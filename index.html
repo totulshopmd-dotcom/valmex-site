@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valmex.md</title>
+<meta name="description" content="Valmex - Acoperisuri, Fatade, Panouri AMK">
+
+<style>
+/* ========================= */
+/* GLOBAL */
+/* ========================= */
+:root{
+ --primary:#e30613;
+ --bg:#050505;
+ --card:#111111;
+ --text:#ffffff;
+ --muted:#bdbdbd;
+ --border:rgba(255,255,255,.08);
+}
+
+*{
+ margin:0;
+ padding:0;
+ box-sizing:border-box;
+}
+
+html{
+ scroll-behavior:smooth;
+}
+
+body{
+ background:var(--bg);
+ color:var(--text);
+ font-family:Arial,sans-serif;
+ overflow-x:hidden;
+}
+
+a{
+ text-decoration:none;
+ color:inherit;
+}
+
+img{
+ display:block;
+ max-width:100%;
+}
+
+section{
+ padding:90px 0;
+}
+
+.container{
+ width:min(1450px,95%);
+ margin:auto;
+}
+
+.section-title{
+ text-align:center;
+ font-size:clamp(34px,4vw,60px);
+ margin-bottom:16px;
+}
+
+.section-subtitle{
+ text-align:center;
+ color:var(--muted);
+ max-width:900px;
+ margin:0 auto 50px;
+ line-height:1.7;
+}
+
+/* ========================= */
+/* INTRO */
+/* ========================= */
+#introScreen{
+ position:fixed;
+ inset:0;
+ background:#050505;
+ z-index:999999;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ flex-direction:column;
+ transition:1s;
+}
+
+#introScreen.hide{
+ opacity:0;
+ visibility:hidden;
+}
+
+.intro-logo{
+ font-size:clamp(60px,10vw,180px);
+ font-weight:900;
+ letter-spacing:10px;
+ text-shadow:0 0 35px rgba(227,6,19,.35);
+ margin-bottom:20px;
+}
+
+.intro-sub{
+ color:#ccc;
+}
+
+.loader-ring{
+ margin-top:40px;
+ width:70px;
+ height:70px;
+ border-radius:50%;
+ border:4px solid rgba(255,255,255,.1);
+ border-top:4px solid #e30613;
+ animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+ from{transform:rotate(0)}
+ to{transform:rotate(360deg)}
+}
+
+/* ========================= */
+/* TOP BAR */
+/* ========================= */
+.top-bar{
+ position:fixed;
+ top:0;
+ width:100%;
+ z-index:99999;
+ background:#0b0b0b;
+ padding:8px 0;
+ border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.top-wrap{
+ display:flex;
+ justify-content:space-between;
+ color:#ccc;
+ font-size:14px;
+}
+
+/* ========================= */
+/* HEADER */
+/* ========================= */
+header{
+ position:fixed;
+ top:36px;
+ width:100%;
+ z-index:9999;
+ background:rgba(0,0,0,.88);
+ backdrop-filter:blur(12px);
+ transition:.35s;
+}
+
+header.scrolled{
+ top:0;
+}
+
+.header-wrap{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ min-height:86px;
+}
+
+.logo img{
+ height:82px;
+}
+
+/* ========================= */
+/* NAV */
+/* ========================= */
+nav{
+ display:flex;
+ gap:24px;
+ font-weight:700;
+}
+
+.nav-link{
+ color:white;
+ position:relative;
+ transition:.35s;
+}
+
+.nav-link:hover{
+ color:#e30613;
+}
+
+.nav-link.active{
+ color:#e30613;
+}
+
+.nav-link.active::after{
+ content:"";
+ position:absolute;
+ left:0;
+ bottom:-10px;
+ width:100%;
+ height:3px;
+ border-radius:999px;
+ background:#e30613;
+ box-shadow:0 0 14px rgba(227,6,19,.45);
+}
+
+.header-cta{
+ padding:14px 24px;
+ border-radius:999px;
+ background:#e30613;
+ font-weight:800;
+ color:white;
+}
+
+/* ========================= */
+/* BUTTON */
+/* ========================= */
+.btn{
+ display:inline-block;
+ padding:18px 36px;
+ border-radius:999px;
+ background:linear-gradient(90deg,#e30613,#ff3340);
+ color:#fff;
+ font-weight:800;
+ box-shadow:0 0 30px rgba(227,6,19,.35);
+ border:none;
+ cursor:pointer;
+}
+
+/* ========================= */
+/* CARD */
+/* ========================= */
+.card{
+ background:#111;
+ border:1px solid rgba(255,255,255,.08);
+ border-radius:28px;
+ overflow:hidden;
+ transition:.45s;
+ box-shadow:0 12px 30px rgba(0,0,0,.30);
+}
+
+.card:hover{
+ transform:translateY(-12px) scale(1.018);
+ border-color:rgba(227,6,19,.40);
+ box-shadow:
+ 0 30px 80px rgba(0,0,0,.55),
+ 0 0 45px rgba(227,6,19,.18);
+}
+
+.card img{
+ transition:.65s;
+}
+
+.card:hover img{
+ transform:scale(1.06);
+}
+
+/* ========================= */
+/* SOCIAL */
+/* ========================= */
+.social-fixed{
+ position:fixed;
+ right:18px;
+ top:50%;
+ transform:translateY(-50%);
+ display:flex;
+ flex-direction:column;
+ gap:14px;
+ z-index:9999;
+}
+
+.social-fixed a{
+ width:62px;
+ height:62px;
+ border-radius:50%;
+ background:#fff;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+
+.social-fixed img{
+ width:36px;
+ height:36px;
+}
+
+/* ========================= */
+/* REVEAL */
+/* ========================= */
+.reveal{
+ opacity:0;
+ transform:translateY(80px);
+ transition:1s;
+}
+
+.reveal.active{
+ opacity:1;
+ transform:translateY(0);
+}
+
+@media(max-width:992px){
+ nav{display:none;}
+ .header-cta{display:none;}
+ .top-wrap{
+  flex-direction:column;
+  gap:4px;
+  text-align:center;
+ }
+}
+</style>
+ <style>
+#valmex-network{
+    padding:90px 20px;
+    background:#050505;
+    text-align:center;
+}
+
+#valmex-network h2{
+    color:#fff;
+    font-size:56px;
+    font-weight:800;
+    margin-bottom:20px;
+    animation: valmexGlow 2s infinite alternate;
+}
+
+#valmex-network p{
+    color:#cfcfcf;
+    font-size:20px;
+    line-height:1.8;
+    max-width:1000px;
+    margin:0 auto 50px auto;
+}
+
+.network-container{
+    width:100%;
+    max-width:1300px;
+    height:680px;
+    margin:auto;
+    border-radius:30px;
+    overflow:hidden;
+    border:1px solid rgba(255,0,0,.35);
+    box-shadow:0 0 60px rgba(255,0,0,.18);
+    background:
+        linear-gradient(rgba(255,0,0,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,0,0,.04) 1px, transparent 1px),
+        #080808;
+    background-size:40px 40px;
+}
+
+#valmexCanvas{
+    width:100%;
+    height:100%;
+}
+
+@keyframes valmexGlow{
+    from{
+        text-shadow:0 0 10px rgba(255,0,0,.15);
+    }
+    to{
+        text-shadow:0 0 30px rgba(255,0,0,.8);
+    }
+}
+
+@media(max-width:768px){
+    #valmex-network h2{
+        font-size:38px;
+    }
+
+    #valmex-network p{
+        font-size:16px;
+    }
+
+    .network-container{
+        height:520px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div id="introScreen">
+ <div class="intro-logo" id="introLogo"></div>
+ <div class="intro-sub">Acoperisuri • Fatade • AMK</div>
+ <div class="loader-ring"></div>
+</div>
+
+<div class="top-bar">
+ <div class="container top-wrap">
+  <div>+373 78 026 212 | Valmex.md@gmail.com</div>
+  <div>L-S 09:00–18:00 | Consultatie Gratuita</div>
+ </div>
+</div>
+
+<header id="mainHeader">
+<div class="container header-wrap">
+
+<a class="logo">
+<img src="https://i.ibb.co/Y7dSbJWv/file-00000000fc0071f49163a60f6883bf9b.png">
+</a>
+
+<nav id="mainNav">
+<a class="nav-link" href="#acoperis">Acoperis</a>
+<a class="nav-link" href="#fatade">Fatade Tencuiala</a>
+<a class="nav-link" href="#amk">Fatade AMK</a>
+<a class="nav-link" href="#contact">Contact</a>
+</nav>
+
+<a href="#contact" class="header-cta">Solicita Oferta</a>
+
+</div>
+</header>
+
+<div class="social-fixed">
+<a href="https://wa.me/37378026212">
+<img src="https://i.ibb.co/TM3hj0SQ/1000057993-removebg-preview-1-1.png">
+</a>
+
+<a href="viber://chat?number=%2B37378026212">
+<img src="https://i.ibb.co/PvM0xFcL/1000057992-removebg-preview-1.png">
+</a>
+
+<a href="https://www.facebook.com/share/18v4sd1se6/">
+<img src="https://i.ibb.co/13KRTwh/Facebook-Logo-2023-1.png">
+</a>
+</div>
+<style>
+/* ========================= */
+/* HERO */
+/* ========================= */
+.hero{
+ position:relative;
+ min-height:100vh;
+ display:flex;
+ align-items:center;
+ overflow:hidden;
+}
+
+.hero-bg{
+ position:absolute;
+ inset:0;
+ background-size:cover;
+ background-position:center;
+ transition:1s;
+ transform:scale(1.05);
+}
+
+.hero-overlay{
+ position:absolute;
+ inset:0;
+ background:
+ linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.82));
+}
+
+.hero-content{
+ position:relative;
+ z-index:2;
+ margin-top:70px;
+}
+
+.hero h1{
+ font-size:clamp(42px,6vw,92px);
+ line-height:1.05;
+ max-width:1050px;
+ margin-bottom:22px;
+ text-shadow:0 0 25px rgba(227,6,19,.22);
+}
+
+.hero p{
+ max-width:760px;
+ font-size:22px;
+ color:#ddd;
+ line-height:1.7;
+ margin-bottom:35px;
+}
+
+.hero-buttons{
+ display:flex;
+ gap:18px;
+ flex-wrap:wrap;
+ margin-bottom:35px;
+}
+
+.btn-outline{
+ display:inline-block;
+ padding:18px 36px;
+ border-radius:999px;
+ border:2px solid rgba(255,255,255,.4);
+ font-weight:800;
+}
+
+.hero-badges{
+ display:flex;
+ flex-wrap:wrap;
+ gap:14px;
+}
+
+.hero-badge{
+ padding:14px 20px;
+ background:rgba(255,255,255,.08);
+ border:1px solid rgba(255,255,255,.08);
+ border-radius:16px;
+}
+
+/* ========================= */
+/* GALLERY HOVER */
+/* ========================= */
+.gallery-img{
+ transition:.45s;
+}
+
+.gallery-img:hover{
+ transform:translateY(-10px) scale(1.02);
+ box-shadow:
+ 0 25px 65px rgba(0,0,0,.5),
+ 0 0 30px rgba(227,6,19,.16);
+}
+
+@media(max-width:992px){
+ .hero h1{font-size:44px;}
+ .hero p{font-size:18px;}
+ .hero-buttons{
+  flex-direction:column;
+  align-items:flex-start;
+ }
+}
+</style>
+
+<section class="hero">
+
+<div class="hero-bg" id="heroBg"></div>
+<div class="hero-overlay"></div>
+
+<div class="container hero-content reveal">
+
+<h1>
+Acoperisuri si Fatade Premium in Moldova
+</h1>
+
+<p>
+Montaj profesional • Materiale premium • Garantie • Finisaj impecabil
+</p>
+
+<div class="hero-buttons">
+<a href="#contact" class="btn">Solicita Oferta</a>
+<a href="tel:+37378026212" class="btn-outline">Suna Acum</a>
+</div>
+
+<div class="hero-badges">
+<div class="hero-badge">500+ Proiecte</div>
+<div class="hero-badge">7+ Ani Experienta</div>
+<div class="hero-badge">Garantie</div>
+<div class="hero-badge">Consultatie Gratuita</div>
+</div>
+
+</div>
+</section>
+<section id="acoperis">
+<div class="container">
+
+<h2 class="section-title reveal">Acoperisuri Premium</h2>
+
+<p class="section-subtitle reveal">
+Executam montaj complet de acoperisuri cu materiale premium, durabile si design modern.
+Fiecare proiect este realizat cu atentie maxima la detalii.
+</p>
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:28px;
+">
+
+<!-- BLOC PRODUS 1 -->
+<div class="card reveal">
+<img src="https://krovli.lider.md/sites/default/files/2025-10/Dakia_7024_0.png"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">Dakia</h3>
+<p style="color:#ccc;line-height:1.7;">
+Tigla metalica premium cu profil modern si rezistenta ridicata.
+</p>
+</div>
+</div>
+
+<!-- BLOC PRODUS 2 -->
+<div class="card reveal">
+<img src="https://krovli.lider.md/sites/default/files/2025-10/Melano_7024.png"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">Melano</h3>
+<p style="color:#ccc;line-height:1.7;">
+Design elegant pentru proiecte moderne si premium.
+</p>
+</div>
+</div>
+
+<!-- BLOC PRODUS 3 -->
+<div class="card reveal">
+<img src="https://krovli.lider.md/sites/default/files/2025-10/Lider_7024_0.png"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">Lider</h3>
+<p style="color:#ccc;line-height:1.7;">
+Raport excelent intre pret, calitate si durabilitate.
+</p>
+</div>
+</div>
+ 
+<!-- BLOC PRODUS 4 -->
+<div class="card reveal">
+<img src="https://krovli.lider.md/sites/default/files/2026-06/Kvadro_7024.png"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">Kvadro</h3>
+<p style="color:#ccc;line-height:1.7;">
+NEW! Kvadro — model premium cu relief puternic și design modern.
+Durabil, elegant și construit pentru rezistență în timp.
+</p>
+</div>
+</div>
+ 
+<!-- BLOC PRODUS 5 -->
+<div class="card reveal">
+<img src="https://krovli.lider.md/sites/default/files/2025-10/Florentia_7024_0.png"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">Florenția</h3>
+<p style="color:#ccc;line-height:1.7;">
+Florenția combină eleganța clasică cu un profil premium bine conturat.
+Oferă acoperișului un aspect rafinat, rezistență ridicată și durabilitate excelentă.
+</p>
+</div>
+</div>
+
+<!-- BLOC PRODUS 6 -->
+<div class="card reveal">
+<img src="https://krovli.lider.md/sites/default/files/2025-10/Karelia_7024_0.png"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">Karelia</h3>
+<p style="color:#ccc;line-height:1.7;">
+Karelia — model premium cu design sofisticat și finisaj elegant.
+Construită pentru rezistență, stil și durabilitate.
+</p>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+
+<!-- ================================================= -->
+<!-- GALERIE 4 BLOCURI START -->
+<!-- Copiezi un bloc dacă vrei Bloc 5, 6 etc -->
+<!-- ================================================= -->
+
+<!-- =============================== -->
+<!-- BLOC 1 START - Proiect Finisat -->
+<!-- =============================== -->
+<div style="margin-bottom:70px;">
+
+<div class="card reveal" style="
+overflow:hidden;
+border-radius:32px;
+background:linear-gradient(180deg,#111,#0b0b0b);
+border:1px solid rgba(227,6,19,.20);
+box-shadow:0 15px 40px rgba(0,0,0,.35);
+">
+
+<div style="
+width:100%;
+height:420px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#111;
+overflow:hidden;
+">
+<img
+class="gallery-img"
+src="https://i.ibb.co/XfbsDsQg/Acoperis-finisat2.png"
+style="
+max-width:100%;
+max-height:100%;
+width:auto;
+height:auto;
+object-fit:contain;
+display:block;
+cursor:pointer;
+">
+</div>
+
+<div style="padding:28px;">
+<h3 style="font-size:52px;color:#e30613;margin:0 0 14px 0;font-weight:800;">
+Concept Acoperiș Premium
+</h3>
+
+<p style="color:#cfcfcf;line-height:1.8;font-size:18px;margin:0;">
+Imagine cu caracter demonstrativ. 
+Valmex oferă consultanță, măsurare și montaj profesional pentru proiecte personalizate de acoperiș.
+</p>
+</div>
+
+</div>
+</div>
+<!-- BLOC 1 END -->
+
+
+
+<!-- =============================== -->
+<!-- BLOC 2 START - KVADRO -->
+<!-- =============================== -->
+<div style="margin-bottom:70px;">
+
+<div class="card reveal" style="
+overflow:hidden;
+border-radius:32px;
+background:linear-gradient(180deg,#111,#0b0b0b);
+border:1px solid rgba(227,6,19,.20);
+box-shadow:0 15px 40px rgba(0,0,0,.35);
+">
+
+<div style="
+width:100%;
+height:420px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#111;
+overflow:hidden;
+">
+<img
+class="gallery-img"
+src="https://www.presshub.ro/wp-content/uploads/2024/09/RoofArt-acoperisuri-din-tigla-metalica.jpg"
+style="
+max-width:100%;
+max-height:100%;
+width:auto;
+height:auto;
+object-fit:contain;
+display:block;
+cursor:pointer;
+">
+</div>
+
+<div style="padding:28px;">
+<h3 style="font-size:52px;color:#e30613;margin:0 0 14px 0;font-weight:800;">
+Acoperiș Modern Antracit
+</h3>
+
+<p style="color:#cfcfcf;line-height:1.8;font-size:18px;margin:0;">
+Imagine demonstrativă a unui acoperiș din țiglă metalică cu finisaj antracit, remarcat prin linii elegante și aspect modern. O alegere excelentă pentru locuințe ce necesită protecție durabilă și estetică premium.
+</p>
+</div>
+
+</div>
+</div>
+<!-- BLOC 2 END -->
+
+
+
+<!-- =============================== -->
+<!-- BLOC 3 START - FLORENTIA -->
+<!-- =============================== -->
+<div style="margin-bottom:70px;">
+
+<div class="card reveal" style="
+overflow:hidden;
+border-radius:32px;
+background:linear-gradient(180deg,#111,#0b0b0b);
+border:1px solid rgba(227,6,19,.20);
+box-shadow:0 15px 40px rgba(0,0,0,.35);
+">
+
+<div style="
+width:100%;
+height:420px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#111;
+overflow:hidden;
+">
+<img
+class="gallery-img"
+src="https://www.mihu-steel.ro/wp-content/uploads/2019/10/Germania-Simetric-Plus-Detalii-5.jpg"
+style="
+max-width:100%;
+max-height:100%;
+width:auto;
+height:auto;
+object-fit:contain;
+display:block;
+cursor:pointer;
+">
+</div>
+
+<div style="padding:28px;">
+<h3 style="font-size:52px;color:#e30613;margin:0 0 14px 0;font-weight:800;">
+Design Elegant pentru Acoperiș
+</h3>
+
+<p style="color:#cfcfcf;line-height:1.8;font-size:18px;margin:0;">
+Acoperiș cu linii bine conturate și aspect sofisticat, potrivit pentru locuințe care pun accent pe eleganță și durabilitate. Finisajul premium completează armonios arhitectura casei.
+</p>
+</div>
+
+</div>
+</div>
+<!-- BLOC 3 END -->
+
+
+
+<!-- =============================== -->
+<!-- BLOC 4 START - LIDER -->
+<!-- =============================== -->
+<div style="margin-bottom:70px;">
+
+<div class="card reveal" style="
+overflow:hidden;
+border-radius:32px;
+background:linear-gradient(180deg,#111,#0b0b0b);
+border:1px solid rgba(227,6,19,.20);
+box-shadow:0 15px 40px rgba(0,0,0,.35);
+">
+
+<div style="
+width:100%;
+height:420px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#111;
+overflow:hidden;
+">
+<img
+class="gallery-img"
+src="https://www.mihu-steel.ro/wp-content/uploads/2019/10/Germania-Simetric-Plus-Detalii-2.jpg"
+style="
+max-width:100%;
+max-height:100%;
+width:auto;
+height:auto;
+object-fit:contain;
+display:block;
+cursor:pointer;
+">
+</div>
+
+<div style="padding:28px;">
+<h3 style="font-size:52px;color:#e30613;margin:0 0 14px 0;font-weight:800;">
+Protecție și Precizie
+</h3>
+
+<p style="color:#cfcfcf;line-height:1.8;font-size:18px;margin:0;">
+Configurația profilului permite distribuirea uniformă a sarcinilor și crește rezistența mecanică a acoperișului. O soluție fiabilă pentru proiecte care cer performanță și durabilitate.
+</p>
+</div>
+
+</div>
+</div>
+<!-- BLOC 4 END -->
+
+<!-- ================================================= -->
+<!-- GALERIE 4 BLOCURI END -->
+<!-- ================================================= -->
+<!-- =============================== -->
+<!-- BUTON OFERTA ACOPERIS -->
+<div style="margin-top:50px;text-align:center;" class="reveal">
+<button class="btn openLeadModal" data-service="Acoperis">
+Solicita Oferta Acoperis
+</button>
+</div>
+
+</div>
+</section>
+<section style="padding:80px 20px;background:#000;">
+
+<h2 style="
+text-align:center;
+font-size:52px;
+color:white;
+margin-bottom:20px;
+font-weight:800;">
+Instrucțiuni de Montare Acoperiș
+</h2>
+
+<p style="
+text-align:center;
+max-width:900px;
+margin:0 auto 40px auto;
+color:#cfcfcf;
+font-size:18px;
+line-height:1.8;">
+Videoclipul prezintă etapele esențiale ale montajului unui acoperiș din țiglă metalică, de la pregătirea structurii până la instalarea elementelor de finisaj.
+</p>
+
+<div style="
+max-width:1100px;
+margin:auto;
+border-radius:28px;
+overflow:hidden;
+box-shadow:0 0 50px rgba(227,6,19,.25);
+">
+
+<iframe
+width="100%"
+height="620"
+src="https://www.youtube.com/embed/BjexBYE-8Xg"
+title="Montaj Acoperis"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen>
+</iframe>
+
+</div>
+
+</section>
+
+<!-- ===== START VALMEX DELIVERY BLOCK ===== -->
+<section id="valmex-network">
+    <h2>Livrare și Montaj în Toată Republica Moldova</h2>
+
+    <p>
+        Valmex oferă consultanță, livrare și montaj profesional pentru
+        acoperișuri și fațade în orice regiune a țării.
+    </p>
+
+    <div class="network-container">
+        <canvas id="valmexCanvas"></canvas>
+    </div>
+</section>
+<!-- ===== END VALMEX DELIVERY BLOCK ===== -->
+<!-- ========================= -->
+<!-- ===== START TEXT UNDER MOLDOVA BLOCK ===== -->
+
+<div style="
+max-width:950px;
+margin:35px auto 0 auto;
+text-align:center;
+font-size:20px;
+line-height:1.8;
+color:#d8d8d8;
+font-weight:500;
+">
+De la primul apel până la ultimul detaliu de montaj, 
+<span style="color:#e30613;font-weight:700;">Valmex.md</span> 
+transformă proiectul dumneavoastră într-o lucrare durabilă, estetică și executată la standarde înalte.
+</div>
+
+<!-- ===== END TEXT UNDER MOLDOVA BLOCK ===== -->
+<!-- CALCULATOR ACOPERIS -->
+<!-- ========================= -->
+<section id="roofCalculator">
+<div class="container">
+
+<h2 class="section-title reveal">Calculator Acoperis</h2>
+
+<p class="section-subtitle reveal">
+Calculeaza rapid suprafata estimativa pentru proiectul tau.
+</p>
+
+<div class="card reveal" style="
+padding:40px;
+max-width:1000px;
+margin:auto;
+">
+
+<div id="calcGrid" style="
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:20px;
+">
+
+<select id="roofType" style="height:65px;border:none;border-radius:16px;padding:0 20px;">
+<option value="2">Acoperis 2 ape</option>
+<option value="4">Acoperis 4 ape</option>
+</select>
+
+<select id="roofModel" style="height:65px;border:none;border-radius:16px;padding:0 20px;">
+<option>Dakia</option>
+<option>Melano</option>
+<option>Lider</option>
+<option>Karelia</option>
+</select>
+
+<input id="roofLength" type="number" placeholder="Lungime (m)"
+style="height:65px;border:none;border-radius:16px;padding:0 20px;">
+
+<input id="roofWidth" type="number" placeholder="Latime (m)"
+style="height:65px;border:none;border-radius:16px;padding:0 20px;">
+
+<input id="roofSlope" type="number" placeholder="Panta (%)"
+style="height:65px;border:none;border-radius:16px;padding:0 20px;">
+
+<input id="roofEave" type="number" placeholder="Streasina (cm)"
+style="height:65px;border:none;border-radius:16px;padding:0 20px;">
+
+</div>
+
+<div style="text-align:center;margin-top:30px;">
+<button id="calcBtn" class="btn">Calculeaza</button>
+</div>
+
+<div id="calcResult" style="
+display:none;
+margin-top:30px;
+background:#181818;
+padding:30px;
+border-radius:22px;
+line-height:1.9;
+"></div>
+
+<div style="margin-top:50px;text-align:center;">
+<button class="btn openLeadModal" data-service="Calculator Acoperis">
+Solicita Oferta Din Calculator
+</button>
+</div>
+
+</div>
+
+</div>
+</section>
+<section id="fatade">
+<div class="container">
+
+<h2 class="section-title reveal">Fatade Decorative Premium</h2>
+
+<p class="section-subtitle reveal">
+Transformam exteriorul casei cu fatade moderne, rezistente si elegante.
+Solutii premium pentru protectie termica si aspect impecabil.
+</p>
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:28px;
+">
+
+<!-- BLOC 1 -->
+<div class="card reveal">
+<img src="https://i.ibb.co/mFqGcZWG/file-000000000a5471f499c0bfd7fa150064.png"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">Tencuiala Decorativa</h3>
+<p style="color:#ccc;line-height:1.7;">
+Finisaj premium pentru exterior, rezistent la UV si intemperii.
+</p>
+</div>
+</div>
+
+<!-- BLOC 2 -->
+<div class="card reveal">
+<img src="https://i.ibb.co/mFqGcZWG/file-000000000a5471f499c0bfd7fa150064.png"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">Fatada Moderna</h3>
+<p style="color:#ccc;line-height:1.7;">
+Design contemporan cu eficienta termica ridicata.
+</p>
+</div>
+</div>
+
+<!-- BLOC 3 -->
+<div class="card reveal">
+<img src="https://i.ibb.co/mFqGcZWG/file-000000000a5471f499c0bfd7fa150064.png"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">Finisaj Premium</h3>
+<p style="color:#ccc;line-height:1.7;">
+Executie profesionala si atentie maxima la detalii.
+</p>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<section>
+<div class="container">
+
+<h2 class="section-title reveal">Galerie Fatade</h2>
+
+<p class="section-subtitle reveal">
+Exemple de lucrari realizate de echipa Valmex.
+</p>
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:22px;
+">
+
+<img class="gallery-img reveal"
+src="https://i.ibb.co/mFqGcZWG/file-000000000a5471f499c0bfd7fa150064.png"
+style="width:100%;height:260px;object-fit:cover;border-radius:22px;cursor:pointer;">
+
+<img class="gallery-img reveal"
+src="https://i.ibb.co/mFqGcZWG/file-000000000a5471f499c0bfd7fa150064.png"
+style="width:100%;height:260px;object-fit:cover;border-radius:22px;cursor:pointer;">
+
+<img class="gallery-img reveal"
+src="https://i.ibb.co/mFqGcZWG/file-000000000a5471f499c0bfd7fa150064.png"
+style="width:100%;height:260px;object-fit:cover;border-radius:22px;cursor:pointer;">
+
+<img class="gallery-img reveal"
+src="https://i.ibb.co/mFqGcZWG/file-000000000a5471f499c0bfd7fa150064.png"
+style="width:100%;height:260px;object-fit:cover;border-radius:22px;cursor:pointer;">
+
+</div>
+</div>
+</section>
+
+<section>
+<div class="container">
+
+<h2 class="section-title reveal">Video Proiect Fatada</h2>
+
+<p class="section-subtitle reveal">
+Vezi procesul de executie si rezultatul final.
+</p>
+
+<div class="reveal" style="
+max-width:1100px;
+margin:auto;
+border-radius:28px;
+overflow:hidden;
+box-shadow:0 20px 60px rgba(227,6,19,.18);
+">
+<video controls style="width:100%;display:block;background:black;">
+<source src="https://youtu.be/BjexBYE-8Xg?si=LIE_XNoFp7OwEOk6" type="video/mp4">
+</video>
+</div>
+
+<div style="margin-top:50px;text-align:center;" class="reveal">
+<button class="btn openLeadModal" data-service="Fatade">
+Solicita Oferta Fatade
+</button>
+</div>
+
+</div>
+</section>
+<section id="amk">
+<div class="container">
+
+<h2 class="section-title reveal">Panouri AMK Premium</h2>
+
+<p class="section-subtitle reveal">
+Panourile AMK din marmura naturala ofera aspect premium, montaj rapid si durabilitate maxima.
+Solutia ideala pentru fatade moderne.
+</p>
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:28px;
+">
+
+<!-- BLOC 1 -->
+<div class="card reveal">
+<img src="https://i.ibb.co/mrnmsNR6/Fatade-AMK-proiect-finisat-5.jpg"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">AMK Classic</h3>
+<p style="color:#ccc;line-height:1.7;">
+Textura premium cu aspect natural de piatra si finisaj elegant.
+</p>
+</div>
+</div>
+
+<!-- BLOC 2 -->
+<div class="card reveal">
+<img src="https://i.ibb.co/mrnmsNR6/Fatade-AMK-proiect-finisat-5.jpg"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">AMK Marble</h3>
+<p style="color:#ccc;line-height:1.7;">
+Aspect luxos pentru proiecte premium si vile moderne.
+</p>
+</div>
+</div>
+
+<!-- BLOC 3 -->
+<div class="card reveal">
+<img src="https://i.ibb.co/mrnmsNR6/Fatade-AMK-proiect-finisat-5.jpg"
+style="width:100%;height:280px;object-fit:cover;">
+<div style="padding:28px;">
+<h3 style="font-size:28px;color:#e30613;margin-bottom:14px;">AMK Premium</h3>
+<p style="color:#ccc;line-height:1.7;">
+Design modern, executie profesionala si durabilitate maxima.
+</p>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<section>
+<div class="container">
+
+<h2 class="section-title reveal">Galerie AMK</h2>
+
+<p class="section-subtitle reveal">
+Exemple de proiecte realizate de echipa Valmex cu panouri AMK.
+</p>
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:22px;
+">
+
+<img class="gallery-img reveal"
+src="https://i.ibb.co/mrnmsNR6/Fatade-AMK-proiect-finisat-5.jpg"
+style="width:100%;height:260px;object-fit:cover;border-radius:22px;cursor:pointer;">
+
+<img class="gallery-img reveal"
+src="https://i.ibb.co/mrnmsNR6/Fatade-AMK-proiect-finisat-5.jpg"
+style="width:100%;height:260px;object-fit:cover;border-radius:22px;cursor:pointer;">
+
+<img class="gallery-img reveal"
+src="https://i.ibb.co/mrnmsNR6/Fatade-AMK-proiect-finisat-5.jpg"
+style="width:100%;height:260px;object-fit:cover;border-radius:22px;cursor:pointer;">
+
+<img class="gallery-img reveal"
+src="https://i.ibb.co/mrnmsNR6/Fatade-AMK-proiect-finisat-5.jpg"
+style="width:100%;height:260px;object-fit:cover;border-radius:22px;cursor:pointer;">
+
+</div>
+</div>
+</section>
+
+<section>
+<div class="container">
+
+<h2 class="section-title reveal">Video Proiect AMK</h2>
+
+<p class="section-subtitle reveal">
+Vezi procesul de montaj si rezultatul final al panourilor AMK.
+</p>
+
+<div class="reveal" style="
+max-width:1100px;
+margin:auto;
+border-radius:28px;
+overflow:hidden;
+box-shadow:0 20px 60px rgba(227,6,19,.18);
+">
+<video controls style="width:100%;display:block;background:black;">
+<source src="amk-video.mp4" type="video/mp4">
+</video>
+</div>
+
+<div style="margin-top:50px;text-align:center;" class="reveal">
+<button class="btn openLeadModal" data-service="AMK">
+Solicita Oferta AMK
+</button>
+</div>
+
+</div>
+</section>
+<!-- ========================= -->
+<!-- POPUP OFERTA -->
+<!-- Nume + Telefon -->
+<!-- Trimite spre Telegram -->
+<!-- ========================= -->
+<div id="leadModal" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.82);
+backdrop-filter:blur(8px);
+z-index:999999;
+justify-content:center;
+align-items:center;
+padding:20px;
+">
+
+<div style="
+width:100%;
+max-width:520px;
+background:#111;
+border:1px solid rgba(227,6,19,.25);
+border-radius:32px;
+padding:40px;
+position:relative;
+">
+
+<button id="closeLeadModal" style="
+position:absolute;
+right:18px;
+top:18px;
+background:none;
+border:none;
+color:white;
+font-size:32px;
+cursor:pointer;
+">&times;</button>
+
+<h2 style="
+font-size:36px;
+margin-bottom:14px;
+text-align:center;
+">
+Solicita Oferta
+</h2>
+
+<p id="leadServiceText" style="
+text-align:center;
+color:#bbb;
+margin-bottom:28px;
+">
+Serviciu selectat
+</p>
+
+<div style="display:grid;gap:18px;">
+
+<input id="leadName"
+type="text"
+placeholder="Nume Prenume"
+style="height:62px;border:none;border-radius:18px;padding:0 20px;">
+
+<input id="leadPhone"
+type="tel"
+placeholder="Telefon"
+style="height:62px;border:none;border-radius:18px;padding:0 20px;">
+
+<button id="sendLeadBtn" class="btn" style="width:100%;">
+Trimite
+</button>
+
+<div id="leadStatus" style="
+display:none;
+padding:18px;
+background:#14532d;
+border-radius:16px;
+text-align:center;
+">
+Cererea a fost trimisa.
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ========================= -->
+<!-- CONTACT -->
+<!-- ========================= -->
+<section id="contact">
+<div class="container">
+
+<h2 class="section-title reveal">Contact</h2>
+
+<p class="section-subtitle reveal">
+Contacteaza-ne pentru consultatie gratuita si oferta personalizata.
+</p>
+
+<div class="card reveal" style="
+padding:50px;
+max-width:1100px;
+margin:auto;
+">
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:28px;
+text-align:center;
+">
+
+<div>
+<h3 style="color:#e30613;margin-bottom:12px;">Telefon</h3>
+<p style="color:#ccc;">+373 78 026 212</p>
+</div>
+
+<div>
+<h3 style="color:#e30613;margin-bottom:12px;">Email</h3>
+<p style="color:#ccc;">Valmex.md@gmail.com</p>
+</div>
+
+<div>
+<h3 style="color:#e30613;margin-bottom:12px;">Program</h3>
+<p style="color:#ccc;">L-S 09:00 - 18:00</p>
+</div>
+
+</div>
+
+<div style="text-align:center;margin-top:40px;">
+<button class="btn openLeadModal" data-service="Oferta Generala">
+Solicita Oferta
+</button>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ========================= -->
+<!-- LIGHTBOX -->
+<!-- ========================= -->
+<div id="lightbox" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.94);
+z-index:999999;
+justify-content:center;
+align-items:center;
+padding:20px;
+">
+
+<img id="lightboxImg" style="
+max-width:95%;
+max-height:95%;
+border-radius:24px;
+box-shadow:0 0 70px rgba(227,6,19,.25);
+">
+
+</div>
+
+<!-- ========================= -->
+<!-- FOOTER -->
+<!-- ========================= -->
+<footer style="
+background:#080808;
+padding:80px 0;
+border-top:1px solid rgba(255,255,255,.08);
+">
+
+<div class="container">
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:40px;
+">
+
+<div>
+<h2 style="
+font-size:42px;
+margin-bottom:20px;
+color:#e30613;
+">
+VALMEX
+</h2>
+
+<p style="
+color:#bbb;
+line-height:1.8;
+">
+Acoperisuri premium, fatade decorative si panouri AMK executate profesional in Moldova.
+</p>
+</div>
+
+<div>
+<h3 style="margin-bottom:20px;">Servicii</h3>
+<div style="display:grid;gap:12px;color:#bbb;">
+<p>Acoperisuri</p>
+<p>Fatade Decorative</p>
+<p>Panouri AMK</p>
+<p>Iluminare Fatade</p>
+</div>
+</div>
+
+<div>
+<h3 style="margin-bottom:20px;">Contact</h3>
+<div style="display:grid;gap:12px;color:#bbb;">
+<p>+373 78 026 212</p>
+<p>Valmex.md@gmail.com</p>
+<p>L-S 09:00 - 18:00</p>
+</div>
+</div>
+
+</div>
+
+<div style="
+margin-top:50px;
+padding-top:30px;
+border-top:1px solid rgba(255,255,255,.06);
+text-align:center;
+color:#777;
+">
+© 2026 Valmex.md - Toate drepturile rezervate
+</div>
+
+</div>
+</footer>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+/* ========================= */
+/* INTRO SCREEN */
+/* ========================= */
+const intro = document.getElementById("introScreen");
+const introLogo = document.getElementById("introLogo");
+
+const logoText = "VALMEX";
+let logoIndex = 0;
+
+function typeLogo(){
+ if(logoIndex < logoText.length){
+   introLogo.innerHTML += logoText.charAt(logoIndex);
+   logoIndex++;
+   setTimeout(typeLogo,180);
+ }
+}
+
+typeLogo();
+
+setTimeout(()=>{
+ intro.classList.add("hide");
+},2800);
+
+/* ========================= */
+/* HEADER SCROLL */
+/* ========================= */
+window.addEventListener("scroll", function(){
+ const header = document.getElementById("mainHeader");
+
+ if(window.scrollY > 60){
+   header.classList.add("scrolled");
+ }else{
+   header.classList.remove("scrolled");
+ }
+});
+
+/* ========================= */
+/* HERO BACKGROUND SLIDER */
+/* Modifici pozele aici */
+/* ========================= */
+const heroBg = document.getElementById("heroBg");
+
+const heroImages = [
+ "https://i.ibb.co/XfbsDsQg/Acoperis-finisat2.png",
+ "https://i.ibb.co/mFqGcZWG/file-000000000a5471f499c0bfd7fa150064.png",
+ "https://i.ibb.co/mrnmsNR6/Fatade-AMK-proiect-finisat-5.jpg"
+];
+
+let heroIndex = 0;
+
+function updateHero(){
+ heroBg.style.opacity = 0.35;
+
+ setTimeout(()=>{
+   heroBg.style.backgroundImage = `url('${heroImages[heroIndex]}')`;
+   heroBg.style.opacity = 1;
+   heroIndex = (heroIndex + 1) % heroImages.length;
+ },400);
+}
+
+updateHero();
+setInterval(updateHero,5000);
+
+/* ========================= */
+/* REVEAL EFFECT */
+/* ========================= */
+const reveals = document.querySelectorAll(".reveal");
+
+function revealOnScroll(){
+ reveals.forEach(el=>{
+   const top = el.getBoundingClientRect().top;
+
+   if(top < window.innerHeight - 70){
+     el.classList.add("active");
+   }
+ });
+}
+
+window.addEventListener("scroll", revealOnScroll);
+revealOnScroll();
+/* ========================= */
+/* CALCULATOR */
+/* ========================= */
+const calcBtn = document.getElementById("calcBtn");
+const calcResult = document.getElementById("calcResult");
+
+if(calcBtn){
+ calcBtn.addEventListener("click", function(){
+
+   const type = parseInt(document.getElementById("roofType").value);
+   const length = parseFloat(document.getElementById("roofLength").value) || 0;
+   const width = parseFloat(document.getElementById("roofWidth").value) || 0;
+   const slope = parseFloat(document.getElementById("roofSlope").value) || 0;
+   const eave = (parseFloat(document.getElementById("roofEave").value) || 0)/100;
+   const model = document.getElementById("roofModel").value;
+
+   if(!length || !width){
+     alert("Completeaza dimensiunile.");
+     return;
+   }
+
+   let area = (length + eave*2) * (width + eave*2);
+
+   if(type===2) area *= 1.15;
+   if(type===4) area *= 1.25;
+   if(slope>0) area *= 1 + slope/300;
+
+   const screws = Math.ceil(area * 8);
+   const foil = Math.ceil(area * 1.1);
+
+   calcResult.style.display = "block";
+   calcResult.innerHTML = `
+     <h3 style="color:#e30613;margin-bottom:15px;">Rezultat Estimativ</h3>
+     <p><b>Model:</b> ${model}</p>
+     <p><b>Suprafata:</b> ${area.toFixed(1)} m²</p>
+     <p><b>Suruburi:</b> ~${screws} buc</p>
+     <p><b>Folie:</b> ~${foil} m²</p>
+   `;
+ });
+}
+
+/* ========================= */
+/* LEAD MODAL */
+/* ========================= */
+const modal = document.getElementById("leadModal");
+const closeModal = document.getElementById("closeLeadModal");
+const serviceText = document.getElementById("leadServiceText");
+const leadButtons = document.querySelectorAll(".openLeadModal");
+
+let selectedService = "";
+
+leadButtons.forEach(btn=>{
+ btn.addEventListener("click", function(){
+   selectedService = btn.dataset.service || "Oferta Generala";
+   serviceText.innerText = "Serviciu: " + selectedService;
+   modal.style.display = "flex";
+ });
+});
+
+if(closeModal){
+ closeModal.addEventListener("click", function(){
+   modal.style.display = "none";
+ });
+}
+
+window.addEventListener("click", function(e){
+ if(e.target === modal){
+   modal.style.display = "none";
+ }
+});
+
+/* ========================= */
+/* TELEGRAM / GOOGLE SCRIPT */
+/* Nu schimba daca webhook-ul merge */
+/* ========================= */
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyrmwWAe39mXcZYXrlW-MRnmHne70Ak64iFTB4lNLAKrAZVG8TI_eHQOkH0-cVeqxijbg/exec";
+const sendLeadBtn = document.getElementById("sendLeadBtn");
+
+if(sendLeadBtn){
+ sendLeadBtn.addEventListener("click", async function(){
+
+   const name = document.getElementById("leadName").value.trim();
+   const phone = document.getElementById("leadPhone").value.trim();
+
+   if(!name || !phone){
+     alert("Completeaza campurile.");
+     return;
+   }
+
+   sendLeadBtn.disabled = true;
+   sendLeadBtn.innerText = "Se trimite...";
+  
+
+   const query =
+   WEBAPP_URL +
+   "?name=" + encodeURIComponent(name) +
+   "&phone=" + encodeURIComponent(phone) +
+   "&city=" + encodeURIComponent("-") +
+   "&product=" + encodeURIComponent("VALMEX | " + selectedService) +
+   "&price=" + encodeURIComponent("-") +
+   "&t=" + Date.now();
+
+   try{
+     await fetch(query,{method:"GET", cache:"no-store"});
+
+     document.getElementById("leadStatus").style.display = "block";
+
+     document.getElementById("leadName").value = "";
+     document.getElementById("leadPhone").value = "";
+
+     setTimeout(()=>{
+       modal.style.display = "none";
+       document.getElementById("leadStatus").style.display = "none";
+     },1800);
+
+   }catch(e){
+     alert("Eroare la trimitere.");
+   }
+
+   sendLeadBtn.disabled = false;
+   sendLeadBtn.innerText = "Trimite";
+ });
+}
+/* ========================= */
+/* ACTIVE MENU ON SCROLL */
+/* ========================= */
+const sections = document.querySelectorAll("section[id]");
+const navLinks = document.querySelectorAll(".nav-link");
+
+function updateActiveMenu(){
+ let current = "";
+
+ sections.forEach(section=>{
+   const sectionTop = section.offsetTop - 220;
+
+   if(window.scrollY >= sectionTop){
+     current = section.getAttribute("id");
+   }
+ });
+
+ navLinks.forEach(link=>{
+   link.classList.remove("active");
+
+   if(link.getAttribute("href") === "#" + current){
+     link.classList.add("active");
+   }
+ });
+}
+
+window.addEventListener("scroll", updateActiveMenu);
+updateActiveMenu();
+
+/* ========================= */
+/* LIGHTBOX */
+/* Click pe imagini = zoom */
+/* ========================= */
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightboxImg");
+
+document.querySelectorAll(".gallery-img").forEach(img=>{
+ img.addEventListener("click", function(){
+   lightbox.style.display = "flex";
+   lightboxImg.src = img.src;
+ });
+});
+
+if(lightbox){
+ lightbox.addEventListener("click", function(){
+   lightbox.style.display = "none";
+ });
+}
+
+/* ========================= */
+/* MOBILE FIX */
+/* Calculator pe telefon */
+/* ========================= */
+function mobileFix(){
+ if(window.innerWidth < 768){
+   const calcGrid = document.getElementById("calcGrid");
+   if(calcGrid){
+     calcGrid.style.gridTemplateColumns = "1fr";
+   }
+ }
+}
+
+mobileFix();
+window.addEventListener("resize", mobileFix);
+
+});
+</script>
+<!-- ========================= -->
+<!-- JS END -->
+<!-- ========================= -->
+<script>
+const canvas = document.getElementById("valmexCanvas");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas(){
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+const cities = [
+ {name:"Chișinău",x:.52,y:.48,main:true},
+ {name:"Bălți",x:.40,y:.20},
+ {name:"Ungheni",x:.25,y:.42},
+ {name:"Orhei",x:.57,y:.36},
+ {name:"Cahul",x:.35,y:.82},
+ {name:"Comrat",x:.60,y:.78},
+ {name:"Soroca",x:.67,y:.18}
+];
+
+let t = 0;
+
+function draw(){
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0,0,w,h);
+
+    cities.forEach(city=>{
+        city.px = city.x*w;
+        city.py = city.y*h;
+    });
+
+    const center = cities[0];
+
+    ctx.strokeStyle = "rgba(255,0,0,.7)";
+    ctx.lineWidth = 2;
+
+    for(let i=1;i<cities.length;i++){
+        let c = cities[i];
+
+        ctx.beginPath();
+        ctx.moveTo(center.px, center.py);
+        ctx.lineTo(c.px,c.py);
+        ctx.stroke();
+
+        let p = ((t*3+i*20)%100)/100;
+        let ax = center.px + (c.px-center.px)*p;
+        let ay = center.py + (c.py-center.py)*p;
+
+        ctx.fillStyle = "#ff0000";
+        ctx.beginPath();
+        ctx.arc(ax,ay,4,0,Math.PI*2);
+        ctx.fill();
+    }
+
+    cities.forEach(city=>{
+        ctx.shadowBlur=20;
+        ctx.shadowColor="red";
+        ctx.fillStyle="#ff0000";
+        ctx.beginPath();
+        ctx.arc(city.px,city.py,6,0,Math.PI*2);
+        ctx.fill();
+        ctx.shadowBlur=0;
+
+        ctx.fillStyle="white";
+        ctx.font="bold 20px Arial";
+        ctx.fillText(city.name, city.px+10, city.py+5);
+    });
+
+    t++;
+    requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+</body>
+</html>
