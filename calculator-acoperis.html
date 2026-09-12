@@ -57,6 +57,27 @@ body{
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Banner-ul foto acoperă întreaga pagină ca fundal fix — se vede foarte
+   discret pe sub text. Elementele cu fundal propriu (ex. 3D-ul, cardurile)
+   îl acoperă complet acolo unde sunt, pentru că sunt desenate deasupra lui. */
+body::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image: url('https://i.ibb.co/bjNHJGbG/tigla-4.jpg');
+  background-size: cover;
+  background-position: center 55%;
+}
+body::after{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(10,10,10,0.88);
 }
 
 h1,h2,h3{
@@ -82,7 +103,7 @@ h2{ font-size: clamp(22px, 5vw, 28px); }
 /* ---------- Chrome-ul site-ului (top bar / header / meniu mobil) ---------- */
 
 .top-bar{
-  background: #050505;
+  background: rgba(5,5,5,0.82);
   border-bottom: 1px solid var(--line);
   font-size: 12.5px;
   color: var(--muted);
@@ -230,38 +251,13 @@ h2{ font-size: clamp(22px, 5vw, 28px); }
 }
 .social-fixed img{ width: 22px; height: 22px; }
 
-/* ---------- Hero / banner ---------- */
+/* ---------- Breadcrumb (păstrat pentru alte pagini ale site-ului) ---------- */
 
-.page-hero{
-  position: relative;
-  min-height: 30vh;
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
-}
-.page-hero-bg{
-  position: absolute; inset: 0;
-  background-size: cover;
-  background-position: center 68%;
-}
-.page-hero-overlay{
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.55) 55%, rgba(10,10,10,0.94) 100%);
-}
-.page-hero-content{
-  position: relative;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 40px 20px 26px;
-  width: 100%;
-}
 .breadcrumb{ font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
 .breadcrumb a{ color: var(--muted); text-decoration: none; }
 .breadcrumb a:hover{ color: var(--paper); }
 .breadcrumb-sep{ margin: 0 6px; }
 .breadcrumb-current{ color: var(--paper); }
-.page-hero h1{ margin-bottom: 6px; }
-.page-hero p{ color: var(--muted); font-size: 14.5px; max-width: 46ch; }
 
 /* ---------- Header sticky de progres (deasupra configuratorului) ---------- */
 
@@ -313,7 +309,7 @@ h2{ font-size: clamp(22px, 5vw, 28px); }
 
 .panel{
   flex: 1 1 auto;
-  background: var(--ink);
+  background: rgba(10,10,10,0.72);
   padding: 28px 20px 40px;
   max-width: 560px;
   width: 100%;
@@ -391,13 +387,13 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
 .form-field input{ width: 100%; background: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); padding: 13px 14px; color: var(--paper); font-size: 15px; font-family: var(--font-body); }
 .form-field input:focus{ outline: none; border-color: var(--red); }
 
-.seo-block{ max-width: 700px; margin: 0 auto; padding: 40px 20px 60px; color: var(--muted); font-size: 13.5px; line-height: 1.6; border-top: 1px solid var(--line); }
+.seo-block{ max-width: 700px; margin: 0 auto; padding: 40px 20px 60px; color: var(--muted); font-size: 13.5px; line-height: 1.6; border-top: 1px solid var(--line); background: rgba(10,10,10,0.72); }
 .seo-block h2{ font-size: 16px; color: var(--paper); margin-top: 22px; }
 .seo-block h2:first-child{ margin-top: 0; }
 
 /* ---------- Footer ---------- */
 
-.footer{ background: #050505; border-top: 1px solid var(--line); padding: 50px 0 0; }
+.footer{ background: rgba(5,5,5,0.86); border-top: 1px solid var(--line); padding: 50px 0 0; }
 .footer .container{ max-width: 1280px; margin: 0 auto; padding: 0 20px; }
 .footer-grid{ display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 30px; padding-bottom: 34px; }
 .footer-brand p{ color: var(--muted); font-size: 13.5px; line-height: 1.6; margin-top: 14px; max-width: 34ch; }
@@ -521,17 +517,6 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
   <a href="viber://chat?number=%2B37378026212" aria-label="Viber"><img src="https://i.ibb.co/PvM0xFcL/1000057992-removebg-preview-1.png" alt="Viber" width="22" height="22" loading="lazy"></a>
   <a href="https://www.facebook.com/share/18v4sd1se6/" target="_blank" rel="noopener" aria-label="Facebook"><img src="https://i.ibb.co/13KRTwh/Facebook-Logo-2023-1.png" alt="Facebook" width="22" height="22" loading="lazy"></a>
 </div>
-
-<!-- Hero / banner -->
-<section class="page-hero">
-  <div class="page-hero-bg" style="background-image:url('https://i.ibb.co/bjNHJGbG/tigla-4.jpg')"></div>
-  <div class="page-hero-overlay"></div>
-  <div class="page-hero-content">
-    <div class="breadcrumb"><a href="index.html">Acasă</a><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Calculator Acoperiș</span></div>
-    <h1>Calculator <span style="color:var(--red)">Acoperiș</span> 3D</h1>
-    <p>Configurează-ți acoperișul în 3D și primești o estimare de preț instant pentru țiglă metalică sau montaj la cheie.</p>
-  </div>
-</section>
 
 <div class="app" id="app">
 
@@ -691,7 +676,7 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
           <button class="btn btn-ghost" type="button" data-prev>Înapoi</button>
           <button class="btn btn-primary" type="submit" id="sendLeadBtn"><span>Vezi prețul estimat</span></button>
         </div>
-        <p class="microcopy">Nu îți vindem datele nimănui. Cererea ajunge direct la echipa Valmex pe WhatsApp, la <a href="tel:+37378026212" style="color:var(--muted)">+373 78 026 212</a>.</p>
+        <p class="microcopy">Nu îți vindem datele nimănui. Cererea ajunge direct la echipa Valmex.</p>
         <p class="status-msg" id="leadStatus" style="display:none;color:var(--red);font-size:12.5px;margin-top:6px;">Cererea a fost trimisă cu succes!</p>
       </form>
     </section>
@@ -700,7 +685,7 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
     <section class="step" data-step="5" hidden>
       <p class="field-label">Proiectul tău</p>
       <h2 id="resGreeting">Felicitări!</h2>
-      <p class="lede">Iată estimarea proiectului tău. Am deschis WhatsApp cu datele tale — trebuie doar să apeși Trimite.</p>
+      <p class="lede">Cererea a fost trimisă cu succes. Iată estimarea proiectului tău.</p>
 
       <div class="result-grid">
         <div class="result-row"><span>Dimensiuni</span><strong id="resDims">—</strong></div>
@@ -714,7 +699,6 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
 
       <div class="step-actions">
         <button class="btn btn-ghost" id="btnModifyProject">Modifică proiectul</button>
-        <button class="btn btn-primary" id="btnResendWhatsapp">Trimite din nou pe WhatsApp</button>
       </div>
     </section>
 
@@ -1566,7 +1550,10 @@ function lastCfgOrDefault() { return lastCfg; }
   "use strict";
 
   var STORAGE_KEY = "valmex_roof_config_v1";
-  var WHATSAPP_NUMBER = "37378026212"; // fără "+", fără spații
+
+  // Același Apps Script folosit deja de formularul de pe calculator-amk.html
+  // (din valmex.js) — ca lead-urile de aici să ajungă pe același canal.
+  var WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyrmwWAe39mXcZYXrlW-MRnmHne70Ak64iFTB4lNLAKrAZVG8TI_eHQOkH0-cVeqxijbg/exec";
 
   var SLOPE_RAD = 35 * Math.PI / 180;
   var EAVE = 0.6;
@@ -1620,8 +1607,8 @@ function lastCfgOrDefault() { return lastCfg; }
     els.gateForm = document.getElementById("gateForm");
     els.resGreeting = document.getElementById("resGreeting");
     els.btnModifyProject = document.getElementById("btnModifyProject");
-    els.btnResendWhatsapp = document.getElementById("btnResendWhatsapp");
     els.leadStatus = document.getElementById("leadStatus");
+    els.sendLeadBtn = document.getElementById("sendLeadBtn");
     els.stageLoading = document.getElementById("stageLoading");
     els.hintText = document.getElementById("hintText");
   }
@@ -1688,9 +1675,6 @@ function lastCfgOrDefault() { return lastCfg; }
     });
 
     els.btnModifyProject.addEventListener("click", function () { goTo(3); });
-    if (els.btnResendWhatsapp) {
-      els.btnResendWhatsapp.addEventListener("click", function () { sendToWhatsapp(); });
-    }
 
     els.btnIntroMain.addEventListener("click", function () {
       if (resumeTargetStep !== null) goTo(resumeTargetStep);
@@ -1823,57 +1807,58 @@ function lastCfgOrDefault() { return lastCfg; }
   function round1(v) { return Math.round(v * 10) / 10; }
   function fmtMDL(v) { return Math.round(v).toLocaleString("ro-RO") + " MDL"; }
 
-  /* ---------------- Lead → WhatsApp Valmex ---------------- */
+  /* ---------------- Lead → același Apps Script folosit de valmex.js ----------------
+     Clientul NU e redirecționat nicăieri — vede doar mesajul de confirmare,
+     apoi ecranul cu rezultatul. Cererea ajunge pe același canal ca la AMK. */
 
-  function buildWhatsappMessage() {
-    var area = round1(computeMontajArea(state.length, state.width));
+  function buildRoofProductLabel() {
     var typeLabel = state.type === "4ape" ? "4 ape" : "2 ape";
     var variantLabel = state.variant === "lacheie" ? "La cheie (material + montaj)" : "Țiglă metalică (material)";
-    var lines = [
-      "Cerere ofertă — Calculator Acoperiș Valmex",
-      "Nume: " + leadName,
-      "Telefon: " + leadPhone
-    ];
-    if (leadLocality) lines.push("Localitate: " + leadLocality);
-    lines.push("Dimensiuni casă: " + fmtMeters(state.length) + " × " + fmtMeters(state.width));
-    lines.push("Tip acoperiș: " + typeLabel);
-    lines.push("Variantă: " + variantLabel);
-    lines.push("Culoare țiglă: " + state.colorName);
-    lines.push("Suprafață montaj estimată: " + area + " m²");
-    return lines.join("\n");
+    return "VALMEX | Calculator Acoperiș | " + fmtMeters(state.length) + " x " + fmtMeters(state.width) +
+      " | Tip: " + typeLabel + " | Variantă: " + variantLabel + " | Culoare: " + state.colorName;
   }
 
-  function sendToWhatsapp() {
-    var msg = encodeURIComponent(buildWhatsappMessage());
-    var url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + msg;
-    window.open(url, "_blank", "noopener");
+  function computeEstimatedPrice() {
+    var area = computeMontajArea(state.length, state.width);
+    if (state.variant === "lacheie") return area * PRICE_LACHEIE_PER_M2;
+    var materialArea = area * WASTE_FACTOR;
+    var tiglaCost = materialArea * PRICE_TIGLA_PER_M2;
+    return tiglaCost + tiglaCost * ACCESSORY_MARKUP;
   }
 
-  function submitGateForm() {
+  async function submitGateForm() {
     var name = document.getElementById("leadName").value.trim();
     var phone = document.getElementById("leadPhone").value.trim();
-    if (!name || !phone) return;
+    if (!name || !phone) { alert("Completează câmpurile."); return; }
 
     leadName = name;
     leadPhone = phone;
     leadLocality = document.getElementById("leadLocality").value.trim();
 
-    var payload = {
-      name: leadName,
-      phone: leadPhone,
-      locality: leadLocality,
-      config: state,
-      submittedAt: new Date().toISOString()
-    };
-    console.log("Lead Valmex:", payload);
+    var btnLabel = els.sendLeadBtn ? els.sendLeadBtn.querySelector("span") : null;
+    if (els.sendLeadBtn) els.sendLeadBtn.disabled = true;
+    if (btnLabel) btnLabel.textContent = "Se trimite...";
 
-    if (els.leadStatus) els.leadStatus.style.display = "block";
+    var query = WEBAPP_URL +
+      "?name=" + encodeURIComponent(leadName) +
+      "&phone=" + encodeURIComponent(leadPhone) +
+      "&city=" + encodeURIComponent(leadLocality || "-") +
+      "&product=" + encodeURIComponent(buildRoofProductLabel()) +
+      "&price=" + encodeURIComponent(fmtMDL(computeEstimatedPrice())) +
+      "&t=" + Date.now();
 
-    leadSubmitted = true;
-    localStorage.removeItem(STORAGE_KEY);
+    try {
+      await fetch(query, { method: "GET", cache: "no-store" });
+      if (els.leadStatus) els.leadStatus.style.display = "block";
+      leadSubmitted = true;
+      localStorage.removeItem(STORAGE_KEY);
+      goTo(5);
+    } catch (e) {
+      alert("Eroare la trimitere.");
+    }
 
-    sendToWhatsapp();
-    goTo(5);
+    if (els.sendLeadBtn) els.sendLeadBtn.disabled = false;
+    if (btnLabel) btnLabel.textContent = "Vezi prețul estimat";
   }
 
   function showPersonalizedResult() {
