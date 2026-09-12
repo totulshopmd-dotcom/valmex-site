@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#C81E2C">
 
 <title>Calculator Acoperiș 3D — Calculează Prețul Țiglei Metalice | Valmex Moldova</title>
 <meta name="description" content="Proiectează-ți acoperișul în 3D și obține în 2 minute o estimare de preț pentru țiglă metalică sau montaj la cheie. Calculator acoperiș Moldova — Valmex.">
@@ -12,19 +18,21 @@
 <meta property="og:title" content="Calculator Acoperiș 3D — Valmex Moldova">
 <meta property="og:description" content="Configurează-ți acoperișul în 3D și primești o estimare de preț instant pentru țiglă metalică sau montaj la cheie.">
 <meta property="og:url" content="https://www.valmex.md/calculator-acoperis.html">
-<meta property="og:image" content="https://www.valmex.md/img/calculator-acoperis-og.jpg">
+<meta property="og:image" content="https://i.ibb.co/bjNHJGbG/tigla-4.jpg">
 <meta property="og:locale" content="ro_MD">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Calculator Acoperiș 3D — Valmex Moldova">
 <meta name="twitter:description" content="Proiectează-ți acoperișul în 3D și obține o estimare de preț instant.">
+<meta name="twitter:image" content="https://i.ibb.co/bjNHJGbG/tigla-4.jpg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="valmex.css">
 
 <style>
-/* ===== Valmex — Calculator Acoperiș 3D ===== */
+/* ===== Valmex — Calculator Acoperiș 3D (integrat cu site-ul) ===== */
 
 :root{
   --ink: #0A0A0A;
@@ -68,62 +76,210 @@ h2{ font-size: clamp(22px, 5vw, 28px); }
   margin: 0 0 20px 0;
   max-width: 42ch;
 }
+.microcopy{ color: var(--muted); font-size: 12.5px; margin: 10px 0 0 0; }
+.field-label{ color: var(--muted); font-size: 13px; margin: 22px 0 10px 0; }
 
-.microcopy{
-  color: var(--muted);
+/* ---------- Chrome-ul site-ului (top bar / header / meniu mobil) ---------- */
+
+.top-bar{
+  background: #050505;
+  border-bottom: 1px solid var(--line);
   font-size: 12.5px;
-  margin: 10px 0 0 0;
-}
-
-.field-label{
-  text-transform: none;
   color: var(--muted);
-  font-size: 13px;
-  margin: 22px 0 10px 0;
 }
-
-/* ===== Layout ===== */
-
-.app{
-  min-height: 100vh;
+.top-wrap{
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 7px 20px;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
+.top-wrap a{ color: var(--muted); text-decoration: none; }
+.top-wrap a:hover{ color: var(--paper); }
 
-.hdr{
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 20px;
+.header{
   position: sticky;
   top: 0;
-  z-index: 20;
-  background: linear-gradient(180deg, rgba(10,10,10,0.95), rgba(10,10,10,0.75));
-  backdrop-filter: blur(6px);
+  z-index: 50;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
 }
+.header-wrap{
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.logo{ flex: 0 0 auto; display: flex; align-items: center; }
+.logo img{ display: block; height: 34px; width: auto; }
 
-.hdr-brand{
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: 0.06em;
+.nav{ display: none; align-items: center; gap: 22px; margin-left: 8px; flex: 1 1 auto; }
+.nav-link{
   color: var(--paper);
   text-decoration: none;
+  font-size: 14.5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 0;
+}
+.nav-link:hover, .nav-link.active{ color: var(--red); }
+.nav-link svg{ width: 12px; height: 12px; }
+
+.dropdown{ position: relative; }
+.dropdown-menu{
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 230px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 6px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 10;
+}
+.dropdown:hover .dropdown-menu,
+.dropdown.open .dropdown-menu{ opacity: 1; visibility: visible; transform: translateY(0); }
+.dropdown-menu a{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: var(--paper);
+  text-decoration: none;
+  font-size: 13.5px;
+  border-radius: 2px;
+}
+.dropdown-menu a:hover, .dropdown-menu a.active{ background: rgba(200,30,44,0.12); color: var(--red); }
+.dropdown-menu svg{ width: 16px; height: 16px; flex: 0 0 auto; }
+
+.header-cta{
+  display: none;
+  background: var(--red);
+  color: var(--paper);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: var(--radius);
   flex: 0 0 auto;
+  transition: background 0.2s ease;
+}
+.header-cta:hover{ background: var(--red-hover); }
+
+.mobile-toggle{
+  margin-left: auto;
+  width: 34px; height: 34px;
+  background: none; border: none;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+  cursor: pointer;
+}
+.mobile-toggle span{ width: 22px; height: 2px; background: var(--paper); border-radius: 2px; }
+
+.mobile-menu{
+  position: fixed; inset: 0;
+  background: var(--ink);
+  z-index: 80;
+  padding: 20px;
+  display: none;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+}
+.mobile-menu.open{ display: flex; }
+.mobile-menu nav{ display: flex; flex-direction: column; gap: 4px; }
+.mobile-menu .nav-link{ padding: 12px 4px; border-bottom: 1px solid var(--line); font-size: 16px; }
+.mobile-menu .dropdown-menu{
+  position: static; opacity: 1; visibility: visible; transform: none;
+  display: none; border: none; background: transparent; padding-left: 14px;
+}
+.mobile-menu .dropdown.open .dropdown-menu{ display: block; }
+.mobile-menu .btn{ margin-top: 8px; text-align: center; }
+.mobile-close{
+  align-self: flex-end;
+  background: none; border: none; color: var(--paper);
+  font-size: 28px; line-height: 1; cursor: pointer;
 }
 
+.social-fixed{
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.social-fixed a{
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+.social-fixed img{ width: 22px; height: 22px; }
+
+/* ---------- Hero / banner ---------- */
+
+.page-hero{
+  position: relative;
+  min-height: 30vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+.page-hero-bg{
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center 68%;
+}
+.page-hero-overlay{
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.55) 55%, rgba(10,10,10,0.94) 100%);
+}
+.page-hero-content{
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 20px 26px;
+  width: 100%;
+}
+.breadcrumb{ font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+.breadcrumb a{ color: var(--muted); text-decoration: none; }
+.breadcrumb a:hover{ color: var(--paper); }
+.breadcrumb-sep{ margin: 0 6px; }
+.breadcrumb-current{ color: var(--paper); }
+.page-hero h1{ margin-bottom: 6px; }
+.page-hero p{ color: var(--muted); font-size: 14.5px; max-width: 46ch; }
+
+/* ---------- Header sticky de progres (deasupra configuratorului) ---------- */
+
+.hdr-progress-wrap{
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(10,10,10,0.96);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 20px;
+}
 .hdr-progress{
-  flex: 1 1 auto;
+  max-width: 900px;
+  margin: 0 auto;
   display: flex;
   gap: 6px;
 }
-.hdr-progress-seg{
-  height: 3px;
-  flex: 1;
-  background: var(--line);
-  border-radius: 2px;
-  transition: background 0.3s ease;
-}
+.hdr-progress-seg{ height: 3px; flex: 1; background: var(--line); border-radius: 2px; transition: background 0.3s ease; }
 .hdr-progress-seg.active{ background: var(--red); }
 .hdr-progress-seg.done{ background: var(--paper); }
 
@@ -136,73 +292,25 @@ h2{ font-size: clamp(22px, 5vw, 28px); }
   background: radial-gradient(120% 100% at 50% 0%, #f3f1ec 0%, #e9e4d8 70%);
   flex: 0 0 auto;
 }
-#roofCanvas{
-  width: 100%;
-  height: 100%;
-  display: block;
-  touch-action: none;
-}
+#roofCanvas{ width: 100%; height: 100%; display: block; touch-action: none; }
 .hint-bar{
-  position: absolute;
-  top: 14px;
-  left: 16px;
-  right: 16px;
-  z-index: 6;
-  background: rgba(10,10,10,0.74);
-  backdrop-filter: blur(6px);
-  color: var(--paper);
-  padding: 11px 16px;
-  border-radius: 3px;
-  font-size: 13.5px;
-  font-weight: 500;
-  min-height: 20px;
-  display: flex;
-  align-items: center;
-  border-left: 2px solid var(--red);
+  position: absolute; top: 14px; left: 16px; right: 16px; z-index: 6;
+  background: rgba(10,10,10,0.74); backdrop-filter: blur(6px); color: var(--paper);
+  padding: 11px 16px; border-radius: 3px; font-size: 13.5px; font-weight: 500;
+  min-height: 20px; display: flex; align-items: center; border-left: 2px solid var(--red);
 }
-.hint-cursor{
-  color: var(--red);
-  font-weight: 700;
-  margin-left: 2px;
-  animation: blinkCursor 0.9s steps(1) infinite;
-}
-@keyframes blinkCursor{
-  0%, 49%{ opacity: 1; }
-  50%, 100%{ opacity: 0; }
-}
-
-.stage-hint{
-  position: absolute;
-  left: 16px;
-  bottom: 12px;
-  font-size: 11.5px;
-  color: #6b6f74;
-  pointer-events: none;
-  letter-spacing: 0.02em;
-}
-.stage-loading{
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: opacity 0.4s ease;
-}
-.stage-loading span{
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--red);
-  animation: pulse 1s infinite ease-in-out;
-}
+.hint-cursor{ color: var(--red); font-weight: 700; margin-left: 2px; animation: blinkCursor 0.9s steps(1) infinite; }
+@keyframes blinkCursor{ 0%, 49%{ opacity: 1; } 50%, 100%{ opacity: 0; } }
+.stage-hint{ position: absolute; left: 16px; bottom: 12px; font-size: 11.5px; color: #6b6f74; pointer-events: none; letter-spacing: 0.02em; }
+.stage-loading{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.4s ease; }
+.stage-loading span{ width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: pulse 1s infinite ease-in-out; }
 .stage-loading span:nth-child(2){ animation-delay: 0.15s; }
 .stage-loading span:nth-child(3){ animation-delay: 0.3s; }
 .stage-loading.hidden{ opacity: 0; pointer-events: none; }
-@keyframes pulse{
-  0%,80%,100%{ transform: scale(0.6); opacity: 0.4; }
-  40%{ transform: scale(1); opacity: 1; }
-}
+@keyframes pulse{ 0%,80%,100%{ transform: scale(0.6); opacity: 0.4; } 40%{ transform: scale(1); opacity: 1; } }
 
-/* Panel / steps */
+.app{ min-height: 100vh; display: flex; flex-direction: column; }
+
 .panel{
   flex: 1 1 auto;
   background: var(--ink);
@@ -211,240 +319,119 @@ h2{ font-size: clamp(22px, 5vw, 28px); }
   width: 100%;
   margin: 0 auto;
 }
-
 .step[hidden]{ display: none; }
 .step{ animation: fadeUp 0.35s ease; }
-@keyframes fadeUp{
-  from{ opacity: 0; transform: translateY(8px); }
-  to{ opacity: 1; transform: translateY(0); }
-}
+@keyframes fadeUp{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: translateY(0); } }
+.step-actions{ display: flex; gap: 12px; margin-top: 28px; }
 
-.step-actions{
-  display: flex;
-  gap: 12px;
-  margin-top: 28px;
-}
-
-/* Buttons */
 .btn{
   font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 15px;
-  border: none;
-  border-radius: var(--radius);
-  padding: 14px 22px;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+  font-weight: 600; font-size: 15px; border: none; border-radius: var(--radius);
+  padding: 14px 22px; cursor: pointer; transition: background 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+  text-decoration: none; display: inline-block;
 }
+.btn span{ display:inline-block; }
 .btn:active{ transform: scale(0.98); }
-.btn-primary{
-  background: var(--red);
-  color: var(--paper);
-}
+.btn-primary{ background: var(--red); color: var(--paper); }
 .btn-primary:hover{ background: var(--red-hover); }
-.btn-primary:disabled{
-  background: #3a2224;
-  color: #7a6062;
-  cursor: not-allowed;
-}
-.btn-ghost{
-  background: transparent;
-  color: var(--paper);
-  border: 1px solid var(--line);
-}
+.btn-primary:disabled{ background: #3a2224; color: #7a6062; cursor: not-allowed; }
+.btn-ghost{ background: transparent; color: var(--paper); border: 1px solid var(--line); }
 .btn-ghost:hover{ border-color: var(--paper); }
 .btn-lg{ width: 100%; padding: 16px 22px; font-size: 16px; }
-
-.btn-link{
-  display: block;
-  margin: 14px auto 0;
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 13px;
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 4px;
+.btn-outline{
+  background: transparent; color: var(--paper); border: 1px solid var(--line);
+  padding: 13px 22px; border-radius: var(--radius); text-decoration: none; font-size: 14.5px; font-weight: 600;
 }
+.btn-outline:hover{ border-color: var(--paper); }
+.btn-link{ display: block; margin: 14px auto 0; background: none; border: none; color: var(--muted); font-size: 13px; text-decoration: underline; cursor: pointer; padding: 4px; }
 .btn-link:hover{ color: var(--paper); }
 
-/* Sliders */
 .field{ margin-bottom: 26px; }
-.field-row{
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 10px;
-}
+.field-row{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
 .field-row label{ font-size: 14px; color: var(--paper); }
-.field-value{
-  font-family: var(--font-display);
-  font-size: 20px;
-  color: var(--red);
-  font-weight: 600;
-}
+.field-value{ font-family: var(--font-display); font-size: 20px; color: var(--red); font-weight: 600; }
 
-input[type="range"]{
-  -webkit-appearance: none;
-  width: 100%;
-  height: 3px;
-  background: var(--line);
-  border-radius: 2px;
-  outline: none;
-}
-input[type="range"]::-webkit-slider-thumb{
-  -webkit-appearance: none;
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--paper);
-  border: 3px solid var(--red);
-  cursor: pointer;
-}
-input[type="range"]::-moz-range-thumb{
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--paper);
-  border: 3px solid var(--red);
-  cursor: pointer;
-}
+input[type="range"]{ -webkit-appearance: none; width: 100%; height: 3px; background: var(--line); border-radius: 2px; outline: none; }
+input[type="range"]::-webkit-slider-thumb{ -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--paper); border: 3px solid var(--red); cursor: pointer; }
+input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius: 50%; background: var(--paper); border: 3px solid var(--red); cursor: pointer; }
 
-/* Cards */
-.cards{
-  display: grid;
-  gap: 12px;
-  margin-bottom: 6px;
-}
+.cards{ display: grid; gap: 12px; margin-bottom: 6px; }
 .cards-2{ grid-template-columns: 1fr 1fr; }
-
 .card{
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 18px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  color: var(--paper);
-  cursor: pointer;
-  text-align: left;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  color: var(--paper); cursor: pointer; text-align: left; transition: border-color 0.2s ease, background 0.2s ease;
 }
 .card:hover{ border-color: #444; }
-.card.selected{
-  border-color: var(--red);
-  background: #1c1414;
-  animation: none;
-}
-.card:not(.selected){
-  animation: attentionPulse 2.4s ease-in-out infinite;
-}
+.card.selected{ border-color: var(--red); background: #1c1414; animation: none; }
+.card:not(.selected){ animation: attentionPulse 2.4s ease-in-out infinite; }
 .card-icon{ width: 48px; height: 39px; color: var(--muted); margin-bottom: 4px; }
 .card.selected .card-icon{ color: var(--red); }
 .card-title{ font-family: var(--font-display); font-size: 18px; font-weight: 600; }
 .card-sub{ font-size: 12.5px; color: var(--muted); }
 
-/* Swatches */
 .swatches{ display: flex; gap: 12px; margin-bottom: 8px; }
-.swatch{
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  cursor: pointer;
-  position: relative;
-  animation: attentionPulseRound 2.4s ease-in-out infinite;
-}
-.swatch.selected{
-  border-color: var(--paper);
-  box-shadow: 0 0 0 2px var(--ink), 0 0 0 4px var(--red);
-  animation: none;
-}
+.swatch{ width: 40px; height: 40px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; position: relative; animation: attentionPulseRound 2.4s ease-in-out infinite; }
+.swatch.selected{ border-color: var(--paper); box-shadow: 0 0 0 2px var(--ink), 0 0 0 4px var(--red); animation: none; }
+@keyframes attentionPulse{ 0%, 100% { box-shadow: 0 0 0 0 rgba(200, 30, 44, 0); } 50% { box-shadow: 0 0 0 5px rgba(200, 30, 44, 0.16); } }
+@keyframes attentionPulseRound{ 0%, 100% { box-shadow: 0 0 0 0 rgba(200, 30, 44, 0); } 50% { box-shadow: 0 0 0 4px rgba(200, 30, 44, 0.28); } }
 
-@keyframes attentionPulse{
-  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 30, 44, 0); }
-  50% { box-shadow: 0 0 0 5px rgba(200, 30, 44, 0.16); }
-}
-@keyframes attentionPulseRound{
-  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 30, 44, 0); }
-  50% { box-shadow: 0 0 0 4px rgba(200, 30, 44, 0.28); }
-}
-
-/* Upload box */
-.upload-box{
-  margin-top: 22px;
-  padding: 14px;
-  border: 1px dashed var(--line);
-  border-radius: var(--radius);
-}
+.upload-box{ margin-top: 22px; padding: 14px; border: 1px dashed var(--line); border-radius: var(--radius); }
 .upload-box label{ display:block; font-size: 13.5px; margin-bottom: 8px; }
-.upload-box input[type="file"]{
-  color: var(--muted);
-  font-size: 13px;
-  max-width: 100%;
-}
+.upload-box input[type="file"]{ color: var(--muted); font-size: 13px; max-width: 100%; }
 
-/* Result grid */
-.result-grid{
-  border-top: 1px solid var(--line);
-  margin-top: 8px;
-}
-.result-row{
-  display: flex;
-  justify-content: space-between;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--line);
-  font-size: 14.5px;
-}
+.result-grid{ border-top: 1px solid var(--line); margin-top: 8px; }
+.result-row{ display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
 .result-row span{ color: var(--muted); }
 .result-row strong{ font-weight: 600; text-align: right; }
-.result-row-accent strong{
-  color: var(--red);
-  font-family: var(--font-display);
-  font-size: 22px;
-}
+.result-row-accent strong{ color: var(--red); font-family: var(--font-display); font-size: 22px; }
 
-/* Formular (inline, la pasul 4) */
 .form-field{ margin-bottom: 14px; }
 .form-field label{ display:block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-.form-field input{
-  width: 100%;
-  background: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 13px 14px;
-  color: var(--paper);
-  font-size: 15px;
-  font-family: var(--font-body);
-}
+.form-field input{ width: 100%; background: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); padding: 13px 14px; color: var(--paper); font-size: 15px; font-family: var(--font-body); }
 .form-field input:focus{ outline: none; border-color: var(--red); }
 
-/* SEO block */
-.seo-block{
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 40px 20px 60px;
-  color: var(--muted);
-  font-size: 13.5px;
-  line-height: 1.6;
-  border-top: 1px solid var(--line);
-}
+.seo-block{ max-width: 700px; margin: 0 auto; padding: 40px 20px 60px; color: var(--muted); font-size: 13.5px; line-height: 1.6; border-top: 1px solid var(--line); }
 .seo-block h2{ font-size: 16px; color: var(--paper); margin-top: 22px; }
 .seo-block h2:first-child{ margin-top: 0; }
 
-/* Accessibility */
+/* ---------- Footer ---------- */
+
+.footer{ background: #050505; border-top: 1px solid var(--line); padding: 50px 0 0; }
+.footer .container{ max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+.footer-grid{ display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 30px; padding-bottom: 34px; }
+.footer-brand p{ color: var(--muted); font-size: 13.5px; line-height: 1.6; margin-top: 14px; max-width: 34ch; }
+.footer-title{ font-family: var(--font-display); font-size: 15px; color: var(--paper); margin-bottom: 14px; }
+.footer-links{ display: flex; flex-direction: column; gap: 10px; }
+.footer-links a{ color: var(--muted); text-decoration: none; font-size: 13.5px; }
+.footer-links a:hover{ color: var(--red); }
+.footer-links span{ color: var(--muted); font-size: 13.5px; }
+.footer-bottom{
+  border-top: 1px solid var(--line); padding: 18px 0; margin-top: 4px;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  font-size: 12.5px; color: var(--muted);
+}
+.footer-bottom a{ color: var(--muted); text-decoration: none; }
+.footer-bottom a:hover{ color: var(--paper); }
+
+@media (max-width: 800px){
+  .footer-grid{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px){
+  .footer-grid{ grid-template-columns: 1fr; }
+}
+
 :focus-visible{ outline: 2px solid var(--red); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
-/* Desktop widening */
 @media (min-width: 900px){
-  .app{ flex-direction: row; height: 100vh; overflow: hidden; }
-  .hdr{ position: absolute; top: 0; left: 0; right: 0; }
-  .stage{ height: 100vh; flex: 1 1 60%; }
-  .panel{ flex: 1 1 40%; max-width: 480px; height: 100vh; overflow-y: auto; padding-top: 90px; margin: 0; }
+  .nav{ display: flex; }
+  .header-cta{ display: inline-block; }
+  .mobile-toggle{ display: none; }
+  .stage{ height: 62vh; }
 }
-
 </style>
 
 <script type="importmap">
@@ -463,28 +450,93 @@ input[type="range"]::-moz-range-thumb{
   "name": "Montaj și calcul acoperiș țiglă metalică",
   "serviceType": "Montaj acoperiș",
   "areaServed": "Moldova",
-  "provider": {
-    "@type": "Organization",
-    "name": "Valmex",
-    "url": "https://www.valmex.md"
-  },
-  "offers": {
-    "@type": "AggregateOffer",
-    "priceCurrency": "MDL",
-    "lowPrice": "136",
-    "highPrice": "1350",
-    "offerCount": "2"
-  }
+  "provider": { "@type": "Organization", "name": "Valmex", "url": "https://www.valmex.md" },
+  "offers": { "@type": "AggregateOffer", "priceCurrency": "MDL", "lowPrice": "136", "highPrice": "1350", "offerCount": "2" }
 }
 </script>
 </head>
 <body>
 
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-wrap">
+    <div><a href="tel:+37378026212">+373 78 026 212</a> | <a href="mailto:Valmex.md@gmail.com">Valmex.md@gmail.com</a></div>
+    <div>L–S 09:00–18:00 | Consultație Gratuită</div>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="header" id="mainHeader">
+  <div class="header-wrap">
+    <a class="logo" href="index.html"><img src="favicon.png" alt="Valmex.md" width="160" height="52" loading="eager"></a>
+    <nav class="nav" id="mainNav">
+      <a class="nav-link" href="index.html">Acasă</a>
+      <a class="nav-link" href="proiecte.html">Proiecte</a>
+      <a class="nav-link" href="blog.html">Blog</a>
+      <a class="nav-link" href="despre.html">Despre</a>
+      <a class="nav-link" href="contact.html">Contact</a>
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle active" href="#">Calculatoare
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="dropdown-menu">
+          <a href="calculator-acoperis.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Calculator Acoperiș</a>
+          <a href="calculator-fatada.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>Calculator Fațadă</a>
+          <a href="calculator-amk.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Calculator AMK</a>
+        </div>
+      </div>
+    </nav>
+    <a href="contact.html" class="header-cta">Solicită Ofertă</a>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Meniu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose" aria-label="Închide">&times;</button>
+  <a class="logo" href="index.html"><img src="favicon.png" alt="Valmex.md" width="140"></a>
+  <nav>
+    <a class="nav-link" href="index.html">Acasă</a>
+    <a class="nav-link" href="proiecte.html">Proiecte</a>
+    <a class="nav-link" href="blog.html">Blog</a>
+    <a class="nav-link" href="despre.html">Despre</a>
+    <a class="nav-link" href="contact.html">Contact</a>
+    <div class="dropdown" id="mobileDropdown">
+      <a class="nav-link dropdown-toggle" href="#">Calculatoare
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="calculator-acoperis.html" class="active">Calculator Acoperiș</a>
+        <a href="calculator-fatada.html">Calculator Fațadă</a>
+        <a href="calculator-amk.html">Calculator AMK</a>
+      </div>
+    </div>
+  </nav>
+  <a href="contact.html" class="btn btn-primary">Solicită Ofertă</a>
+</div>
+
+<!-- Social Fixed -->
+<div class="social-fixed">
+  <a href="https://wa.me/37378026212" target="_blank" rel="noopener" aria-label="WhatsApp"><img src="https://i.ibb.co/TM3hj0SQ/1000057993-removebg-preview-1-1.png" alt="WhatsApp" width="22" height="22" loading="lazy"></a>
+  <a href="viber://chat?number=%2B37378026212" aria-label="Viber"><img src="https://i.ibb.co/PvM0xFcL/1000057992-removebg-preview-1.png" alt="Viber" width="22" height="22" loading="lazy"></a>
+  <a href="https://www.facebook.com/share/18v4sd1se6/" target="_blank" rel="noopener" aria-label="Facebook"><img src="https://i.ibb.co/13KRTwh/Facebook-Logo-2023-1.png" alt="Facebook" width="22" height="22" loading="lazy"></a>
+</div>
+
+<!-- Hero / banner -->
+<section class="page-hero">
+  <div class="page-hero-bg" style="background-image:url('https://i.ibb.co/bjNHJGbG/tigla-4.jpg')"></div>
+  <div class="page-hero-overlay"></div>
+  <div class="page-hero-content">
+    <div class="breadcrumb"><a href="index.html">Acasă</a><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Calculator Acoperiș</span></div>
+    <h1>Calculator <span style="color:var(--red)">Acoperiș</span> 3D</h1>
+    <p>Configurează-ți acoperișul în 3D și primești o estimare de preț instant pentru țiglă metalică sau montaj la cheie.</p>
+  </div>
+</section>
+
 <div class="app" id="app">
 
-  <!-- HEADER -->
-  <header class="hdr">
-    <a class="hdr-brand" href="https://www.valmex.md">VALMEX</a>
+  <!-- Progress bar -->
+  <div class="hdr-progress-wrap">
     <div class="hdr-progress" id="progressBar" aria-hidden="true">
       <span class="hdr-progress-seg" data-seg="0"></span>
       <span class="hdr-progress-seg" data-seg="1"></span>
@@ -493,7 +545,7 @@ input[type="range"]::-moz-range-thumb{
       <span class="hdr-progress-seg" data-seg="4"></span>
       <span class="hdr-progress-seg" data-seg="5"></span>
     </div>
-  </header>
+  </div>
 
   <!-- 3D STAGE (persistent across steps) -->
   <div class="stage" id="stage">
@@ -622,24 +674,25 @@ input[type="range"]::-moz-range-thumb{
 
       <form id="gateForm">
         <div class="form-field">
-          <label for="name">Nume *</label>
-          <input type="text" id="name" name="name" placeholder="Numele tău" required>
+          <label for="leadName">Nume *</label>
+          <input type="text" id="leadName" name="name" placeholder="Numele tău" autocomplete="name" required>
         </div>
         <div class="form-field">
-          <label for="phone">Număr de telefon *</label>
-          <input type="tel" id="phone" name="phone" inputmode="tel" autocomplete="tel"
+          <label for="leadPhone">Număr de telefon *</label>
+          <input type="tel" id="leadPhone" name="phone" inputmode="tel" autocomplete="tel"
                  pattern="^(\+373|0)[0-9]{8}$" placeholder="06X XXX XXX sau +373 6X XXX XXX" required>
         </div>
         <div class="form-field">
-          <label for="locality">Localitate (opțional)</label>
-          <input type="text" id="locality" name="locality" placeholder="ex. Chișinău">
+          <label for="leadLocality">Localitate (opțional)</label>
+          <input type="text" id="leadLocality" name="locality" placeholder="ex. Chișinău">
         </div>
 
         <div class="step-actions">
           <button class="btn btn-ghost" type="button" data-prev>Înapoi</button>
-          <button class="btn btn-primary" type="submit">Vezi prețul estimat</button>
+          <button class="btn btn-primary" type="submit" id="sendLeadBtn"><span>Vezi prețul estimat</span></button>
         </div>
-        <p class="microcopy">Nu îți vindem datele nimănui. Te contactăm doar noi, pentru oferta ta.</p>
+        <p class="microcopy">Nu îți vindem datele nimănui. Cererea ajunge direct la echipa Valmex pe WhatsApp, la <a href="tel:+37378026212" style="color:var(--muted)">+373 78 026 212</a>.</p>
+        <p class="status-msg" id="leadStatus" style="display:none;color:var(--red);font-size:12.5px;margin-top:6px;">Cererea a fost trimisă cu succes!</p>
       </form>
     </section>
 
@@ -647,7 +700,7 @@ input[type="range"]::-moz-range-thumb{
     <section class="step" data-step="5" hidden>
       <p class="field-label">Proiectul tău</p>
       <h2 id="resGreeting">Felicitări!</h2>
-      <p class="lede">Iată estimarea proiectului tău.</p>
+      <p class="lede">Iată estimarea proiectului tău. Am deschis WhatsApp cu datele tale — trebuie doar să apeși Trimite.</p>
 
       <div class="result-grid">
         <div class="result-row"><span>Dimensiuni</span><strong id="resDims">—</strong></div>
@@ -661,6 +714,7 @@ input[type="range"]::-moz-range-thumb{
 
       <div class="step-actions">
         <button class="btn btn-ghost" id="btnModifyProject">Modifică proiectul</button>
+        <button class="btn btn-primary" id="btnResendWhatsapp">Trimite din nou pe WhatsApp</button>
       </div>
     </section>
 
@@ -675,6 +729,76 @@ input[type="range"]::-moz-range-thumb{
   <h2>Cum calculăm prețul acoperișului</h2>
   <p>Estimarea ține cont de suprafața reală de montaj — nu doar de suprafața casei — incluzând panta acoperișului și streașina, pentru un calcul țiglă metalică cât mai apropiat de realitate. Oferta finală se confirmă întotdeauna după o vizită tehnică Valmex.md.</p>
 </section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="index.html"><img src="favicon.png" alt="Valmex.md" width="160" loading="lazy"></a>
+        <p>Acoperișuri premium, fațade decorative și panouri AMK executate profesional în Republica Moldova. Calitate, garanție și finisaj impecabil.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Servicii</h4>
+        <div class="footer-links">
+          <a href="acoperis.html">Acoperișuri Metalice</a>
+          <a href="fatade.html">Fațade Decorative</a>
+          <a href="amk.html">Panouri AMK</a>
+          <a href="pavaj.html">Pavaje</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-title">Calculatoare</h4>
+        <div class="footer-links">
+          <a href="calculator-acoperis.html">Calculator Acoperiș</a>
+          <a href="calculator-fatada.html">Calculator Fațadă</a>
+          <a href="calculator-amk.html">Calculator AMK</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-title">Informații</h4>
+        <div class="footer-links">
+          <a href="proiecte.html">Proiecte</a>
+          <a href="blog.html">Blog</a>
+          <a href="despre.html">Despre Noi</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Valmex.md — Toate drepturile rezervate</div>
+      <div style="display:flex;gap:20px;">
+        <a href="#">Politica Cookies</a>
+        <a href="#">Politica Confidențialitate</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---- Chrome site: meniu mobil + dropdown ---- */
+(function () {
+  "use strict";
+  var toggle = document.getElementById("mobileToggle");
+  var closeBtn = document.getElementById("mobileClose");
+  var menu = document.getElementById("mobileMenu");
+  var mobileDropdown = document.getElementById("mobileDropdown");
+
+  function openMenu(){ menu.classList.add("open"); document.body.style.overflow = "hidden"; }
+  function closeMenu(){ menu.classList.remove("open"); document.body.style.overflow = ""; }
+
+  if (toggle) toggle.addEventListener("click", openMenu);
+  if (closeBtn) closeBtn.addEventListener("click", closeMenu);
+
+  if (mobileDropdown) {
+    var toggleLink = mobileDropdown.querySelector(".dropdown-toggle");
+    toggleLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      mobileDropdown.classList.toggle("open");
+    });
+  }
+})();
+</script>
 
 <script type="module">
 /**
@@ -707,31 +831,24 @@ let canvasEl, containerEl;
 let ready = false;
 let resizeObserver;
 
-// Rotație de prezentare (o singură dată, la încărcare) — declarate ÎNAINTE de
-// init(), pentru că init() rulează imediat și apelează startIntroOrbit().
 let introActive = false;
 let introStart = 0;
-const INTRO_DURATION = 2000; // ms — un tur complet de 360°
+const INTRO_DURATION = 2000;
 let introTheta0 = 0, introRadius = 0, introPhi = 0;
 const introTarget = new THREE.Vector3();
 
-// Puls de atenție — o scurtă „privire" spre stânga și înapoi, la fiecare
-// modificare a clientului (dimensiune, etapă, culoare etc.), ca să fie clar
-// că s-a aplicat ceva. Revine exact la unghiul unde era camera, nu îl schimbă.
 let pulseActive = false;
 let pulseStart = 0;
-const PULSE_DURATION = 850; // ms
-const PULSE_SWING = 0.5;    // rad — cât „privește" spre colțul din stânga
+const PULSE_DURATION = 850;
+const PULSE_SWING = 0.5;
 let pulseTheta0 = 0, pulseRadius = 0, pulsePhi = 0;
 const pulseTarget = new THREE.Vector3();
 
-// Decor permanent — păsări + balonul Valmex. Declarate ÎNAINTE de init(),
-// pentru același motiv ca mai sus: init() rulează imediat.
 let birds = [];
 let balloonRig = null;
 let balloonMaterials = [];
 let balloonStartTime = null;
-const BALLOON_CYCLE = 24000; // ms — durata unui ciclu complet de decolare
+const BALLOON_CYCLE = 24000;
 
 init();
 
@@ -781,19 +898,12 @@ function init() {
   ready = true;
   window.dispatchEvent(new CustomEvent("roof3d:ready"));
 
-  window.addEventListener("roof:update", (e) => {
-    buildScene(e.detail);
-  });
-
-  window.addEventListener("roof:pulse", () => {
-    triggerAttentionPulse();
-  });
+  window.addEventListener("roof:update", (e) => { buildScene(e.detail); });
+  window.addEventListener("roof:pulse", () => { triggerAttentionPulse(); });
 }
 
-/* ---------------- Puls de atenție — funcția care îl pornește ---------------- */
-
 function triggerAttentionPulse() {
-  if (!ready || introActive || pulseActive) return; // nu suprapune animații
+  if (!ready || introActive || pulseActive) return;
   pulseTarget.copy(controls.target);
   const offset = camera.position.clone().sub(pulseTarget);
   const sph = new THREE.Spherical().setFromVector3(offset);
@@ -804,8 +914,6 @@ function triggerAttentionPulse() {
   pulseActive = true;
   controls.enabled = false;
 }
-
-/* ---------------- Rotație de prezentare — funcția care o pornește ---------------- */
 
 function startIntroOrbit() {
   introTarget.copy(controls.target);
@@ -822,10 +930,8 @@ function startIntroOrbit() {
 function setupLights() {
   const hemi = new THREE.HemisphereLight(0xffffff, 0x8ea87a, 1.4);
   scene.add(hemi);
-
   const ambient = new THREE.AmbientLight(0xffffff, 0.55);
   scene.add(ambient);
-
   const sun = new THREE.DirectionalLight(0xfff6e8, 3.1);
   sun.position.set(10, 16, 8);
   sun.castShadow = true;
@@ -838,12 +944,9 @@ function setupLights() {
   sun.shadow.camera.bottom = -20;
   sun.shadow.bias = -0.0015;
   scene.add(sun);
-
-  // Lumină de umplere caldă, fără umbre — deschide zonele întunecate ale acoperișului
   const fill = new THREE.DirectionalLight(0xeaf1ff, 0.9);
   fill.position.set(-9, 8, -7);
   scene.add(fill);
-
   const rim = new THREE.DirectionalLight(0xffffff, 0.5);
   rim.position.set(0, 6, -12);
   scene.add(rim);
@@ -865,11 +968,8 @@ function buildGrassTexture() {
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext("2d");
-
   ctx.fillStyle = "#5c8a42";
   ctx.fillRect(0, 0, size, size);
-
-  // pete mari, organice, de culoare — variație naturală a gazonului, nu doar dungi
   for (let i = 0; i < 70; i++) {
     const x = Math.random() * size;
     const y = Math.random() * size;
@@ -883,15 +983,11 @@ function buildGrassTexture() {
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
   }
-
-  // dungi discrete de tuns gazonul (mai late, mai puțin uniforme decât o pajiște artificială)
   const stripeH = size / 9;
   for (let y = 0; y < size; y += stripeH) {
     ctx.fillStyle = (y / stripeH) % 2 === 0 ? "rgba(255,255,255,0.045)" : "rgba(0,0,0,0.045)";
     ctx.fillRect(0, y, size, stripeH);
   }
-
-  // strat 1 — fire de iarbă fine, dese
   for (let i = 0; i < 5200; i++) {
     const x = Math.random() * size;
     const y = Math.random() * size;
@@ -906,8 +1002,6 @@ function buildGrassTexture() {
     ctx.lineTo(x + lean, y - l);
     ctx.stroke();
   }
-
-  // strat 2 — smocuri mai groase, mai rare, pentru profunzime
   for (let i = 0; i < 900; i++) {
     const x = Math.random() * size;
     const y = Math.random() * size;
@@ -920,7 +1014,6 @@ function buildGrassTexture() {
     ctx.lineTo(x + lean, y - l);
     ctx.stroke();
   }
-
   const tex = new THREE.CanvasTexture(canvas);
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
@@ -936,9 +1029,9 @@ function buildSkyTexture() {
   canvas.height = 256;
   const ctx = canvas.getContext("2d");
   const grad = ctx.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, "#eef3f7");   // zenit — alb-albăstrui deschis
-  grad.addColorStop(0.55, "#f3f1ec"); // orizont — crem luminos
-  grad.addColorStop(1, "#e9e4d8");    // bază — gri-cald, se împletește cu solul
+  grad.addColorStop(0, "#eef3f7");
+  grad.addColorStop(0.55, "#f3f1ec");
+  grad.addColorStop(1, "#e9e4d8");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 8, 256);
   const tex = new THREE.CanvasTexture(canvas);
@@ -955,17 +1048,13 @@ function resize() {
   camera.updateProjectionMatrix();
 }
 
-/* ==================== Păsări — stol animat, decor permanent ==================== */
-
 function createBird(scale, color) {
   const group = new THREE.Group();
   const mat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
-
   const bodyGeo = new THREE.ConeGeometry(0.05 * scale, 0.22 * scale, 6);
   const body = new THREE.Mesh(bodyGeo, mat);
   body.rotation.x = Math.PI / 2;
   group.add(body);
-
   function wingShape() {
     const shape = new THREE.Shape();
     shape.moveTo(0, 0);
@@ -973,7 +1062,6 @@ function createBird(scale, color) {
     shape.quadraticCurveTo(0.22 * scale, -0.05 * scale, 0, 0);
     return new THREE.ShapeGeometry(shape);
   }
-
   const wingL = new THREE.Mesh(wingShape(), mat);
   const wingR = new THREE.Mesh(wingShape(), mat);
   wingR.scale.x = -1;
@@ -982,7 +1070,6 @@ function createBird(scale, color) {
   wingPivotL.add(wingL);
   wingPivotR.add(wingR);
   group.add(wingPivotL, wingPivotR);
-
   return { group, wingPivotL, wingPivotR };
 }
 
@@ -1013,20 +1100,14 @@ function updateBirds(now) {
     const z = b.centerZ + Math.sin(theta) * b.radius;
     const y = b.height + Math.sin(now * 0.0006 + b.flapPhase) * 0.3;
     b.rig.group.position.set(x, y, z);
-
-    // orientează pasărea spre direcția de zbor (tangenta cercului)
     const tangent = new THREE.Vector3(-Math.sin(theta), 0, Math.cos(theta));
     const lookAt = b.rig.group.position.clone().add(tangent);
     b.rig.group.lookAt(lookAt);
-
-    // bătaia din aripi
     const flap = Math.sin(now * 0.012 + b.flapPhase) * 0.9;
     b.rig.wingPivotL.rotation.y = flap;
     b.rig.wingPivotR.rotation.y = -flap;
   });
 }
-
-/* ==================== Balon cu aer cald Valmex — decolare în buclă ==================== */
 
 function buildBalloonTexture() {
   const w = 1024, h = 512;
@@ -1034,20 +1115,15 @@ function buildBalloonTexture() {
   canvas.width = w;
   canvas.height = h;
   const ctx = canvas.getContext("2d");
-
-  // fâșii verticale (fusuri de balon) — roșu Valmex alternat cu alb-crem
   const gores = 16;
   const goreW = w / gores;
   for (let i = 0; i < gores; i++) {
     ctx.fillStyle = i % 2 === 0 ? "#C81E2C" : "#F7F3EA";
     ctx.fillRect(i * goreW, 0, goreW, h);
   }
-
-  // bandă orizontală neagră cu textul "VALMEX", repetat pe tot conturul
   const bandY = h * 0.46, bandH = h * 0.16;
   ctx.fillStyle = "#141414";
   ctx.fillRect(0, bandY, w, bandH);
-
   ctx.fillStyle = "#FAFAFA";
   ctx.font = `700 ${Math.round(bandH * 0.62)}px "Barlow Condensed", sans-serif`;
   ctx.textBaseline = "middle";
@@ -1057,7 +1133,6 @@ function buildBalloonTexture() {
     const cx = (w / repeats) * (i + 0.5);
     ctx.fillText("VALMEX", cx, bandY + bandH / 2 + 1);
   }
-
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
@@ -1072,8 +1147,6 @@ function balloonMesh(geo, mat) {
 
 function buildBalloon() {
   const group = new THREE.Group();
-
-  // învelișul — profil clasic de balon, revolvat (Lathe)
   const profile = [
     new THREE.Vector2(0.42, 0),
     new THREE.Vector2(0.70, 0.4),
@@ -1085,28 +1158,17 @@ function buildBalloon() {
     new THREE.Vector2(0.0, 3.95),
   ];
   const envelopeGeo = new THREE.LatheGeometry(profile, 28);
-  const envelopeMat = new THREE.MeshStandardMaterial({
-    map: buildBalloonTexture(),
-    roughness: 0.55,
-    metalness: 0,
-    side: THREE.DoubleSide,
-  });
+  const envelopeMat = new THREE.MeshStandardMaterial({ map: buildBalloonTexture(), roughness: 0.55, metalness: 0, side: THREE.DoubleSide });
   const envelope = balloonMesh(envelopeGeo, envelopeMat);
-  envelope.position.y = 2.0; // deasupra coșului
+  envelope.position.y = 2.0;
   group.add(envelope);
-
-  // coșul (nacela)
   const basketMat = new THREE.MeshStandardMaterial({ color: 0x8a6338, roughness: 0.9 });
   const basket = balloonMesh(new THREE.BoxGeometry(1.0, 0.75, 1.0), basketMat);
   basket.position.y = 0;
   group.add(basket);
-
-  // corzile — leagă coșul de gâtul învelișului
   const ropeMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.6 });
-  const neckY = 2.0; // baza învelișului (profile[0] e la y=0 local, deci +2.0 offset)
-  const corners = [
-    [0.42, 0.42], [0.42, -0.42], [-0.42, 0.42], [-0.42, -0.42],
-  ];
+  const neckY = 2.0;
+  const corners = [[0.42, 0.42], [0.42, -0.42], [-0.42, 0.42], [-0.42, -0.42]];
   corners.forEach(([cx, cz]) => {
     const dx = 0 - cx, dz = 0 - cz, dy = neckY - 0.38;
     const len = Math.sqrt(dx * dx + dy * dy + dz * dz);
@@ -1116,8 +1178,6 @@ function buildBalloon() {
     rope.rotation.x += Math.PI / 2;
     group.add(rope);
   });
-
-  // doi pasageri simpli, în coș
   const skinMat = new THREE.MeshStandardMaterial({ color: 0xd9a373, roughness: 0.8 });
   [[-0.18, 0x2f4d7a], [0.2, 0x6e2126]].forEach(([px, shirtColor]) => {
     const shirtMat = new THREE.MeshStandardMaterial({ color: shirtColor, roughness: 0.8 });
@@ -1128,33 +1188,24 @@ function buildBalloon() {
     head.position.set(px, 0.85, 0);
     group.add(head);
   });
-
   scene.add(group);
   return group;
 }
 
 function setBalloonOpacity(v) {
-  balloonMaterials.forEach((m) => {
-    m.transparent = v < 1;
-    m.opacity = v;
-  });
+  balloonMaterials.forEach((m) => { m.transparent = v < 1; m.opacity = v; });
 }
 
 function updateBalloon(now) {
   if (!balloonRig) return;
   if (balloonStartTime === null) balloonStartTime = now;
   const t = ((now - balloonStartTime) % BALLOON_CYCLE) / BALLOON_CYCLE;
-
-  // decolare: pornește de la sol, lângă casă, și se ridică/derivă peste cer
   const start = new THREE.Vector3(-13, 0.05, 7);
   const end = new THREE.Vector3(9, 15, -17);
-  const smooth = t * t * (3 - 2 * t); // ease in-out
+  const smooth = t * t * (3 - 2 * t);
   balloonRig.position.lerpVectors(start, end, smooth);
-
   balloonRig.rotation.y = now * 0.00025;
   balloonRig.rotation.z = Math.sin(now * 0.0009) * 0.045;
-
-  // se estompează la începutul/finalul buclei, ca reluarea să nu se vadă
   let opacity = 1;
   if (t < 0.05) opacity = t / 0.05;
   else if (t > 0.92) opacity = (1 - t) / 0.08;
@@ -1164,7 +1215,6 @@ function updateBalloon(now) {
 function animate(now) {
   requestAnimationFrame(animate);
   if (typeof now !== "number") now = performance.now();
-
   if (introActive) {
     if (introStart === null) introStart = now;
     const t = Math.min(1, (now - introStart) / INTRO_DURATION);
@@ -1172,34 +1222,22 @@ function animate(now) {
     const offset = new THREE.Vector3().setFromSpherical(new THREE.Spherical(introRadius, introPhi, theta));
     camera.position.copy(introTarget).add(offset);
     camera.lookAt(introTarget);
-    if (t >= 1) {
-      introActive = false;
-      controls.enabled = true;
-      controls.update();
-    }
+    if (t >= 1) { introActive = false; controls.enabled = true; controls.update(); }
   } else if (pulseActive) {
     const t = Math.min(1, (now - pulseStart) / PULSE_DURATION);
-    const ease = Math.sin(t * Math.PI); // 0 → 1 → 0: pleacă și revine exact la unghiul inițial
+    const ease = Math.sin(t * Math.PI);
     const theta = pulseTheta0 + ease * PULSE_SWING;
     const offset = new THREE.Vector3().setFromSpherical(new THREE.Spherical(pulseRadius, pulsePhi, theta));
     camera.position.copy(pulseTarget).add(offset);
     camera.lookAt(pulseTarget);
-    if (t >= 1) {
-      pulseActive = false;
-      controls.enabled = true;
-      controls.update();
-    }
+    if (t >= 1) { pulseActive = false; controls.enabled = true; controls.update(); }
   } else {
     controls.update();
   }
-
   updateBirds(now);
   updateBalloon(now);
-
   renderer.render(scene, camera);
 }
-
-/* ---------------- Texture: procedural metal-tile ---------------- */
 
 function buildMetalTileTexture(hexColor) {
   const size = 512;
@@ -1207,18 +1245,12 @@ function buildMetalTileTexture(hexColor) {
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext("2d");
-
   const base = new THREE.Color(hexColor);
   const baseCss = `rgb(${Math.round(base.r * 255)},${Math.round(base.g * 255)},${Math.round(base.b * 255)})`;
-
   ctx.fillStyle = baseCss;
   ctx.fillRect(0, 0, size, size);
-
-  // Physical module: one texture tile = 1m (rows) x 1m (ribs), repeated by real size later.
-  const rowH = size / 3;      // 3 tile-courses per meter of texture tile -> ~33cm row (realistic)
-  const ribW = size / 8;      // corrugation rib spacing
-
-  // Vertical ribs (corrugation) — light/dark alternating bands
+  const rowH = size / 3;
+  const ribW = size / 8;
   for (let x = 0; x < size; x += ribW) {
     const grad = ctx.createLinearGradient(x, 0, x + ribW, 0);
     grad.addColorStop(0, shade(base, -0.22));
@@ -1229,15 +1261,12 @@ function buildMetalTileTexture(hexColor) {
     ctx.fillStyle = grad;
     ctx.fillRect(x, 0, ribW, size);
   }
-
-  // Horizontal overlap lines (course seams / suprapuneri) + subtle shadow under each
   for (let y = 0; y < size; y += rowH) {
     ctx.fillStyle = "rgba(0,0,0,0.35)";
     ctx.fillRect(0, y, size, size * 0.02);
     ctx.fillStyle = "rgba(255,255,255,0.10)";
     ctx.fillRect(0, y + size * 0.02, size, size * 0.008);
   }
-
   const tex = new THREE.CanvasTexture(canvas);
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
@@ -1248,54 +1277,32 @@ function buildMetalTileTexture(hexColor) {
 
 function shade(color, amt) {
   const c = color.clone();
-  if (amt >= 0) {
-    c.lerp(new THREE.Color(0xffffff), amt);
-  } else {
-    c.lerp(new THREE.Color(0x000000), -amt);
-  }
+  if (amt >= 0) c.lerp(new THREE.Color(0xffffff), amt);
+  else c.lerp(new THREE.Color(0x000000), -amt);
   return `rgb(${Math.round(c.r * 255)},${Math.round(c.g * 255)},${Math.round(c.b * 255)})`;
 }
-
-/* ---------------- Geometry builders ---------------- */
 
 function makeRoofMaterial(color) {
   if (currentTexture) currentTexture.dispose();
   currentTexture = buildMetalTileTexture(color);
-  return new THREE.MeshStandardMaterial({
-    map: currentTexture,
-    roughness: 0.42,
-    metalness: 0.55,
-    envMapIntensity: 0.8,
-    side: THREE.DoubleSide, // previne "geamuri" invizibile dacă o pantă are winding invers
-  });
+  return new THREE.MeshStandardMaterial({ map: currentTexture, roughness: 0.42, metalness: 0.55, envMapIntensity: 0.8, side: THREE.DoubleSide });
 }
 
-function addSlopePanel(group, material, p1, p2, p3, p4, repeatU, repeatV) {
-  // p1..p4 in order: eave-left, eave-right, ridge-right, ridge-left (a quad)
+function addSlopePanel(group, material, p1, p2, p3, p4) {
   const geo = new THREE.BufferGeometry();
-  const verts = new Float32Array([
-    ...p1, ...p2, ...p3,
-    ...p1, ...p3, ...p4,
-  ]);
+  const verts = new Float32Array([...p1, ...p2, ...p3, ...p1, ...p3, ...p4]);
   geo.setAttribute("position", new THREE.BufferAttribute(verts, 3));
-
   const eaveLen = dist(p1, p2);
   const slopeLen = dist(p1, p4);
   const u = Math.max(0.4, eaveLen);
   const v = Math.max(0.4, slopeLen);
-
-  const uvs = new Float32Array([
-    0, 0, u, 0, u, v,
-    0, 0, u, v, 0, v,
-  ]);
+  const uvs = new Float32Array([0, 0, u, 0, u, v, 0, 0, u, v, 0, v]);
   geo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
   geo.computeVertexNormals();
-
   const mat = material.clone();
   mat.map = material.map.clone();
   mat.map.needsUpdate = true;
   mat.map.repeat.set(1, 1);
-
   const mesh = new THREE.Mesh(geo, mat);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
@@ -1303,9 +1310,7 @@ function addSlopePanel(group, material, p1, p2, p3, p4, repeatU, repeatV) {
   return mesh;
 }
 
-function dist(a, b) {
-  return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
-}
+function dist(a, b) { return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]); }
 
 function addTrimBox(group, w, h, d, x, y, z, color) {
   const geo = new THREE.BoxGeometry(w, h, d);
@@ -1318,15 +1323,10 @@ function addTrimBox(group, w, h, d, x, y, z, color) {
   return mesh;
 }
 
-/**
- * Sistem de scurgere: jgheab pe streașină + burlane verticale până la sol,
- * cu un mic cot la bază. includeShortSides=true adaugă jgheab și pe capete
- * (necesar la acoperișul în 4 ape, unde streașina există pe tot conturul).
- */
 function addGutterSystem(group, We, Le, includeShortSides) {
   const trimMat = new THREE.MeshStandardMaterial({ color: 0x232323, roughness: 0.35, metalness: 0.65 });
-  const WALL_CLEARANCE = 0.022;      // mic interstițiu real între burlan și perete
-  const halfWallX = We - EAVE_OVERHANG; // lățimea reală a peretelui (fără streașină)
+  const WALL_CLEARANCE = 0.022;
+  const halfWallX = We - EAVE_OVERHANG;
 
   function gutterRun(w, h, d, x, y, z) {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), trimMat);
@@ -1335,30 +1335,20 @@ function addGutterSystem(group, We, Le, includeShortSides) {
     mesh.receiveShadow = true;
     group.add(mesh);
   }
-
   function bracket(x1, x2, y, z) {
     const w = Math.abs(x2 - x1) + DOWNSPOUT_R * 1.6;
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, DOWNSPOUT_R * 1.1, DOWNSPOUT_R * 2.2), trimMat);
     mesh.position.set((x1 + x2) / 2, y, z);
     group.add(mesh);
   }
-
-  // Burlan: coboară de la jgheab (la streașină) și se apropie de perete printr-un
-  // cot orizontal scurt, apoi merge lipit de fațadă, prins cu bride, până la sol.
   function downspout(sign, z) {
-    const outerX = sign * (We + GUTTER_OUT);        // sub jgheab, la streașină
-    const wallX = sign * (halfWallX + WALL_CLEARANCE); // lipit de perete
-
-    const topY = -DOWNSPOUT_R;   // înălțimea cotului de racord la jgheab
-    const pipeTopY = -0.26;      // înălțimea unde începe țeava verticală
-
-    // cot de racord la jgheab
+    const outerX = sign * (We + GUTTER_OUT);
+    const wallX = sign * (halfWallX + WALL_CLEARANCE);
+    const topY = -DOWNSPOUT_R;
+    const pipeTopY = -0.26;
     const topElbow = new THREE.Mesh(new THREE.BoxGeometry(DOWNSPOUT_R * 2.4, DOWNSPOUT_R * 2.4, DOWNSPOUT_R * 2.4), trimMat);
     topElbow.position.set(outerX, topY, z);
     group.add(topElbow);
-
-    // "gâtul de lebădă" — unește exact cele două puncte (jgheab → capătul țevii),
-    // nu doar o înclinare aproximativă, ca să nu pară ruptă de perete
     const dx = wallX - outerX;
     const dy = pipeTopY - topY;
     const neckLen = Math.sqrt(dx * dx + dy * dy);
@@ -1366,36 +1356,26 @@ function addGutterSystem(group, We, Le, includeShortSides) {
     neck.position.set((outerX + wallX) / 2, (topY + pipeTopY) / 2, z);
     neck.rotation.z = Math.atan2(dy, dx);
     group.add(neck);
-
-    // țeava verticală, lipită de perete
     const pipeLen = WALL_HEIGHT - pipeTopY * -1 - 0.14;
     const pipe = new THREE.Mesh(new THREE.CylinderGeometry(DOWNSPOUT_R, DOWNSPOUT_R, pipeLen, 10), trimMat);
     pipe.position.set(wallX, pipeTopY - pipeLen / 2, z);
     pipe.castShadow = true;
     group.add(pipe);
-
-    // bride de prindere pe perete (3, distribuite pe înălțime) — de la țeavă până la fațadă
     const wallFaceX = sign * halfWallX;
     bracket(wallX, wallFaceX, -1.0, z);
     bracket(wallX, wallFaceX, -2.0, z);
     bracket(wallX, wallFaceX, -WALL_HEIGHT + 0.35, z);
-
-    // cot de evacuare la bază, orientat spre exterior
     const baseElbow = new THREE.Mesh(new THREE.BoxGeometry(DOWNSPOUT_R * 2.2, DOWNSPOUT_R * 2.2, DOWNSPOUT_R * 5), trimMat);
     baseElbow.position.set(wallX, -WALL_HEIGHT + 0.14, z);
     group.add(baseElbow);
   }
 
-  // Jgheaburi pe laturile lungi (streașină la x = ±We)
   gutterRun(GUTTER_SIZE, GUTTER_SIZE, Le * 2 - 0.08, -(We + GUTTER_OUT), GUTTER_SIZE * 0.25, 0);
   gutterRun(GUTTER_SIZE, GUTTER_SIZE, Le * 2 - 0.08, (We + GUTTER_OUT), GUTTER_SIZE * 0.25, 0);
-
   if (includeShortSides) {
     gutterRun(We * 2 - 0.08, GUTTER_SIZE, GUTTER_SIZE, 0, GUTTER_SIZE * 0.25, -(Le + GUTTER_OUT));
     gutterRun(We * 2 - 0.08, GUTTER_SIZE, GUTTER_SIZE, 0, GUTTER_SIZE * 0.25, (Le + GUTTER_OUT));
   }
-
-  // Burlane în cele 4 colțuri
   const cz = Math.max(0.3, Le - CORNER_INSET);
   downspout(-1, -cz);
   downspout(-1, cz);
@@ -1403,106 +1383,63 @@ function addGutterSystem(group, We, Le, includeShortSides) {
   downspout(1, cz);
 }
 
-/**
- * Build a gable (2 ape) roof.
- * L = length along ridge axis (z), W = width across (x).
- */
 function buildGableRoof(L, W, color) {
   const group = new THREE.Group();
   const material = makeRoofMaterial(color);
-
   const halfW = W / 2;
   const rise = halfW * Math.tan(SLOPE_RAD);
   const ridgeY = rise + FASCIA_H;
+  const We = halfW + EAVE_OVERHANG;
+  const Le = L / 2 + EAVE_OVERHANG * 0.7;
 
-  const We = halfW + EAVE_OVERHANG;      // half-width at eave, with overhang
-  const Le = L / 2 + EAVE_OVERHANG * 0.7; // half-length at gable end, small overhang
-
-  // Two slopes, each spanning full (overhung) length
-  // Slope A: from x=-We (eave) to x=0 (ridge)
   const a1 = [-We, FASCIA_H, -Le];
   const a2 = [-We, FASCIA_H, Le];
   const a3 = [0, ridgeY, Le];
   const a4 = [0, ridgeY, -Le];
   addSlopePanel(group, material, a1, a2, a3, a4);
 
-  // Slope B: from x=We (eave) to x=0 (ridge)
   const b1 = [We, FASCIA_H, Le];
   const b2 = [We, FASCIA_H, -Le];
   const b3 = [0, ridgeY, -Le];
   const b4 = [0, ridgeY, Le];
   addSlopePanel(group, material, b1, b2, b3, b4);
 
-  // Coama — bandă îngustă la vârf, NU o placă cât toată lățimea acoperișului
   addTrimBox(group, 0.32, RIDGE_CAP_H, Le * 2 + 0.1, 0, ridgeY + RIDGE_CAP_H / 2, 0, 0x1c1c1c);
-
-  // Fascia de-a lungul celor două streșini lungi
   addTrimBox(group, 0.06, FASCIA_H, Le * 2, -We, FASCIA_H / 2, 0, 0x151515);
   addTrimBox(group, 0.06, FASCIA_H, Le * 2, We, FASCIA_H / 2, 0, 0x151515);
-
-  // Jgheaburi + burlane (doar pe cele două laturi lungi — capetele sunt frontoane, fără streașină)
   addGutterSystem(group, We, Le, false);
 
   return { group, ridgeY, footprintY: FASCIA_H };
 }
 
-/**
- * Build a hip (4 ape) roof: ridge line shorter than length, four sloped planes.
- */
 function buildHipRoof(L, W, color) {
   const group = new THREE.Group();
   const material = makeRoofMaterial(color);
-
   const halfW = W / 2;
   const rise = halfW * Math.tan(SLOPE_RAD);
   const ridgeY = rise + FASCIA_H;
-
   const We = halfW + EAVE_OVERHANG;
   const halfL = L / 2;
   const Le = halfL + EAVE_OVERHANG;
-
-  // Ridge este retras cu "halfW" față de fiecare capăt (unghi de șarpantă standard);
-  // clamp ca să nu se inverseze pe case foarte late și scurte.
   const ridgeHalfLen = Math.max(0.15, halfL - halfW);
   const r1z = -ridgeHalfLen, r2z = ridgeHalfLen;
 
-  // Panta principală A (latura lungă, streașină +X) — trapez de la streașină (2×Le) la coamă (2×ridgeHalfLen)
-  addHipSlope(group, material,
-    [We, FASCIA_H, -Le], [We, FASCIA_H, Le],
-    [0, ridgeY, r2z], [0, ridgeY, r1z]
-  );
-  // Main slope B (long side, -X eave)
-  addHipSlope(group, material,
-    [-We, FASCIA_H, Le], [-We, FASCIA_H, -Le],
-    [0, ridgeY, r1z], [0, ridgeY, r2z]
-  );
-  // Hip end (front, -Z): triangle from eave corners to ridge start point
-  addHipTriangle(group, material,
-    [-We, FASCIA_H, -Le], [We, FASCIA_H, -Le], [0, ridgeY, r1z]
-  );
-  // Hip end (back, +Z)
-  addHipTriangle(group, material,
-    [We, FASCIA_H, Le], [-We, FASCIA_H, Le], [0, ridgeY, r2z]
-  );
+  addHipSlope(group, material, [We, FASCIA_H, -Le], [We, FASCIA_H, Le], [0, ridgeY, r2z], [0, ridgeY, r1z]);
+  addHipSlope(group, material, [-We, FASCIA_H, Le], [-We, FASCIA_H, -Le], [0, ridgeY, r1z], [0, ridgeY, r2z]);
+  addHipTriangle(group, material, [-We, FASCIA_H, -Le], [We, FASCIA_H, -Le], [0, ridgeY, r1z]);
+  addHipTriangle(group, material, [We, FASCIA_H, Le], [-We, FASCIA_H, Le], [0, ridgeY, r2z]);
 
-  // Short ridge cap
   addTrimBox(group, 0.22, RIDGE_CAP_H, ridgeHalfLen * 2 + 0.1, 0, ridgeY + RIDGE_CAP_H / 2, 0, 0x1c1c1c);
-
-  // Fascia pe tot conturul — la un acoperiș în 4 ape streașina există pe toate laturile
   addTrimBox(group, 0.06, FASCIA_H, Le * 2, -We, FASCIA_H / 2, 0, 0x151515);
   addTrimBox(group, 0.06, FASCIA_H, Le * 2, We, FASCIA_H / 2, 0, 0x151515);
   addTrimBox(group, We * 2, FASCIA_H, 0.06, 0, FASCIA_H / 2, -Le, 0x151515);
   addTrimBox(group, We * 2, FASCIA_H, 0.06, 0, FASCIA_H / 2, Le, 0x151515);
-
-  // Jgheaburi + burlane pe tot conturul
   addGutterSystem(group, We, Le, true);
 
   return { group, ridgeY, footprintY: FASCIA_H };
 }
 
-function addHipSlope(group, material, p1, p2, p3, p4) {
-  addSlopePanel(group, material, p1, p2, p3, p4);
-}
+function addHipSlope(group, material, p1, p2, p3, p4) { addSlopePanel(group, material, p1, p2, p3, p4); }
 
 function addHipTriangle(group, material, p1, p2, p3) {
   const geo = new THREE.BufferGeometry();
@@ -1510,23 +1447,17 @@ function addHipTriangle(group, material, p1, p2, p3) {
   geo.setAttribute("position", new THREE.BufferAttribute(verts, 3));
   const eaveLen = dist(p1, p2);
   const slopeLen = Math.max(dist(p1, p3), dist(p2, p3));
-  geo.setAttribute("uv", new THREE.BufferAttribute(new Float32Array([
-    0, 0, Math.max(0.4, eaveLen), 0, Math.max(0.4, eaveLen) / 2, Math.max(0.4, slopeLen)
-  ]), 2));
+  geo.setAttribute("uv", new THREE.BufferAttribute(new Float32Array([0, 0, Math.max(0.4, eaveLen), 0, Math.max(0.4, eaveLen) / 2, Math.max(0.4, slopeLen)]), 2));
   geo.computeVertexNormals();
-
   const mat = material.clone();
   mat.map = material.map.clone();
   mat.map.needsUpdate = true;
   mat.map.repeat.set(1, 1);
-
   const mesh = new THREE.Mesh(geo, mat);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   group.add(mesh);
 }
-
-/* ---------------- House block (walls + door + windows) ---------------- */
 
 function addFacadeRect(group, w, h, x, y, z, rotY, color, matOpts) {
   const geo = new THREE.PlaneGeometry(w, h);
@@ -1540,80 +1471,60 @@ function addFacadeRect(group, w, h, x, y, z, rotY, color, matOpts) {
 }
 
 function addWindow(group, x, y, z, rotY, w, h) {
-  // ramă
   addFacadeRect(group, w, h, x, y, z, rotY, 0xfbf8f2, { roughness: 0.75 });
   const dx = Math.sin(rotY) * 0.012;
   const dz = Math.cos(rotY) * 0.012;
-  // sticlă
-  addFacadeRect(group, w * 0.8, h * 0.8, x + dx, y, z + dz, rotY, 0xbfe1ec,
-    { roughness: 0.1, metalness: 0.25, emissive: 0x25404a, emissiveIntensity: 0.18 });
-  // muntin (cruce)
+  addFacadeRect(group, w * 0.8, h * 0.8, x + dx, y, z + dz, rotY, 0xbfe1ec, { roughness: 0.1, metalness: 0.25, emissive: 0x25404a, emissiveIntensity: 0.18 });
   addFacadeRect(group, w * 0.8, h * 0.045, x + dx * 1.3, y, z + dz * 1.3, rotY, 0xfbf8f2, { roughness: 0.7 });
   addFacadeRect(group, w * 0.045, h * 0.8, x + dx * 1.3, y, z + dz * 1.3, rotY, 0xfbf8f2, { roughness: 0.7 });
 }
 
 function addDoor(group, x, y, z, rotY, w, h) {
-  addFacadeRect(group, w, h, x, y, z, rotY, 0xfbf8f2, { roughness: 0.75 }); // toc
+  addFacadeRect(group, w, h, x, y, z, rotY, 0xfbf8f2, { roughness: 0.75 });
   const dx = Math.sin(rotY) * 0.012;
   const dz = Math.cos(rotY) * 0.012;
-  addFacadeRect(group, w * 0.82, h * 0.94, x + dx, y - h * 0.03, z + dz, rotY, 0x6e2126,
-    { roughness: 0.55, metalness: 0.15 }); // ușă — roșu Valmex, discret
-  addFacadeRect(group, w * 0.08, w * 0.08, x + dx * 1.3 + Math.cos(rotY) * w * 0.28, y, z + dz * 1.3 - Math.sin(rotY) * w * 0.28, rotY, 0xd8b463,
-    { roughness: 0.4, metalness: 0.6 }); // clanță
+  addFacadeRect(group, w * 0.82, h * 0.94, x + dx, y - h * 0.03, z + dz, rotY, 0x6e2126, { roughness: 0.55, metalness: 0.15 });
+  addFacadeRect(group, w * 0.08, w * 0.08, x + dx * 1.3 + Math.cos(rotY) * w * 0.28, y, z + dz * 1.3 - Math.sin(rotY) * w * 0.28, rotY, 0xd8b463, { roughness: 0.4, metalness: 0.6 });
 }
 
 function buildHouseBlock(L, W, wallHeight) {
   const group = new THREE.Group();
   const hw = (W - 0.02) / 2;
   const hl = (L - 0.02) / 2;
-
   const geo = new THREE.BoxGeometry(W - 0.02, wallHeight, L - 0.02);
-  const mat = new THREE.MeshStandardMaterial({ color: 0xd9c7a0, roughness: 0.92, metalness: 0 }); // bej
+  const mat = new THREE.MeshStandardMaterial({ color: 0xd9c7a0, roughness: 0.92, metalness: 0 });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.position.y = wallHeight / 2;
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   group.add(mesh);
-
   const doorW = Math.min(0.95, hw * 0.5);
   const doorH = Math.min(2.0, wallHeight * 0.78);
   const winW = Math.min(0.8, hw * 0.4);
   const winH = Math.min(1.0, wallHeight * 0.4);
   const winY = wallHeight * 0.56;
   const eps = 0.015;
-
-  // Fațada principală (+Z): ușă la centru, câte o fereastră de fiecare parte
   addDoor(group, 0, doorH / 2, hl + eps, 0, doorW, doorH);
   if (hw > doorW * 0.9) {
     addWindow(group, -(doorW / 2 + winW * 0.75), winY, hl + eps, 0, winW, winH);
     addWindow(group, (doorW / 2 + winW * 0.75), winY, hl + eps, 0, winW, winH);
   }
-
-  // Spate (-Z): două ferestre
   if (hw > winW) {
     addWindow(group, -hw * 0.4, winY, -hl - eps, Math.PI, winW, winH);
     addWindow(group, hw * 0.4, winY, -hl - eps, Math.PI, winW, winH);
   }
-
-  // Lateral dreapta (+X) și stânga (-X): câte o fereastră
   if (hl > winW * 0.7) {
     addWindow(group, hw + eps, winY, 0, Math.PI / 2, Math.min(winW, hl * 0.5), winH);
     addWindow(group, -hw - eps, winY, 0, -Math.PI / 2, Math.min(winW, hl * 0.5), winH);
   }
-
   return group;
 }
-
-/* ---------------- Public build/update ---------------- */
 
 function clearGroup(g) {
   if (!g) return;
   g.traverse((obj) => {
     if (obj.geometry) obj.geometry.dispose();
-    if (obj.material) {
-      if (obj.material.map) obj.material.map.dispose();
-      obj.material.dispose();
-    }
+    if (obj.material) { if (obj.material.map) obj.material.map.dispose(); obj.material.dispose(); }
   });
   scene.remove(g);
 }
@@ -1623,68 +1534,52 @@ function buildScene(cfg) {
   const W = clamp(cfg.width || 8, 4, 20);
   const type = cfg.type === "4ape" ? "4ape" : "2ape";
   currentColor = cfg.color || currentColor;
-
   clearGroup(roofGroup);
   clearGroup(houseGroup);
-
   const wallHeight = WALL_HEIGHT;
   houseGroup = buildHouseBlock(L, W, wallHeight);
   houseGroup.position.y = 0;
   scene.add(houseGroup);
-
   const built = type === "4ape" ? buildHipRoof(L, W, currentColor) : buildGableRoof(L, W, currentColor);
   roofGroup = built.group;
   roofGroup.position.y = wallHeight;
   scene.add(roofGroup);
-
-  // Camera și target rămân fixe mereu (poziție + distanță constante), setate o
-  // singură dată la inițializare — nu se re-cadrează la schimbarea dimensiunilor
-  // sau la selecții, ca să nu anuleze rotirea/zoom-ul făcut manual de utilizator.
 }
 
 function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
 
-// Expose minimal API for non-module scripts
 window.RoofScene = {
   isReady: () => ready,
   setColor: (hex) => window.dispatchEvent(new CustomEvent("roof:update", { detail: { ...lastCfgOrDefault(), color: hex } })),
 };
-
 let lastCfg = { length: 10, width: 8, type: "2ape", color: currentColor };
 window.addEventListener("roof:update", (e) => { lastCfg = { ...lastCfg, ...e.detail }; });
 function lastCfgOrDefault() { return lastCfg; }
-
 </script>
+
 <script>
 /**
  * Valmex — Calculator Acoperiș 3D
- * Wizard, logica de preț și formularul de contact.
- * Fișier non-modul (script clasic) — comunică cu roof3d.js prin
- * evenimente custom pe window ("roof:update", "roof3d:ready").
+ * Wizard, logica de preț și trimiterea lead-ului pe WhatsApp (număr Valmex).
  */
 (function () {
   "use strict";
 
   var STORAGE_KEY = "valmex_roof_config_v1";
+  var WHATSAPP_NUMBER = "37378026212"; // fără "+", fără spații
 
   var SLOPE_RAD = 35 * Math.PI / 180;
   var EAVE = 0.6;
-  var WASTE_FACTOR = 1.07; // 7% pierdere tehnică pentru material
-  var PRICE_TIGLA_PER_M2 = 136; // MDL
-  var ACCESSORY_MARKUP = 0.35; // 35%
-  var PRICE_LACHEIE_PER_M2 = 1200; // MDL
+  var WASTE_FACTOR = 1.07;
+  var PRICE_TIGLA_PER_M2 = 136;
+  var ACCESSORY_MARKUP = 0.35;
+  var PRICE_LACHEIE_PER_M2 = 1200;
 
   var state = {
-    step: 0,
-    length: 10,
-    width: 8,
-    type: null, // "2ape" | "4ape"
-    variant: null, // "tigla" | "lacheie"
-    color: "#3d4147",
-    colorName: "Antracit"
+    step: 0, length: 10, width: 8, type: null, variant: null,
+    color: "#3d4147", colorName: "Antracit"
   };
-  var resumeTargetStep = null; // != null doar dacă există o configurație salvată de reluat
-
+  var resumeTargetStep = null;
   var els = {};
 
   document.addEventListener("DOMContentLoaded", init);
@@ -1701,37 +1596,32 @@ function lastCfgOrDefault() { return lastCfg; }
     els.panel = document.getElementById("panel");
     els.steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
     els.progressSegs = Array.prototype.slice.call(document.querySelectorAll(".hdr-progress-seg"));
-
     els.introTitle = document.getElementById("introTitle");
     els.introLede = document.getElementById("introLede");
     els.introMicrocopy = document.getElementById("introMicrocopy");
     els.btnIntroMain = document.getElementById("btnIntroMain");
     els.btnResetConfig = document.getElementById("btnResetConfig");
-
     els.inLength = document.getElementById("inLength");
     els.inWidth = document.getElementById("inWidth");
     els.valLength = document.getElementById("valLength");
     els.valWidth = document.getElementById("valWidth");
-
     els.roofTypeCards = document.getElementById("roofTypeCards");
     els.btnStep2Next = document.getElementById("btnStep2Next");
-
     els.variantCards = document.getElementById("variantCards");
     els.colorSwatches = document.getElementById("colorSwatches");
     els.btnStep3Next = document.getElementById("btnStep3Next");
     els.houseImage = document.getElementById("houseImage");
-
     els.resDims = document.getElementById("resDims");
     els.resType = document.getElementById("resType");
     els.resArea = document.getElementById("resArea");
     els.resVariant = document.getElementById("resVariant");
     els.resPrice = document.getElementById("resPrice");
     els.resNote = document.getElementById("resNote");
-
     els.gateForm = document.getElementById("gateForm");
     els.resGreeting = document.getElementById("resGreeting");
     els.btnModifyProject = document.getElementById("btnModifyProject");
-
+    els.btnResendWhatsapp = document.getElementById("btnResendWhatsapp");
+    els.leadStatus = document.getElementById("leadStatus");
     els.stageLoading = document.getElementById("stageLoading");
     els.hintText = document.getElementById("hintText");
   }
@@ -1750,7 +1640,7 @@ function lastCfgOrDefault() { return lastCfg; }
       pushRoofUpdate();
       persist();
     });
-    els.inLength.addEventListener("change", triggerPulse); // doar la eliberare, nu la fiecare pixel tras
+    els.inLength.addEventListener("change", triggerPulse);
     els.inWidth.addEventListener("input", function () {
       state.width = parseFloat(els.inWidth.value);
       els.valWidth.textContent = fmtMeters(state.width);
@@ -1797,16 +1687,14 @@ function lastCfgOrDefault() { return lastCfg; }
       submitGateForm();
     });
 
-    els.btnModifyProject.addEventListener("click", function () {
-      goTo(3);
-    });
+    els.btnModifyProject.addEventListener("click", function () { goTo(3); });
+    if (els.btnResendWhatsapp) {
+      els.btnResendWhatsapp.addEventListener("click", function () { sendToWhatsapp(); });
+    }
 
     els.btnIntroMain.addEventListener("click", function () {
-      if (resumeTargetStep !== null) {
-        goTo(resumeTargetStep);
-      } else {
-        goTo(1);
-      }
+      if (resumeTargetStep !== null) goTo(resumeTargetStep);
+      else goTo(1);
     });
     els.btnResetConfig.addEventListener("click", function () {
       localStorage.removeItem(STORAGE_KEY);
@@ -1822,7 +1710,6 @@ function lastCfgOrDefault() { return lastCfg; }
     window.addEventListener("roof3d:ready", function () {
       if (els.stageLoading) els.stageLoading.classList.add("hidden");
     });
-    // In case the 3D module was already ready before this script attached the listener.
     if (window.RoofScene && window.RoofScene.isReady && window.RoofScene.isReady()) {
       els.stageLoading.classList.add("hidden");
     }
@@ -1835,25 +1722,16 @@ function lastCfgOrDefault() { return lastCfg; }
   }
 
   function resetCardSelections() {
-    document.querySelectorAll(".card.selected, .swatch.selected").forEach(function (c) {
-      c.classList.remove("selected");
-    });
+    document.querySelectorAll(".card.selected, .swatch.selected").forEach(function (c) { c.classList.remove("selected"); });
     els.btnStep2Next.disabled = true;
     els.btnStep3Next.disabled = true;
   }
 
-  function checkStep3Ready() {
-    els.btnStep3Next.disabled = !(state.variant && state.color);
-  }
+  function checkStep3Ready() { els.btnStep3Next.disabled = !(state.variant && state.color); }
+  function fmtMeters(v) { return (Math.round(v * 10) / 10) + " m"; }
 
-  function fmtMeters(v) {
-    return (Math.round(v * 10) / 10) + " m";
-  }
-
-  /* ---------------- Navigation ---------------- */
-
-  var leadName = ""; // numele completat în formularul de la pasul 4, folosit la urare
-  var leadSubmitted = false; // odată trimis lead-ul, nu mai persistăm starea (nu mai e nevoie de reluare)
+  var leadName = "", leadPhone = "", leadLocality = "";
+  var leadSubmitted = false;
 
   function goTo(stepIndex) {
     if (stepIndex < 0) stepIndex = 0;
@@ -1880,10 +1758,6 @@ function lastCfgOrDefault() { return lastCfg; }
     typeHint(state.step);
   }
 
-  /* ---------------- Indicație live (scriere caracter cu caracter) ---------------- */
-  /* Bara e independentă de pasul afișat jos — rămâne mereu vizibilă deasupra
-     calculatorului 3D și doar textul ei se schimbă în funcție de etapă. */
-
   var HINT_MESSAGES = {
     0: "Bine ai venit! Hai să construim acoperișul visurilor tale.",
     1: "Reglează lungimea și lățimea casei tale.",
@@ -1906,35 +1780,19 @@ function lastCfgOrDefault() { return lastCfg; }
     function tick() {
       if (myToken !== hintToken) return;
       els.hintText.textContent = text.slice(0, i);
-      if (i < text.length) {
-        i++;
-        hintTimer = setTimeout(tick, 22);
-      }
+      if (i < text.length) { i++; hintTimer = setTimeout(tick, 22); }
     }
     tick();
   }
 
-  /* ---------------- 3D sync ---------------- */
-
   function pushRoofUpdate() {
     window.dispatchEvent(new CustomEvent("roof:update", {
-      detail: {
-        length: state.length,
-        width: state.width,
-        type: state.type || "2ape",
-        color: state.color
-      }
+      detail: { length: state.length, width: state.width, type: state.type || "2ape", color: state.color }
     }));
   }
-
-  function triggerPulse() {
-    window.dispatchEvent(new CustomEvent("roof:pulse"));
-  }
-
-  /* ---------------- Pricing ---------------- */
+  function triggerPulse() { window.dispatchEvent(new CustomEvent("roof:pulse")); }
 
   function computeMontajArea(L, W) {
-    // Suprafață reală de montaj: footprint + streașină pe tot conturul, / cos(pantă)
     var Le = L + 2 * EAVE;
     var We = W + 2 * EAVE;
     var slopeFactor = 1 / Math.cos(SLOPE_RAD);
@@ -1944,11 +1802,9 @@ function lastCfgOrDefault() { return lastCfg; }
   function computeAndRenderResult() {
     var area = computeMontajArea(state.length, state.width);
     var materialArea = area * WASTE_FACTOR;
-
     els.resDims.textContent = fmtMeters(state.length) + " × " + fmtMeters(state.width);
     els.resType.textContent = state.type === "4ape" ? "4 ape" : "2 ape";
     els.resArea.textContent = round1(area) + " m²";
-
     if (state.variant === "lacheie") {
       var totalLaCheie = area * PRICE_LACHEIE_PER_M2;
       els.resVariant.textContent = "La cheie (material + montaj)";
@@ -1965,33 +1821,58 @@ function lastCfgOrDefault() { return lastCfg; }
   }
 
   function round1(v) { return Math.round(v * 10) / 10; }
-  function fmtMDL(v) {
-    return Math.round(v).toLocaleString("ro-RO") + " MDL";
+  function fmtMDL(v) { return Math.round(v).toLocaleString("ro-RO") + " MDL"; }
+
+  /* ---------------- Lead → WhatsApp Valmex ---------------- */
+
+  function buildWhatsappMessage() {
+    var area = round1(computeMontajArea(state.length, state.width));
+    var typeLabel = state.type === "4ape" ? "4 ape" : "2 ape";
+    var variantLabel = state.variant === "lacheie" ? "La cheie (material + montaj)" : "Țiglă metalică (material)";
+    var lines = [
+      "Cerere ofertă — Calculator Acoperiș Valmex",
+      "Nume: " + leadName,
+      "Telefon: " + leadPhone
+    ];
+    if (leadLocality) lines.push("Localitate: " + leadLocality);
+    lines.push("Dimensiuni casă: " + fmtMeters(state.length) + " × " + fmtMeters(state.width));
+    lines.push("Tip acoperiș: " + typeLabel);
+    lines.push("Variantă: " + variantLabel);
+    lines.push("Culoare țiglă: " + state.colorName);
+    lines.push("Suprafață montaj estimată: " + area + " m²");
+    return lines.join("\n");
   }
 
-  /* ---------------- Formularul-poartă (nume + telefon, înainte de preț) ---------------- */
+  function sendToWhatsapp() {
+    var msg = encodeURIComponent(buildWhatsappMessage());
+    var url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + msg;
+    window.open(url, "_blank", "noopener");
+  }
 
   function submitGateForm() {
-    var name = document.getElementById("name").value.trim();
-    var phone = document.getElementById("phone").value.trim();
-    if (!name || !phone) return; // validarea nativă (required/pattern) ar trebui să oprească deja submit-ul
+    var name = document.getElementById("leadName").value.trim();
+    var phone = document.getElementById("leadPhone").value.trim();
+    if (!name || !phone) return;
+
+    leadName = name;
+    leadPhone = phone;
+    leadLocality = document.getElementById("leadLocality").value.trim();
 
     var payload = {
-      name: name,
-      phone: phone,
-      locality: document.getElementById("locality").value.trim(),
+      name: leadName,
+      phone: leadPhone,
+      locality: leadLocality,
       config: state,
       submittedAt: new Date().toISOString()
     };
-
-    // Integrare reală: trimite payload către endpoint-ul Valmex (CRM/email).
-    // Exemplu:
-    // fetch("/api/leads", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(payload) });
     console.log("Lead Valmex:", payload);
 
-    leadName = name;
+    if (els.leadStatus) els.leadStatus.style.display = "block";
+
     leadSubmitted = true;
-    localStorage.removeItem(STORAGE_KEY); // lead-ul e trimis — nu mai e nevoie de reluare
+    localStorage.removeItem(STORAGE_KEY);
+
+    sendToWhatsapp();
     goTo(5);
   }
 
@@ -2001,13 +1882,9 @@ function lastCfgOrDefault() { return lastCfg; }
     computeAndRenderResult();
   }
 
-  /* ---------------- Persistence ---------------- */
-
   function persist() {
     if (leadSubmitted) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (e) { /* storage indisponibil — ignorăm silențios */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
   }
 
   function restoreIfAny() {
@@ -2016,15 +1893,15 @@ function lastCfgOrDefault() { return lastCfg; }
     if (!raw) return;
     try {
       var saved = JSON.parse(raw);
-      if (saved && (saved.type || saved.variant || saved.step > 0)) {1
+      if (saved && (saved.type || saved.variant || saved.step > 0)) {
         resumeTargetStep = saved.step > 0 ? saved.step : 1;
-        var restoredStep = state.step; // rămânem pe intro (0) până utilizatorul alege
+        var restoredStep = state.step;
         state = Object.assign(state, saved);
         state.step = restoredStep;
         applyRestoredUI();
         setIntroResume();
       }
-    } catch (e) { /* ignorăm configurație corupă */ }
+    } catch (e) {}
   }
 
   function setIntroResume() {
@@ -2048,7 +1925,6 @@ function lastCfgOrDefault() { return lastCfg; }
     els.valLength.textContent = fmtMeters(state.length);
     els.inWidth.value = state.width;
     els.valWidth.textContent = fmtMeters(state.width);
-
     if (state.type) {
       var typeCard = els.roofTypeCards.querySelector('[data-value="' + state.type + '"]');
       if (typeCard) { selectCard(els.roofTypeCards, typeCard); els.btnStep2Next.disabled = false; }
@@ -2063,9 +1939,7 @@ function lastCfgOrDefault() { return lastCfg; }
     }
     checkStep3Ready();
   }
-
 })();
-
 </script>
 </body>
 </html>
