@@ -307,6 +307,13 @@ h2{ font-size: clamp(22px, 5vw, 28px); }
 
 .app{ min-height: 100vh; display: flex; flex-direction: column; }
 
+.content-row{
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 .panel{
   flex: 1 1 auto;
   background: rgba(10,10,10,0.72);
@@ -426,7 +433,28 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
   .nav{ display: flex; }
   .header-cta{ display: inline-block; }
   .mobile-toggle{ display: none; }
-  .stage{ height: 62vh; }
+
+  .content-row{
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .stage{
+    flex: 1 1 58%;
+    height: auto;
+    min-height: calc(100vh - 130px);
+    position: sticky;
+    top: 130px;
+    align-self: flex-start;
+  }
+  .panel{
+    flex: 1 1 42%;
+    max-width: 540px;
+    width: auto;
+    margin: 0;
+    padding: 48px 48px 60px;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+  }
 }
 </style>
 
@@ -531,6 +559,8 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
       <span class="hdr-progress-seg" data-seg="5"></span>
     </div>
   </div>
+
+  <div class="content-row">
 
   <!-- 3D STAGE (persistent across steps) -->
   <div class="stage" id="stage">
@@ -704,6 +734,8 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
 
   </main>
 
+  </div>
+
 </div>
 
 <!-- SEO content (below the fold, does not affect the tool's UX) -->
@@ -829,10 +861,6 @@ let pulseTheta0 = 0, pulseRadius = 0, pulsePhi = 0;
 const pulseTarget = new THREE.Vector3();
 
 let birds = [];
-let balloonRig = null;
-let balloonMaterials = [];
-let balloonStartTime = null;
-const BALLOON_CYCLE = 24000;
 
 init();
 
@@ -869,7 +897,6 @@ function init() {
   setupLights();
   setupGround();
   buildBirds();
-  balloonRig = buildBalloon();
 
   resize();
   resizeObserver = new ResizeObserver(resize);
@@ -1093,109 +1120,6 @@ function updateBirds(now) {
   });
 }
 
-function buildBalloonTexture() {
-  const w = 1024, h = 512;
-  const canvas = document.createElement("canvas");
-  canvas.width = w;
-  canvas.height = h;
-  const ctx = canvas.getContext("2d");
-  const gores = 16;
-  const goreW = w / gores;
-  for (let i = 0; i < gores; i++) {
-    ctx.fillStyle = i % 2 === 0 ? "#C81E2C" : "#F7F3EA";
-    ctx.fillRect(i * goreW, 0, goreW, h);
-  }
-  const bandY = h * 0.46, bandH = h * 0.16;
-  ctx.fillStyle = "#141414";
-  ctx.fillRect(0, bandY, w, bandH);
-  ctx.fillStyle = "#FAFAFA";
-  ctx.font = `700 ${Math.round(bandH * 0.62)}px "Barlow Condensed", sans-serif`;
-  ctx.textBaseline = "middle";
-  ctx.textAlign = "center";
-  const repeats = 6;
-  for (let i = 0; i < repeats; i++) {
-    const cx = (w / repeats) * (i + 0.5);
-    ctx.fillText("VALMEX", cx, bandY + bandH / 2 + 1);
-  }
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
-  return tex;
-}
-
-function balloonMesh(geo, mat) {
-  const mesh = new THREE.Mesh(geo, mat);
-  balloonMaterials.push(mat);
-  return mesh;
-}
-
-function buildBalloon() {
-  const group = new THREE.Group();
-  const profile = [
-    new THREE.Vector2(0.42, 0),
-    new THREE.Vector2(0.70, 0.4),
-    new THREE.Vector2(1.30, 1.15),
-    new THREE.Vector2(1.45, 1.9),
-    new THREE.Vector2(1.32, 2.65),
-    new THREE.Vector2(0.90, 3.3),
-    new THREE.Vector2(0.32, 3.75),
-    new THREE.Vector2(0.0, 3.95),
-  ];
-  const envelopeGeo = new THREE.LatheGeometry(profile, 28);
-  const envelopeMat = new THREE.MeshStandardMaterial({ map: buildBalloonTexture(), roughness: 0.55, metalness: 0, side: THREE.DoubleSide });
-  const envelope = balloonMesh(envelopeGeo, envelopeMat);
-  envelope.position.y = 2.0;
-  group.add(envelope);
-  const basketMat = new THREE.MeshStandardMaterial({ color: 0x8a6338, roughness: 0.9 });
-  const basket = balloonMesh(new THREE.BoxGeometry(1.0, 0.75, 1.0), basketMat);
-  basket.position.y = 0;
-  group.add(basket);
-  const ropeMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.6 });
-  const neckY = 2.0;
-  const corners = [[0.42, 0.42], [0.42, -0.42], [-0.42, 0.42], [-0.42, -0.42]];
-  corners.forEach(([cx, cz]) => {
-    const dx = 0 - cx, dz = 0 - cz, dy = neckY - 0.38;
-    const len = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    const rope = balloonMesh(new THREE.CylinderGeometry(0.018, 0.018, len, 6), ropeMat);
-    rope.position.set(cx / 2, 0.38 + (neckY - 0.38) / 2, cz / 2);
-    rope.lookAt(0, neckY, 0);
-    rope.rotation.x += Math.PI / 2;
-    group.add(rope);
-  });
-  const skinMat = new THREE.MeshStandardMaterial({ color: 0xd9a373, roughness: 0.8 });
-  [[-0.18, 0x2f4d7a], [0.2, 0x6e2126]].forEach(([px, shirtColor]) => {
-    const shirtMat = new THREE.MeshStandardMaterial({ color: shirtColor, roughness: 0.8 });
-    const torso = balloonMesh(new THREE.CylinderGeometry(0.11, 0.13, 0.42, 8), shirtMat);
-    torso.position.set(px, 0.58, 0);
-    group.add(torso);
-    const head = balloonMesh(new THREE.SphereGeometry(0.1, 10, 10), skinMat);
-    head.position.set(px, 0.85, 0);
-    group.add(head);
-  });
-  scene.add(group);
-  return group;
-}
-
-function setBalloonOpacity(v) {
-  balloonMaterials.forEach((m) => { m.transparent = v < 1; m.opacity = v; });
-}
-
-function updateBalloon(now) {
-  if (!balloonRig) return;
-  if (balloonStartTime === null) balloonStartTime = now;
-  const t = ((now - balloonStartTime) % BALLOON_CYCLE) / BALLOON_CYCLE;
-  const start = new THREE.Vector3(-13, 0.05, 7);
-  const end = new THREE.Vector3(9, 15, -17);
-  const smooth = t * t * (3 - 2 * t);
-  balloonRig.position.lerpVectors(start, end, smooth);
-  balloonRig.rotation.y = now * 0.00025;
-  balloonRig.rotation.z = Math.sin(now * 0.0009) * 0.045;
-  let opacity = 1;
-  if (t < 0.05) opacity = t / 0.05;
-  else if (t > 0.92) opacity = (1 - t) / 0.08;
-  setBalloonOpacity(Math.max(0, Math.min(1, opacity)));
-}
-
 function animate(now) {
   requestAnimationFrame(animate);
   if (typeof now !== "number") now = performance.now();
@@ -1219,7 +1143,6 @@ function animate(now) {
     controls.update();
   }
   updateBirds(now);
-  updateBalloon(now);
   renderer.render(scene, camera);
 }
 
