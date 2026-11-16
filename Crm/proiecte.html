@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -26,6 +27,8 @@ th{background:#fafafa;color:#666;font-size:11px;text-transform:uppercase;letter-
 .status{display:inline-block;padding:5px 8px;border-radius:20px;background:#f0f0f0;color:#555;font-size:11px}
 .status.planificare{background:#eef5ff;color:#245a9b}.status.in_lucru{background:#fff5df;color:#875900}.status.finalizat{background:#e9f7ed;color:#26743c}.status.suspendat{background:#fff1f1;color:#b0000b}
 .action{border:1px solid #ddd;background:#fff;border-radius:7px;padding:7px 10px;font-size:12px}
+.open-file{display:inline-block;background:#171717;color:#fff;border:1px solid #171717;border-radius:7px;padding:8px 11px;font-size:12px;text-decoration:none;white-space:nowrap;margin-right:5px}
+.open-file:hover{background:var(--red);border-color:var(--red)}
 #feedback{min-height:22px;margin:12px 2px;color:#555;font-size:13px}.empty{padding:35px;text-align:center;color:#777;font-size:14px}
 .overlay{display:none;position:fixed;inset:0;background:#0008;z-index:20;padding:16px;overflow:auto}.overlay.show{display:flex;align-items:center;justify-content:center}
 .modal{width:100%;max-width:700px;background:#fff;border-radius:14px;padding:22px;box-shadow:0 20px 60px #0003;margin:auto}
@@ -46,7 +49,7 @@ th{background:#fafafa;color:#666;font-size:11px;text-transform:uppercase;letter-
     <button class="btn secondary" id="refreshBtn">Reîncarcă</button>
   </div>
   <div class="tablebox"><div class="table-scroll"><table>
-    <thead><tr><th>Cod proiect</th><th>Proiect</th><th>Client</th><th>Lucrare</th><th>Localitate / adresă</th><th>Responsabil</th><th>Perioadă estimată</th><th>Status</th><th></th></tr></thead>
+    <thead><tr><th>Cod proiect</th><th>Proiect</th><th>Client</th><th>Lucrare</th><th>Localitate / adresă</th><th>Responsabil</th><th>Perioadă estimată</th><th>Status</th><th>Acțiuni</th></tr></thead>
     <tbody id="projectRows"><tr><td colspan="9" class="empty">Se încarcă proiectele...</td></tr></tbody>
   </table></div></div>
   <div id="feedback" role="status" aria-live="polite"></div>
@@ -124,7 +127,20 @@ function renderProjects(){
  $("projectRows").innerHTML=filtered.map(p=>{
   const c=clients.find(x=>x.id===p.client_id),m=profiles.find(x=>x.id===p.manager_id);
   const period=(p.estimated_start||p.estimated_end)?`${dateText(p.estimated_start)} – ${dateText(p.estimated_end)}`:"—";
-  return `<tr><td class="code">${escapeHtml(p.project_code)}</td><td><div class="name">${escapeHtml(p.title)}</div><div class="small">${escapeHtml(p.work_type||"Lucrare nespecificată")}</div></td><td><div class="name">${escapeHtml(c?`${c.first_name} ${c.last_name}`:"Client indisponibil")}</div><div class="small">${escapeHtml(c?.client_code||"")}</div></td><td>${escapeHtml(p.work_type||"—")}</td><td>${escapeHtml(p.address||c?.locality||"—")}</td><td>${escapeHtml(m?.full_name||"—")}</td><td>${escapeHtml(period)}</td><td><span class="status ${escapeHtml(p.status)}">${escapeHtml(statusNames[p.status]||p.status)}</span></td><td>${canEdit?`<button class="action" data-edit="${escapeHtml(p.id)}">Editează</button>`:"—"}</td></tr>`;
+  return `<tr>
+<td class="code">${escapeHtml(p.project_code)}</td>
+<td><div class="name">${escapeHtml(p.title)}</div><div class="small">${escapeHtml(p.work_type||"Lucrare nespecificată")}</div></td>
+<td><div class="name">${escapeHtml(c?`${c.first_name} ${c.last_name}`:"Client indisponibil")}</div><div class="small">${escapeHtml(c?.client_code||"")}</div></td>
+<td>${escapeHtml(p.work_type||"—")}</td>
+<td>${escapeHtml(p.address||c?.locality||"—")}</td>
+<td>${escapeHtml(m?.full_name||"—")}</td>
+<td>${escapeHtml(period)}</td>
+<td><span class="status ${escapeHtml(p.status)}">${escapeHtml(statusNames[p.status]||p.status)}</span></td>
+<td>
+<a class="open-file" href="fisa-proiect.html?id=${encodeURIComponent(p.id)}">Deschide fișa</a>
+${canEdit?`<button class="action" data-edit="${escapeHtml(p.id)}">Editează</button>`:""}
+</td>
+</tr>`;
  }).join("");
  $("projectRows").querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>editProject(b.dataset.edit)));
 }
