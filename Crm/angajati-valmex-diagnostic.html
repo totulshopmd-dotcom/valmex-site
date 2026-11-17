@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111"><title>VALMEX CRM – Angajați</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f4f6;color:#202124;font-family:Arial,sans-serif}
+header{background:#151515;color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-size:25px;font-weight:900}.logo span{color:#e30613}a{color:inherit}
+main{max-width:1000px;margin:28px auto;padding:0 16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:25px;margin:0 0 6px}.muted{color:#777;font-size:13px}.panel{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:20px;margin-top:20px}
+.panel h2{font-size:17px;margin:0 0 16px}form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+label{display:block;font-size:12px;color:#555;margin-bottom:6px}input{width:100%;padding:12px;border:1px solid #d7d7d7;border-radius:8px;font:inherit}
+.full{grid-column:1/-1}button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:11px 15px}
+button:disabled{opacity:.55;cursor:wait}.primary{background:#e30613;color:white;font-weight:bold}.secondary{background:#eee;color:#222}
+#message{font-size:13px;margin-top:12px;white-space:pre-wrap;line-height:1.5}.error{color:#b42318}.ok{color:#18794e}.info{color:#555}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:12px 9px;border-bottom:1px solid #eee;overflow-wrap:anywhere}
+th{color:#777}.pill{padding:4px 8px;border-radius:20px;background:#eee;font-size:11px}.on{background:#e7f6ec;color:#18794e}.off{background:#fdecec;color:#b42318}
+.empty{padding:18px;color:#777}.notice{background:#fff7df;border:1px solid #f0dfaa;padding:12px;border-radius:8px;margin-top:14px;font-size:13px}
+@media(max-width:600px){form{grid-template-columns:1fr}.full{grid-column:auto}.panel{padding:15px}table{min-width:520px}}
+</style></head>
+<body>
+<header><div class="logo">VAL<span>MEX</span> CRM</div><a href="dashboard.html">← Înapoi la Dashboard</a></header>
+<main>
+<div class="top"><div><h1>Angajați</h1><div class="muted">Administrarea conturilor de acces VALMEX</div></div><button class="secondary" id="reload" type="button">Reîncarcă lista</button></div>
+<section class="panel"><h2>Adaugă angajat</h2>
+<form id="employeeForm">
+<div><label for="fullName">Nume și prenume *</label><input id="fullName" autocomplete="name" required></div>
+<div><label for="email">Email *</label><input id="email" type="email" autocomplete="email" required></div>
+<div><label for="phone">Telefon</label><input id="phone" type="tel" autocomplete="tel"></div>
+<div><label for="position">Funcția</label><input id="position" placeholder="Ex.: Montator, responsabil lucrări"></div>
+<div class="full"><label for="password">Parola inițială * (minimum 8 caractere)</label><input id="password" type="password" minlength="8" autocomplete="new-password" required></div>
+<div class="full"><button class="primary" id="createBtn" type="submit">Creează cont angajat</button></div>
+</form><div id="message" role="status" aria-live="polite"></div>
+<div class="notice">Conturile noi primesc rolul employee. Telefonul și funcția sunt transmise ca metadate contului; tabelul profiles are momentan doar coloanele id, full_name, role, active și created_at.</div>
+</section>
+<section class="panel"><h2>Conturi existente</h2><div class="table-wrap"><table><thead><tr><th>Nume</th><th>ID utilizator</th><th>Rol</th><th>Statut</th></tr></thead><tbody id="employees"><tr><td colspan="4" class="empty">Se inițializează...</td></tr></tbody></table></div></section>
+</main>
+<script>
+(() => {
+ const SUPABASE_URL="https://qejnbbzhpvfjeqzwotwt.supabase.co";
+ const SUPABASE_KEY="sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov";
+ const $=id=>document.getElementById(id);
+ const tbody=$("employees");
+ function showMessage(text,type="error"){const el=$("message");el.textContent=text;el.className=type;}
+ function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+ function timeout(promise,label,ms=15000){return Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+" a depășit "+(ms/1000)+" secunde. Verifică conexiunea și serviciul Supabase.")),ms))]);}
+ if(!window.supabase?.createClient){tbody.innerHTML="<tr><td colspan='4' class='empty'>Biblioteca Supabase nu s-a încărcat. Reîncarcă pagina sau verifică conexiunea.</td></tr>";showMessage("Nu s-a încărcat biblioteca Supabase din CDN.");return;}
+ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+ async function requireAdmin(){
+   const {data:{session},error}=await timeout(db.auth.getSession(),"Verificarea sesiunii");
+   if(error)throw new Error("Sesiune: "+error.message);
+   if(!session){location.replace("index.html");return false;}
+   const {data:p,error:e}=await timeout(db.from("profiles").select("role,active").eq("id",session.user.id).maybeSingle(),"Verificarea profilului");
+   if(e)throw new Error("Profil administrator: "+e.message);
+   if(!p||p.active!==true||String(p.role).toLowerCase()!=="administrator"){
+     document.querySelector("main").innerHTML="<section class='panel'><h2>Acces restricționat</h2><p>Modul disponibil doar administratorului.</p><a href='dashboard.html'>Înapoi</a></section>";
+     return false;
+   }
+   return true;
+ }
+ async function loadEmployees(){
+   $("reload").disabled=true;
+   tbody.innerHTML="<tr><td colspan='4' class='empty'>Se încarcă lista...</td></tr>";
+   try{
+     const {data,error}=await timeout(db.from("profiles").select("id,full_name,role,active").order("full_name",{ascending:true}),"Citirea listei angajaților");
+     if(error)throw new Error(error.message+" (cod: "+(error.code||"necunoscut")+")");
+     const employees=(data||[]).filter(x=>String(x.role||"").toLowerCase()==="employee");
+     tbody.innerHTML=employees.length?employees.map(x=>`<tr><td>${esc(x.full_name)}</td><td>${esc(x.id)}</td><td>${esc(x.role)}</td><td><span class="pill ${x.active?"on":"off"}">${x.active?"Activ":"Suspendat"}</span></td></tr>`).join(""):"<tr><td colspan='4' class='empty'>Nu există încă angajați.</td></tr>";
+   }catch(err){
+     tbody.innerHTML=`<tr><td colspan="4" class="empty">Eroare la încărcare: ${esc(err.message||err)}</td></tr>`;
+   }finally{$("reload").disabled=false;}
+ }
+ $("reload").addEventListener("click",loadEmployees);
+ $("employeeForm").addEventListener("submit",async e=>{
+   e.preventDefault();showMessage("");
+   const payload={action:"create",full_name:$("fullName").value.trim(),email:$("email").value.trim(),password:$("password").value,phone:$("phone").value.trim(),position:$("position").value.trim()};
+   if(!payload.full_name||!payload.email||payload.password.length<8){showMessage("Completează numele, emailul și o parolă de minimum 8 caractere.");return;}
+   const btn=$("createBtn");btn.disabled=true;btn.textContent="Se creează contul...";
+   try{
+     const {data,error}=await timeout(db.functions.invoke("admin-manage-employees",{body:payload}),"Crearea contului",25000);
+     if(error)throw new Error(error.message||String(error));
+     if(data?.error)throw new Error(data.error);
+     if(!data?.success)throw new Error("Funcția nu a confirmat crearea contului. Răspuns: "+JSON.stringify(data));
+     showMessage("Contul angajatului a fost creat cu succes. Angajatul se poate autentifica.","ok");
+     $("employeeForm").reset();await loadEmployees();
+   }catch(err){
+     let detail=err?.message||String(err);
+     if(err?.context?.json){try{const j=await err.context.json();detail=j.error||j.message||detail;}catch{}}
+     showMessage("Contul NU a fost confirmat ca fiind creat. Detalii: "+detail);
+   }finally{btn.disabled=false;btn.textContent="Creează cont angajat";}
+ });
+ (async()=>{try{const ok=await requireAdmin();if(ok)await loadEmployees();}catch(err){tbody.innerHTML=`<tr><td colspan="4" class="empty">Eroare la inițializare: ${esc(err.message||err)}</td></tr>`;showMessage("Nu s-a putut inițializa pagina: "+(err.message||err));}})();
+})();
+</script></body></html>
