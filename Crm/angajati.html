@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111111">
+<title>VALMEX CRM – Angajați</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--red:#e30613;--ink:#171717;--muted:#777;--line:#e8e8e8;--bg:#f4f5f7;--green:#16803c;--amber:#946200}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#202124;font-family:Arial,sans-serif}button,input,select{font:inherit}button{cursor:pointer}
+.top{min-height:64px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 22px;gap:12px}.brand{font-size:23px;font-weight:900;letter-spacing:-1px}.brand span{color:var(--red)}.top a{color:#fff;text-decoration:none;font-size:13px}
+.wrap{max-width:1200px;margin:0 auto;padding:26px 20px}.head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}h1{font-size:25px;margin:0 0 6px}.sub{font-size:13px;color:var(--muted)}
+.btn{border:0;border-radius:8px;padding:11px 16px;font-weight:700}.primary{background:var(--red);color:#fff}.secondary{background:#fff;border:1px solid var(--line);color:#333}.smallbtn{padding:7px 10px;font-size:12px;border:1px solid #ddd;border-radius:7px;background:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px}.stat span{font-size:12px;color:var(--muted)}.stat b{display:block;font-size:26px;margin-top:6px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);padding:14px;border-radius:12px;margin-bottom:14px}.toolbar input,.toolbar select{min-width:190px;flex:1}
+input,select{width:100%;padding:11px 12px;border:1px solid #d8d8d8;border-radius:8px;background:#fff;color:#222;outline:none}input:focus,select:focus{border-color:var(--red)}
+.tablebox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}.table-scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:13px 14px;border-bottom:1px solid #eee;font-size:13px;vertical-align:middle}th{background:#fafafa;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:.4px}tr:last-child td{border-bottom:0}.name{font-weight:700}.small{color:#777;font-size:12px;margin-top:4px}.pill{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;background:#f1f1f1;color:#555}.pill.active{background:#e9f7ed;color:var(--green)}.pill.off{background:#fff1f1;color:#b0000b}
+#feedback{min-height:22px;margin:12px 2px;color:#555;font-size:13px}.empty{padding:35px;text-align:center;color:#777;font-size:14px}
+.overlay{display:none;position:fixed;inset:0;background:#0008;z-index:20;padding:16px;overflow:auto}.overlay.show{display:flex;align-items:center;justify-content:center}.modal{width:100%;max-width:650px;background:#fff;border-radius:14px;padding:22px;box-shadow:0 20px 60px #0003;margin:auto}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modalhead h2{font-size:19px;margin:0}.close{border:0;background:#eee;border-radius:50%;width:34px;height:34px;font-size:20px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field label{display:block;font-size:12px;color:#555;margin:0 0 6px}.field.full{grid-column:1/-1}.hint{font-size:12px;color:#777;line-height:1.5;margin-top:6px}.formactions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.notice{padding:12px 14px;border-radius:9px;background:#fff6df;color:#765500;font-size:13px;line-height:1.5;margin:14px 0}.hidden{display:none!important}button:disabled{opacity:.55;cursor:wait}
+@media(max-width:650px){.top{padding:12px 15px}.wrap{padding:19px 12px}.head{align-items:flex-start;flex-direction:column}.head .btn{width:100%}.toolbar{padding:10px}.toolbar input,.toolbar select{min-width:100%;flex-basis:100%}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.modal{padding:17px}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand">VAL<span>MEX</span> CRM</div><a href="dashboard.html">← Înapoi la Dashboard</a></header>
+<main class="wrap" id="app" hidden>
+  <div class="head"><div><h1>Angajați</h1><div class="sub">Administrarea conturilor de acces VALMEX</div></div><button class="btn primary" id="addBtn">＋ Înregistrează angajat</button></div>
+  <div class="notice">Angajații pot utiliza modulele CRM conform rolului acordat. Nu pot șterge înregistrări. Modificările datelor existente sunt supuse aprobării administratorului. Administratorul gestionează activarea și suspendarea conturilor.</div>
+  <div class="stats"><div class="stat"><span>Total conturi</span><b id="totalCount">—</b></div><div class="stat"><span>Conturi active</span><b id="activeCount">—</b></div><div class="stat"><span>Conturi suspendate</span><b id="inactiveCount">—</b></div></div>
+  <div class="toolbar"><input id="search" type="search" placeholder="Caută după nume sau email..."><select id="statusFilter"><option value="">Toate conturile</option><option value="active">Active</option><option value="inactive">Suspendate</option></select><button class="btn secondary" id="refreshBtn">Reîncarcă</button></div>
+  <div class="tablebox"><div class="table-scroll"><table><thead><tr><th>Angajat</th><th>Email</th><th>Telefon</th><th>Funcție</th><th>Rol</th><th>Acces</th><th>Acțiuni</th></tr></thead><tbody id="employeeRows"><tr><td colspan="7" class="empty">Se încarcă...</td></tr></tbody></table></div></div>
+  <div id="feedback" role="status" aria-live="polite"></div>
+</main>
+<div class="overlay" id="employeeOverlay"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modalhead"><h2 id="modalTitle">Înregistrează angajat</h2><button class="close" id="closeModal" aria-label="Închide">×</button></div>
+<form id="employeeForm"><div class="formgrid">
+<div class="field"><label for="fullName">Nume și prenume *</label><input id="fullName" required maxlength="150" autocomplete="name"></div>
+<div class="field"><label for="email">Email pentru autentificare *</label><input id="email" required type="email" maxlength="200" autocomplete="email"></div>
+<div class="field"><label for="phone">Telefon</label><input id="phone" type="tel" maxlength="40" autocomplete="tel"></div>
+<div class="field"><label for="jobTitle">Funcția</label><input id="jobTitle" maxlength="100" placeholder="Ex.: Montator, responsabil lucrări"></div>
+<div class="field"><label for="password">Parolă inițială *</label><input id="password" required type="password" minlength="8" autocomplete="new-password"></div>
+<div class="field"><label for="password2">Confirmă parola *</label><input id="password2" required type="password" minlength="8" autocomplete="new-password"></div>
+<div class="field full"><div class="hint">Contul va primi rolul „employee”. Datele de autentificare trebuie transmise angajatului în mod privat. Recomandăm schimbarea parolei după prima conectare.</div></div>
+</div><div class="formactions"><button type="button" class="btn secondary" id="cancelBtn">Anulează</button><button type="submit" class="btn primary" id="saveBtn">Creează contul</button></div></form></section></div>
+<script>
+/* Configurația proiectului VALMEX – aceeași instanță Supabase folosită de CRM. */
+const SUPABASE_URL="https://qejnbbzhpvfjeqzwotwt.supabase.co";
+const SUPABASE_KEY="sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov";
+const STORAGE_KEY="sb-qejnbbzhpvfjeqzwotwt-auth-token";
+/* Edge Function securizată necesară pentru crearea conturilor Auth. */
+const EMPLOYEE_FUNCTION="admin-manage-employees";
+const storage=localStorage.getItem(STORAGE_KEY)?localStorage:(sessionStorage.getItem(STORAGE_KEY)?sessionStorage:null);
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{storage:storage||localStorage,storageKey:STORAGE_KEY,persistSession:true,autoRefreshToken:true}});
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let currentUser=null,currentProfile=null,employees=[];
+function say(t){$("feedback").textContent=t}
+function openModal(){ $("employeeForm").reset(); $("employeeOverlay").classList.add("show"); }
+function closeModal(){ $("employeeOverlay").classList.remove("show"); }
+function friendlyError(e){const m=e?.message||String(e||"Eroare necunoscută");if(/function.*not found|404/i.test(m))return "Funcția securizată admin-manage-employees nu este încă instalată în Supabase. Pagina este pregătită, dar crearea conturilor va funcționa după instalarea funcției server-side.";return m;}
+async function initialize(){
+ const {data:{session},error}=await db.auth.getSession();
+ if(error||!session){location.replace("index.html");return;}
+ currentUser=session.user;
+ const {data:profile,error:pe}=await db.from("profiles").select("id,full_name,role,active").eq("id",currentUser.id).maybeSingle();
+ if(pe||!profile||!profile.active){await db.auth.signOut();location.replace("index.html");return;}
+ if(profile.role!=="administrator"){$("app").hidden=false;$ ("addBtn").disabled=true;say("Acces interzis. Modulul Angajați este disponibil doar administratorului.");return;}
+ currentProfile=profile;$("app").hidden=false;await loadEmployees();
+}
+async function loadEmployees(){
+ $("employeeRows").innerHTML='<tr><td colspan="7" class="empty">Se încarcă...</td></tr>';
+ const {data,error}=await db.from("profiles").select("id,full_name,role,active").order("full_name");
+ if(error){$("employeeRows").innerHTML='<tr><td colspan="7" class="empty">Nu s-a putut încărca lista.</td></tr>';say("Eroare la citirea profilurilor: "+error.message);return;}
+ employees=(data||[]).filter(p=>p.id!==currentUser.id);
+ /* Emailul, telefonul și funcția sunt returnate de Edge Function din Auth user_metadata,
+    nu sunt presupuse coloane în tabela profiles. */
+ try{const result=await db.functions.invoke(EMPLOYEE_FUNCTION,{body:{action:"list"}});if(result.error)throw result.error;const details=result.data?.employees||[];employees=employees.map(p=>({...p,...(details.find(x=>x.id===p.id)||{})}));}
+ catch(e){say("Lista de bază a profilurilor este încărcată. Pentru email, telefon și funcție este necesară funcția securizată: "+friendlyError(e));}
+ renderEmployees();
+}
+function renderEmployees(){
+ const q=$("search").value.trim().toLocaleLowerCase("ro"),filter=$("statusFilter").value;
+ const rows=employees.filter(p=>{const text=[p.full_name,p.email,p.phone,p.job_title].join(" ").toLocaleLowerCase("ro");return(!q||text.includes(q))&&(!filter||(filter==="active"?p.active:!p.active));});
+ $("totalCount").textContent=employees.length;$("activeCount").textContent=employees.filter(x=>x.active).length;$("inactiveCount").textContent=employees.filter(x=>!x.active).length;
+ if(!rows.length){$("employeeRows").innerHTML='<tr><td colspan="7" class="empty">Nu există angajați pentru filtrul selectat.</td></tr>';return;}
+ $("employeeRows").innerHTML=rows.map(p=>`<tr><td><div class="name">${esc(p.full_name||"Fără nume")}</div><div class="small">ID: ${esc(p.id.slice(0,8))}…</div></td><td>${esc(p.email||"—")}</td><td>${esc(p.phone||"—")}</td><td>${esc(p.job_title||"—")}</td><td>${esc(p.role||"employee")}</td><td><span class="pill ${p.active?"active":"off"}">${p.active?"Activ":"Suspendat"}</span></td><td><button class="smallbtn" data-toggle="${esc(p.id)}" data-active="${p.active?"1":"0"}">${p.active?"Suspendă":"Activează"}</button></td></tr>`).join("");
+ $("employeeRows").querySelectorAll("[data-toggle]").forEach(b=>b.addEventListener("click",()=>toggleEmployee(b.dataset.toggle,b.dataset.active==="1")));
+}
+async function createEmployee(payload){
+ const {data,error}=await db.functions.invoke(EMPLOYEE_FUNCTION,{body:{action:"create",employee:payload}});
+ if(error)throw error;if(data?.error)throw new Error(data.error);return data;
+}
+async function toggleEmployee(id,isActive){
+ if(!confirm(isActive?"Suspendăm accesul acestui angajat?":"Activăm accesul acestui angajat?"))return;
+ try{const {data,error}=await db.functions.invoke(EMPLOYEE_FUNCTION,{body:{action:"set_active",user_id:id,active:!isActive}});if(error)throw error;if(data?.error)throw new Error(data.error);say(isActive?"Contul a fost suspendat.":"Contul a fost activat.");await loadEmployees();}
+ catch(e){say("Nu s-a putut modifica accesul: "+friendlyError(e));}
+}
+$("employeeForm").addEventListener("submit",async e=>{
+ e.preventDefault();const password=$("password").value,password2=$("password2").value;
+ if(password.length<8){say("Parola trebuie să conțină cel puțin 8 caractere.");return;}
+ if(password!==password2){say("Parolele nu coincid.");return;}
+ const payload={full_name:$("fullName").value.trim(),email:$("email").value.trim().toLowerCase(),phone:$("phone").value.trim(),job_title:$("jobTitle").value.trim(),password};
+ if(!payload.full_name||!payload.email){say("Completează numele și emailul.");return;}
+ $("saveBtn").disabled=true;$("saveBtn").textContent="Se creează contul...";
+ try{await createEmployee(payload);closeModal();say("Contul angajatului a fost creat. Transmite-i datele de autentificare în mod privat.");await loadEmployees();}
+ catch(err){say("Crearea contului a eșuat: "+friendlyError(err));}
+ finally{$("saveBtn").disabled=false;$("saveBtn").textContent="Creează contul";}
+});
+$("addBtn").addEventListener("click",openModal);$("closeModal").addEventListener("click",closeModal);$("cancelBtn").addEventListener("click",closeModal);$("employeeOverlay").addEventListener("click",e=>{if(e.target===$("employeeOverlay"))closeModal();});$("search").addEventListener("input",renderEmployees);$("statusFilter").addEventListener("change",renderEmployees);$("refreshBtn").addEventListener("click",loadEmployees);
+db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)location.replace("index.html");});
+initialize();
+</script>
+</body>
+</html>
