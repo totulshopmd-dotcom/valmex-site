@@ -1,0 +1,58 @@
+{
+  "projects": [],
+  "seo": {
+    "siteUrl": "https://valmex.md",
+    "pages": []
+  },
+  "popup": {
+    "enabled": false,
+    "title": "",
+    "message": "",
+    "btn1Text": "",
+    "btn1Link": "",
+    "btn2Text": "",
+    "btn2Link": "",
+    "delay": 5,
+    "pages": "",
+    "categories": "",
+    "maxViews": 1,
+    "pausedUntil": ""
+  },
+  "smart": {
+    "enabled": false,
+    "pausedUntil": "",
+    "maxPerSession": 1,
+    "popups": []
+  },
+  "meta": {
+    "version": 1,
+    "updated": "2026-11-18T18:56:16.639Z"
+  },
+  "prices": {
+    "roof": 1150,
+    "tile": 140,
+    "facade": 850,
+    "amk": ""
+  },
+  "site": {
+    "contact": {
+      "phone": "+37378026212",
+      "whats": "+37378026212",
+      "email": "Valmex.md@gmail.com",
+      "web": "www.valmex.md",
+      "hours": "L–S 09:00–18:00",
+      "area": "Republica Moldova"
+    }
+  },
+  "pages": {
+    "home": {
+      "hero": "",
+      "intro": "",
+      "roofTitle": "",
+      "facadeTitle": "",
+      "roof": "",
+      "facade": "",
+      "button": ""
+    }
+  }
+}
