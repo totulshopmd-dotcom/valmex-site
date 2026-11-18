@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VALMEX – Calculator LIVE</title>
+<style>
+:root{--red:#e30613;--ink:#171717;--muted:#737373;--line:#e8e8e8;--bg:#f5f5f5;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.top{height:64px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+.brand{font-weight:900;letter-spacing:.5px;font-size:21px}.brand span{color:var(--red)}.top small{color:var(--muted)}
+main{width:min(680px,100%);margin:0 auto;padding:28px 18px 110px;flex:1;display:flex;flex-direction:column}
+.live-tag{font-size:11px;letter-spacing:1.5px;color:var(--red);font-weight:800;margin:16px 0 14px}
+.progress{height:3px;background:#e6e6e6;border-radius:9px;overflow:hidden;margin-bottom:34px}.progress i{display:block;height:100%;background:var(--red);width:0;transition:width .2s}
+.stepcount{font-size:12px;color:var(--muted);margin-bottom:10px}
+h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 24px;letter-spacing:-.7px}
+.hint{font-size:14px;color:var(--muted);line-height:1.5;margin:-12px 0 22px}
+.options{display:grid;gap:10px}
+.option{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px 18px;text-align:left;font-weight:700;color:var(--ink);transition:.15s;min-height:58px}
+.option:hover{border-color:#aaa}.option.selected{border:2px solid var(--red);padding:16px 17px;background:#fffafa}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:7px}.field label{font-size:12px;color:var(--muted);font-weight:700}.field input,.field select{width:100%;border:1px solid #ddd;border-radius:10px;padding:15px;background:#fff;outline:none}.field input:focus,.field select:focus{border-color:var(--red)}
+.full{grid-column:1/-1}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);border-top:1px solid var(--line);padding:12px 18px calc(12px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:10px;z-index:5}
+.bottom button{width:min(210px,42vw);border-radius:10px;padding:14px 12px;font-weight:700;border:1px solid var(--line);background:#fff}
+.bottom .cancel{color:#777}.bottom .next{background:var(--red);color:#fff;border-color:var(--red)}
+.bottom button:disabled{opacity:.35;cursor:not-allowed}
+.summary{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:10px 0 18px}
+.sumrow{display:flex;justify-content:space-between;gap:15px;padding:10px 0;border-bottom:1px solid #eee;font-size:14px}.sumrow:last-child{border:0}.sumrow strong{text-align:right}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions button{border:0;border-radius:11px;padding:16px 10px;font-weight:800;background:var(--red);color:#fff}.actions button.secondary{background:#222}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:14px}.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;margin-top:14px}.archive-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0}.archive-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.archive-actions button,.plain-btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 12px;font-weight:700}.danger-btn{color:#b00000}.internal-grid{display:grid;gap:0}
+.hidden{display:none!important}
+@media(max-width:520px){main{padding-top:18px}.fields{grid-template-columns:1fr}.full{grid-column:auto}.top{padding:0 16px}.actions{grid-template-columns:1fr}}
+@media print{
+ body{background:#fff}.top,.live-tag,.progress,.bottom,.actions,.screen-only,#archive{display:none!important}
+ main{width:100%;padding:0;display:block}.printdoc{display:block!important}
+ .printdoc h1{font-size:25px}.printdoc .summary{border:0;padding:0}.printdoc .sumrow{font-size:13px}
+}
+.printdoc{display:none}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="brand">VAL<span>MEX</span></div><div style="display:flex;align-items:center;gap:14px"><small>Calculator ofertare · LIVE</small><button id="settingsBtn" style="border:1px solid #e8e8e8;background:#fff;border-radius:9px;padding:9px 12px;font-weight:700">Setări</button><button id="archiveBtn" style="border:1px solid #e8e8e8;background:#fff;border-radius:9px;padding:9px 12px;font-weight:700">Arhivă</button></div></header>
+<main>
+  <div class="live-tag">CONVERSAȚIE LIVE</div>
+  <div class="progress"><i id="bar"></i></div>
+  <section id="screen" class="screen-only"></section>
+  <section id="result" class="screen-only hidden"></section>
+  <section id="archive" class="screen-only hidden"></section>
+  <section id="printdoc" class="printdoc"></section>
+  <section id="settingsPanel" class="panel hidden screen-only" style="position:fixed;z-index:20;inset:5vh 12px auto;max-height:90vh;overflow:auto;box-shadow:0 12px 50px #0003"></section>
+</main>
+<footer class="bottom" id="nav">
+  <button class="cancel" id="back">← Înapoi</button>
+  <button class="cancel" id="quit">Renunță</button>
+  <button class="next hidden" id="continue">Continuă →</button>
+</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const SETTINGS_KEY='valmex_live_settings_v2';
+const DEFAULT_SETTINGS={roofTariffs:[1250,1350,1450,1600],tileCost:136,accessoriesPercent:35,laborCost:300,consumables:10000,woodCostPerM3:6800,beamCostPerM3:4000,beamWidth:0.2,beamHeight:0.2,blockLengthCm:40,blockHeightCm:20,blockThicknessCm:20,blockWastePercent:0,masonryLaborPerM3:1600,commission:{3:5,4:6,6:8,10:13.5,12:15.5,18:20,24:25}};
+function loadSettings(){try{const x=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');return {...DEFAULT_SETTINGS,...x,commission:{...DEFAULT_SETTINGS.commission,...(x.commission||{})}}}catch(e){return {...DEFAULT_SETTINGS,commission:{...DEFAULT_SETTINGS.commission}}}}
+let settings=loadSettings();
+function saveSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));return true}catch(e){alert('Setările nu au putut fi salvate în acest browser.');return false}}
+const state={
+ type:'turnkey', length:10,width:12, slopes:2,pitch:35,eave:.6,beam:'no',
+ tile:'Kvadro 0,45 mm', tileNote:'Modelul și culoarea se aleg ulterior.', clientName:'', clientPhone:'', clientAddress:'', clientEmail:'',
+ payment:'installments', months:12, payer:'valmex', price:1250,
+ customPrice:1250, beamWidth:settings.beamWidth,beamHeight:settings.beamHeight,
+  masonry:'no', masonryHeightCm:20, openingsArea:0, blockPrice:0, masonryLaborRate:1600,
+  slab:'no', slabThickness:0, concretePrice:settings.concretePriceDefault, pumpCost:settings.pumpCostDefault, slabOtherCost:settings.slabOtherCostDefault,
+  firstPayment:0, extraItems:[]
+};
+const history=[];
+function stateDefaults(){return {type:'turnkey',length:10,width:12,slopes:2,pitch:35,eave:.6,beam:'no',tile:'Kvadro 0,45 mm',tileNote:'Modelul și culoarea se aleg ulterior.',clientName:'',clientPhone:'',clientAddress:'',clientEmail:'',payment:'installments',months:12,payer:'valmex',price:1250,customPrice:1250,beamWidth:settings.beamWidth,beamHeight:settings.beamHeight,masonry:'no',masonryHeightCm:20,openingsArea:0,blockPrice:0,masonryLaborRate:settings.masonryLaborPerM3,slab:'no',slabThickness:0,concretePrice:settings.concretePriceDefault,pumpCost:settings.pumpCostDefault,slabOtherCost:settings.slabOtherCostDefault,firstPayment:0,extraItems:[]};}
+const steps=[
+ {key:'type',q:'Ce tip de lucrare dorește clientul?',opts:[['turnkey','Acoperiș la cheie'],['install','Montare acoperiș'],['materials','Doar materiale']]},
+ {key:'dimensions',q:'Care sunt dimensiunile casei?',hint:'Introdu dimensiunile în metri.',fields:[['length','Lungime (m)','number'],['width','Lățime (m)','number']]},
+  {key:'masonry',q:'Este necesară executarea lucrărilor de zidărie?',opts:[['no','Nu'],['yes','Da']]},
+  {key:'masonryData',q:'Date pentru calculul zidăriei',hint:'Înălțimea se selectează din 20 în 20 cm. Manopera este calculată pe m³ de zidărie.',fields:[['openingsArea','Suprafața golurilor (m²)','number',false],['blockPrice','Preț unitar bloc (lei/buc.)','number',false],['masonryLaborRate','Manoperă zidărie (lei/m³)','number',false]]},
+  {key:'slab',q:'Este necesară turnarea planșeului din beton?',opts:[['no','Nu'],['yes','Da']]},
+  {key:'slabData',q:'Date pentru calculul planșeului',hint:'Volum geometric; grinzile, golurile, pierderile și armătura nu sunt incluse automat.',fields:[['slabThickness','Grosime planșeu (cm)','number',true],['concretePrice','Preț beton (lei/m³)','number',false],['pumpCost','Cost pompă (lei, opțional)','number',false],['slabOtherCost','Alte cheltuieli (lei, opțional)','number',false]]},
+ {key:'slopes',q:'Câte ape are acoperișul?',opts:[['2','2 ape'],['4','4 laturi (4 ape)'],['custom','Altă configurație']]},
+ {key:'pitch',q:'Care este înclinația acoperișului?',opts:[['35','35° – standard'],['25','25°'],['30','30°'],['40','40°'],['45','45°'],['custom','Introduc manual']]},
+ {key:'eave',q:'Cât este șandrama?',opts:[['0','Fără șandrama'],['0.4','40 cm'],['0.6','60 cm – standard'],['0.8','80 cm'],['1','100 cm'],['custom','Introduc manual']]},
+ {key:'beam',q:'Este necesară centura de beton?',opts:[['no','Nu'],['yes','Da']]},
+ {key:'tile',q:'Ce tip de învelitoare alegem?',opts:[['Kvadro 0,45 mm','Țiglă metalică Kvadro 0,45 mm'],['other','Alt model / se stabilește ulterior']]},
+ {key:'price',q:'Care este tariful de vânzare?',opts:settings.roofTariffs.map(v=>[String(v),Number(v).toLocaleString('ro-RO')+' lei/m²']).concat([['custom','Introduc alt tarif']])},
+ {key:'payment',q:'Cum achită clientul?',opts:[['cash','Plată integrală'],['installments','Plată în rate']]},
+ {key:'months',q:'Pe ce perioadă solicită rate?',opts:[['3','3 luni'],['4','4 luni'],['6','6 luni'],['10','10 luni'],['12','12 luni'],['18','18 luni'],['24','24 luni']]},
+ {key:'payer',q:'Cine suportă comisionul finanțării?',opts:[['valmex','VALMEX suportă comisionul'],['client','Clientul suportă comisionul']]},
+  {key:'firstPaymentChoice',q:'Clientul achită un avans către VALMEX?',opts:[['no','Nu'],['yes','Da']]},
+  {key:'firstPayment',q:'Care este suma avansului?',hint:'Introdu suma avansului achitat direct către VALMEX, în lei.',input:'number',placeholder:'Suma în lei'},
+ {key:'clientName',q:'Care este numele clientului?',hint:'Introdu numele și prenumele.',input:'text',placeholder:'Nume și prenume'},
+ {key:'clientPhone',q:'La ce număr de telefon contactăm clientul?',hint:'Prefixul +373 este fix. Introdu cele 8 cifre ale numărului din Republica Moldova.',input:'tel',placeholder:'XXXXXXXX'},
+ {key:'clientAddress',q:'Unde se află obiectul lucrării?',hint:'Localitate și adresă. Acest câmp poate fi lăsat necompletat.',input:'text',placeholder:'Localitate, stradă...'},
+ {key:'extras',q:'Lucrări suplimentare / nestandard',hint:'Adaugă orice lucrare sau material care nu apare în calculator. Fiecare poziție are descriere și preț fix în lei. Prețurile se adună automat la oferta finală.'},
+ {key:'confirm',q:'Verifică datele lucrării',hint:'Confirmă pentru a genera oferta clientului și calculul intern.'}
+];
+let index=0, manualMode=false;
+function esc(v){return String(v??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]))}
+function fmt(n){return Number(n||0).toLocaleString('ro-RO',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function money(n){return fmt(n)+' lei'}
+function roofGeometry(){
+ const L=Number(state.length)+2*Number(state.eave);
+ const W=Number(state.width)+2*Number(state.eave);
+ const pitch=Number(state.pitch)*Math.PI/180;
+ if(!L||!W||!Number.isFinite(pitch)||Math.cos(pitch)<=0)return null;
+ const halfSpan=Math.min(L,W)/2;
+ const ridgeLength=Math.max(0,Math.max(L,W)-Math.min(L,W));
+ const slopeDepth=halfSpan/Math.cos(pitch);
+ const rise=halfSpan*Math.tan(pitch);
+ return {L,W,pitch,halfSpan,ridgeLength,slopeDepth,rise};
+}
+function area(){
+ const g=roofGeometry();
+ if(!g)return 0;
+ if(Number(state.slopes)===2){
+  // Doua versante dreptunghiulare, coama pe latura mai lunga.
+  return 2*Math.max(g.L,g.W)*g.slopeDepth;
+ }
+ if(Number(state.slopes)===4){
+  // Acoperis in 4 ape: doua trapeze laterale + doua frontoane triunghiulare.
+  // Geometria presupune coama paralela cu latura mai lunga si pante egale.
+  const longSide=Math.max(g.L,g.W), shortSide=Math.min(g.L,g.W);
+  const ridge=Math.max(0,longSide-shortSide);
+  const trapezoids=2*((longSide+ridge)/2)*g.slopeDepth;
+  const triangles=2*(shortSide*g.slopeDepth/2);
+  return trapezoids+triangles;
+ }
+ return 0;
+}
+function wood(){
+ const g=roofGeometry(), A=area();
+ if(!g)return {rafters:0,counter:0,battens:0,total:0};
+ const longSide=Math.max(g.L,g.W), shortSide=Math.min(g.L,g.W);
+ const sectionRafter=.05*.15, sectionCounter=.05*.03, sectionBatten=.10*.03;
+ let rafterLengthTotal=0, counterLengthTotal=0, battenLengthTotal=0;
+ if(Number(state.slopes)===2){
+  // Perechi de capriori la 80 cm, pe ambele versante.
+  const pairs=Math.ceil(longSide/.8)+1;
+  rafterLengthTotal=pairs*2*g.slopeDepth;
+  counterLengthTotal=rafterLengthTotal;
+  const rows=Math.ceil(g.slopeDepth/.30)+1;
+  battenLengthTotal=rows*2*longSide;
+ }else if(Number(state.slopes)===4){
+  // 4 ape: capriori comuni pe cele doua trapeze, capriori scurti pe triunghiuri,
+  // plus cei 4 capriori diagonali (solduri). Estimare geometrică, nu proiect structural.
+  const ridge=Math.max(0,longSide-shortSide);
+  const commonPairs=Math.ceil(ridge/.8)+1;
+  const commonLength=commonPairs*2*g.slopeDepth;
+  const hipPlan=Math.sqrt((shortSide/2)**2+(shortSide/2)**2);
+  const hipLength=Math.sqrt(hipPlan**2+g.rise**2);
+  const hipTotal=4*hipLength;
+  const endRafters=Math.ceil((shortSide/2)/.8)*2;
+  const endCommonLength=endRafters*g.slopeDepth;
+  rafterLengthTotal=commonLength+hipTotal+endCommonLength;
+  counterLengthTotal=rafterLengthTotal;
+  // Sipci estimate pe cele patru fete, pe baza suprafeței reale și pasului de 30 cm.
+  battenLengthTotal=A/.30;
+ }
+ const rafters=rafterLengthTotal*sectionRafter;
+ const counter=counterLengthTotal*sectionCounter;
+ const battens=battenLengthTotal*sectionBatten;
+ return {rafters,counter,battens,total:rafters+counter+battens,
+  rafterLengthTotal,counterLengthTotal,battenLengthTotal};
+}
+function commissions(){return Number(settings.commission[state.months])||0}
+function costs(){
+  const A=area(),woodVol=wood();
+  const roofIncluded=['turnkey'].includes(state.type);
+  const tile=(roofIncluded||state.type==='materials')?A*settings.tileCost:0, accessories=roofIncluded?tile*settings.accessoriesPercent/100:0, labor=roofIncluded?A*settings.laborCost:(state.type==='install'?A*settings.laborCost:0), consumables=roofIncluded?settings.consumables:0, woodCost=roofIncluded?woodVol.total*settings.woodCostPerM3:0;
+  const beamPerimeter=2*(Number(state.length)+Number(state.width));
+  const beamVol=state.beam==='yes'?beamPerimeter*state.beamWidth*state.beamHeight:0;
+  const beamCost=beamVol*settings.beamCostPerM3, roofSale=A*Number(state.price);
+  const masonryPerimeter=2*(Number(state.length)+Number(state.width));
+  const masonryGrossArea=state.masonry==='yes'?masonryPerimeter*(Number(state.masonryHeightCm)/100):0;
+  const masonryArea=Math.max(0,masonryGrossArea-Math.max(0,Number(state.openingsArea)||0));
+  const blockFaceArea=(Number(settings.blockLengthCm)/100)*(Number(settings.blockHeightCm)/100);
+  const blockThickness=Number(settings.blockThicknessCm)/100;
+  const masonryVolume=masonryArea*blockThickness;
+  const theoreticalBlocks=blockFaceArea>0?Math.ceil(masonryArea/blockFaceArea):0;
+  const blockCount=state.masonry==='yes'?Math.ceil(theoreticalBlocks*(1+Number(settings.blockWastePercent)/100)):0;
+  const blockCost=blockCount*Math.max(0,Number(state.blockPrice)||0);
+  const masonryLaborCost=masonryVolume*Math.max(0,Number(state.masonryLaborRate)||0);
+  const masonryCost=state.masonry==='yes'?blockCost+masonryLaborCost:0;
+  const slabArea=state.slab==='yes'?Number(state.length)*Number(state.width):0;
+  const slabVolume=slabArea*(Math.max(0,Number(state.slabThickness)||0)/100);
+  const concreteCost=slabVolume*Math.max(0,Number(state.concretePrice)||0);
+  const slabExtras=state.slab==='yes'?(Math.max(0,Number(state.pumpCost)||0)+Math.max(0,Number(state.slabOtherCost)||0)):0;
+  const slabCost=state.slab==='yes'?concreteCost+slabExtras:0;
+  const baseWorkSale=state.type==='turnkey'?roofSale:(state.type==='install'?A*Number(state.price||0):A*Number(state.price||0));
+  const extraTotal=(Array.isArray(state.extraItems)?state.extraItems:[]).reduce((sum,it)=>sum+Math.max(0,Number(it.price)||0),0);
+  const sale=baseWorkSale+beamCost+masonryCost+slabCost+extraTotal;
+  const commission=state.payment==='installments'?sale*commissions()/100:0;
+  const known=tile+accessories+(roofIncluded?labor:state.type==='install'?A*settings.laborCost:0)+consumables+woodCost+beamCost+blockCost+masonryLaborCost+concreteCost+slabExtras+(state.payer==='valmex'?commission:0);
+  const clientTotal=sale+(state.payment==='installments'&&state.payer==='client'?commission:0);
+  const firstPayment=state.payment==='installments'?Math.max(0,Number(state.firstPayment)||0):0;
+  const financedBalance=Math.max(0,clientTotal-firstPayment);
+  const monthlyBase=state.payment==='installments'&&Number(state.months)>0?Math.floor((financedBalance/Number(state.months))*100)/100:0;
+  const lastMonthly=state.payment==='installments'?Math.round((financedBalance-monthlyBase*(Number(state.months)-1))*100)/100:0;
+  return {A,roofSale,sale,extraTotal,tile,accessories,labor,consumables,woodVol,woodCost,beamVol,beamCost,commission,known,clientTotal,remaining:sale-known,beamPerimeter,
+    masonryPerimeter,masonryGrossArea,masonryArea,masonryVolume,theoreticalBlocks,blockCount,blockCost,masonryLaborCost,masonryCost,
+    slabArea,slabVolume,concreteCost,slabExtras,slabCost,firstPayment,financedBalance,monthlyBase,lastMonthly};
+}
+function render(){
+ $('bar').style.width=(index/(steps.length))*100+'%';
+ const s=steps[index]; const stepOptions=s.key==='price'?(state.type==='turnkey'?settings.roofTariffs.map(v=>[String(v),Number(v).toLocaleString('ro-RO')+' lei/m²']).concat([['custom','Introduc alt tarif']]):[['custom',state.type==='install'?'Introduc tariful de montare (lei/m²)':'Introduc tariful materialelor (lei/m²)']]):s.opts; $('result').classList.add('hidden'); $('screen').classList.remove('hidden');
+ let question=s.q;if(s.key==='price')question=state.type==='turnkey'?'Care este tariful pentru acoperișul la cheie?':state.type==='install'?'Care este tariful de vânzare pentru montare (lei/m²)?':'Care este tariful de vânzare pentru materiale (lei/m²)?';
+ let html=`<div class="stepcount">ÎNTREBAREA ${index+1} DIN ${steps.length}</div><h1>${question}</h1>${s.hint?`<p class="hint">${s.hint}</p>`:''}`;
+ if(stepOptions){
+  html+='<div class="options">';
+  stepOptions.forEach(([v,label])=>html+=`<button class="option" data-value="${v}">${label}</button>`);
+  html+='</div>';
+ }
+ if(s.fields){
+  if(s.key==='masonryData'){html+=`<div class="field" style="margin-bottom:14px"><label>Înălțime zidărie (cm)</label><select id="masonryHeightCm">${Array.from({length:25},(_,i)=>(i+1)*20).map(v=>`<option value="${v}" ${Number(state.masonryHeightCm)===v?'selected':''}>${v} cm</option>`).join('')}</select></div>`;}
+  html+='<div class="fields">';
+  s.fields.forEach(([k,label,type,required=true])=>html+=`<div class="field"><label>${label}</label><input id="f_${k}" type="${type}" min="0" step="any" value="${esc(state[k]??0)}" ${required?"required":""}></div>`);
+  html+='</div>';
+ }
+ if(s.input){
+  if(s.key==='clientPhone'){html+=`<div class="fields"><div class="field full"><label>Telefon Moldova</label><div style="display:flex;align-items:center;gap:10px"><strong style="padding:14px;border:1px solid #ddd;border-radius:10px;background:#fff">+373</strong><input id="singleInput" type="tel" inputmode="numeric" maxlength="8" pattern="[0-9]{8}" placeholder="XXXXXXXX" value="${esc(String(state.clientPhone||'').replace(/^\+373/,''))}" style="min-width:0;flex:1;padding:15px;border:1px solid #ddd;border-radius:10px"></div></div></div>`;}else html+=`<div class="fields"><div class="field full"><input id="singleInput" type="${s.input}" placeholder="${s.placeholder||''}" value="${esc(state[s.key]<0?'':(state[s.key]||''))}" autocomplete="on"></div></div>`;
+ }
+ if(s.key==='extras'){
+  const items=Array.isArray(state.extraItems)?state.extraItems:[];
+  html+='<div id="extraRows" class="options">';
+  items.forEach((it,i)=>{html+=`<div class="panel" style="margin:0"><div class="fields"><div class="field full"><label>Descriere lucrare / material ${i+1}</label><input id="extra_desc_${i}" type="text" maxlength="180" placeholder="Ex.: Demontare acoperiș vechi" value="${esc(it.description||'')}"></div><div class="field"><label>Preț (lei)</label><input id="extra_price_${i}" type="number" min="0" step="0.01" value="${esc(it.price??'')}"></div><div class="field" style="justify-content:end"><button type="button" class="plain-btn" data-remove-extra="${i}">Elimină poziția</button></div></div></div>`;});
+  html+='</div><button type="button" class="option" id="addExtra" style="text-align:center;margin-top:12px">+ Adaugă poziție suplimentară</button>';
+  const extraSum=items.reduce((a,x)=>a+Math.max(0,Number(x.price)||0),0);
+  html+=`<div class="summary" style="margin-top:14px">${row('Total lucrări suplimentare',money(extraSum))}<p class="note">Poți continua fără poziții suplimentare. Acestea vor apărea separat în oferta PDF și vor fi incluse în total.</p></div>`;
+ }
+ if(s.key==='confirm'){
+  const c=costs();
+  html+=`<div class="summary">
+   ${row('Dimensiuni',state.length+' × '+state.width+' m')}${row('Acoperiș',(Number(state.slopes)===4?'4 laturi / 4 ape':'2 ape')+' · '+state.pitch+'° · șandrama '+Math.round(state.eave*100)+' cm')}
+   ${row('Client',state.clientName||'—')}${row('Telefon',state.clientPhone||'—')}${row('Adresă obiect',state.clientAddress||'Necompletată')}${row('Suprafață estimată',fmt(c.A)+' m²')}${row('Tip lucrare',state.type==='turnkey'?'Acoperiș la cheie':state.type==='install'?'Montare acoperiș':'Doar materiale')}${row('Tarif',money(state.price)+'/m²')}${row('Valoare lucrare',money(c.roofSale))}${state.beam==='yes'?row('Centură beton armat',money(c.beamCost)):''}${state.masonry==='yes'?row('Zidărie',c.blockCount+' blocuri · '+money(c.masonryCost)):''}${state.slab==='yes'?row('Planșeu',fmt(c.slabVolume)+' m³ · '+money(c.slabCost)):''}${(state.extraItems||[]).map((it,i)=>row('Suplimentar: '+it.description,money(it.price))).join('')}${(state.extraItems||[]).length?row('Total suplimentare',money(c.extraTotal)):''}${row('Valoare totală ofertă',money(c.sale))}
+   ${row('Plată',state.payment==='cash'?'Integrală':`Rate pe ${state.months} luni`)}
+   ${state.payment==='installments'&&state.payer==='client'?row('Comision finanțare',commissions()+'% · '+money(c.commission)):''}
+${state.payment==='installments'&&state.payer==='client'?row('Total achitat de client',money(c.clientTotal)):''}
+   ${state.payment==='installments'?row('Avans către VALMEX',money(c.firstPayment))+row('Sold finanțat',money(c.financedBalance))+row('Rată lunară către compania de finanțare',money(c.monthlyBase))+row('Ultima rată',money(c.lastMonthly)):''}
+  </div><button class="option" id="finishOffer" style="background:#e30613;color:white;text-align:center;border:0;margin-bottom:90px">Finalizează oferta</button>`;
+ }
+ $('screen').innerHTML=html;
+ if(s.key==='extras'){
+  $('addExtra').onclick=()=>{collectExtraItems();state.extraItems.push({description:'',price:''});render();};
+  document.querySelectorAll('[data-remove-extra]').forEach(b=>b.onclick=()=>{collectExtraItems();state.extraItems.splice(Number(b.dataset.removeExtra),1);render();});
+ }
+ if(stepOptions) document.querySelectorAll('.option').forEach(b=>b.onclick=()=>choose(b.dataset.value));
+ $('back').disabled=index===0;$('continue').classList.toggle('hidden',!s.fields&&!s.input&&s.key!=='extras');
+ $('continue').disabled=false;
+ // Reatașează handlerul standard la fiecare pas. Pasul „custom” îl suprascrie
+ // temporar; fără resetare, handlerul vechi rămânea activ și bloca pașii următori.
+ $('continue').onclick=handleContinue;
+ if(s.key==='confirm') $('finishOffer').onclick=finalView;
+}
+function collectExtraItems(){const arr=Array.isArray(state.extraItems)?state.extraItems:[];state.extraItems=arr.map((it,i)=>({description:($('extra_desc_'+i)?.value??it.description??'').trim(),price:$('extra_price_'+i)?.value??it.price??''}));}
+function row(a,b){return `<div class="sumrow"><span>${esc(a)}</span><strong>${esc(b)}</strong></div>`}
+function choose(v){
+ const k=steps[index].key;
+ if(v==='custom' && ['pitch','eave','price'].includes(k)){
+  const labels={pitch:['Înclinație (grade)','35'],eave:['Șandrama (metri)','0.6'],price:[state.type==='turnkey'?'Tarif acoperiș la cheie (lei/m²)':state.type==='install'?'Tarif montare (lei/m²)':'Tarif materiale (lei/m²)',String(state.price||1250)]};
+  $('screen').innerHTML=`<div class="stepcount">DETALII</div><h1>${labels[k][0]}</h1><div class="fields"><div class="field full"><input id="manual" type="number" min="0" step="any" value="${labels[k][1]}"></div></div>`;
+  $('continue').classList.remove('hidden');$('continue').onclick=()=>{let n=Number($('manual').value);if(n<=0||!Number.isFinite(n)||(k==='pitch'&&n>=80)||(k==='eave'&&n>3))return alert('Introdu o valoare validă.');state[k]=n;advance()};return;
+ }
+ if(k==='slopes'&&v==='custom'){alert('Configurația personalizată nu este disponibilă încă. Selectează 2 sau 4 ape.');return;}else if(k==='tile'&&v==='other'){state.tile='Model și culoare la alegerea clientului';}else if(k==='price'){state.price=Number(v)}else if(k==='months'){state.months=Number(v)}else if(k==='beam'){state.beam=v}else if(k==='masonry'){state.masonry=v}else if(k==='slab'){state.slab=v}else if(k==='firstPaymentChoice'){state.firstPayment=v==='yes'?-1:0}else if(k==='payment'){state.payment=v}else if(k==='payer'){state.payer=v}else if(k==='pitch'){state.pitch=Number(v)}else if(k==='eave'){state.eave=Number(v)}else if(k==='type'){state.type=v}else if(k==='slopes'){state.slopes=Number(v)}else if(k==='tile'){state.tile=v}
+ advance();
+}
+function advance(){history.push(index);index++;while(index<steps.length){const k=steps[index].key;if((k==='masonryData'&&state.masonry!=='yes')||(k==='slabData'&&state.slab!=='yes')||(state.payment==='cash'&&['months','payer','firstPaymentChoice','firstPayment'].includes(k))||(k==='firstPayment'&&state.firstPayment!==-1)){index++;continue;}break;}if(index>=steps.length)index=steps.length-1;render()}
+function handleContinue(){const s=steps[index];if(s.key==='extras'){collectExtraItems();for(let i=0;i<state.extraItems.length;i++){const it=state.extraItems[i];const n=it.price===''?0:Number(it.price);if(!Number.isFinite(n)||n<0)return alert('Verifică prețul poziției suplimentare '+(i+1)+'.');if(it.description&&!it.description.trim())return alert('Completează descrierea poziției suplimentare '+(i+1)+'.');if(!it.description&&n>0)return alert('Adaugă descrierea pentru poziția suplimentară '+(i+1)+'.');}state.extraItems=state.extraItems.filter(x=>x.description&&Number(x.price)>0).map(x=>({description:x.description,price:Number(x.price)}));advance();return;}if(s.fields){if(s.key==='masonryData')state.masonryHeightCm=Number($('masonryHeightCm').value);for(const [k,label,type,required=true] of s.fields){const raw=$('f_'+k).value;const v=raw===''?0:Number(raw);if(!Number.isFinite(v)||v<0||(required&&v<=0)||(k==='length'&&v>100)||(k==='width'&&v>100)||(k==='slabThickness'&&v>100)||(k==='openingsArea'&&v>2*(Number(state.length)+Number(state.width))*(Number(state.masonryHeightCm)/100)))return alert('Verifică valoarea: '+label+'.');state[k]=v;}}else if(s.input){const v=$('singleInput').value.trim();if(s.key==='clientName'&&!v)return alert('Introdu numele clientului.');if(s.key==='clientPhone'&&!/^[0-9]{8}$/.test(v))return alert('Introdu exact 8 cifre după +373.');if(s.key==='firstPayment'){const amount=Number(v||0),c=costs();if(!Number.isFinite(amount)||amount<0||amount>c.clientTotal)return alert('Avansul nu poate depăși totalul achitat de client.');state.firstPayment=amount;}else state[s.key]=s.key==='clientPhone'?'+373'+v:v;}advance()}
+$('back').onclick=()=>{if(index>0){do{index--;}while(index>0&&((steps[index].key==='masonryData'&&state.masonry!=='yes')||(steps[index].key==='slabData'&&state.slab!=='yes')||(steps[index].key==='firstPayment'&&state.firstPayment!==-1)||(state.payment==='cash'&&['months','payer','firstPaymentChoice','firstPayment'].includes(steps[index].key))));render()}};
+$('quit').onclick=()=>{if(confirm('Renunți la această ofertare? Datele introduse vor fi resetate.')){location.reload()}};
+function finalView(){
+ if(state.firstPayment<0)state.firstPayment=0;
+ const c=costs();
+ if(state.payment==='installments'&&c.firstPayment>c.clientTotal){alert('Avansul depășește valoarea actualizată a ofertei. Corectează suma.');index=steps.findIndex(x=>x.key==='firstPayment');render();return;}
+ $('screen').classList.add('hidden');$('result').classList.remove('hidden');$('bar').style.width='100%';
+ $('nav').classList.add('hidden');
+ $('result').innerHTML=`<div class="stepcount">OFERTARE FINALIZATĂ</div><h1>Oferta este pregătită.</h1>
+ <div class="summary">${row('Suprafață estimată',fmt(c.A)+' m²')}${row('Valoare acoperiș',money(c.roofSale))}${state.beam==='yes'?row('Centură beton armat',fmt(c.beamVol)+' m³ × '+fmt(settings.beamCostPerM3)+' lei = '+money(c.beamCost)):''}${row('Valoare totală ofertă',money(c.sale))}${row('Total achitat de client',money(c.clientTotal))}${state.payment==='installments'&&state.payer==='client'?row('Comision finanțare',money(c.commission)):''}${state.payment==='installments'?row('Avans către VALMEX',money(c.firstPayment))+row('Sold finanțat',money(c.financedBalance))+row(state.months+' rate către compania de finanțare',money(c.monthlyBase)+' / lună · ultima '+money(c.lastMonthly)):''}</div>
+ <div class="actions">
+  <button onclick="makePdf('client')">Exportă oferta client · PDF</button>
+  <button class="secondary" id="internalToggle">Calcul intern</button>
+ </div>
+ <div class="actions" style="margin-top:10px">
+  <button class="secondary" id="saveArchive">Salvează în arhivă</button>
+  <button class="secondary" id="newOffer">Ofertă nouă</button>
+ </div>
+ <div class="panel" id="crmPanel" style="margin-top:12px">
+  <h3 style="margin:0 0 8px">Dosar client în VALMEX CRM</h3>
+  <p class="note" style="margin:0 0 12px">Salvează clientul (sau găsește fișa după telefon), proiectul, măsurătoarea și oferta în baza de date VALMEX.</p>
+  <button id="saveToCrm" style="width:100%;background:#171717;color:#fff;border:0;border-radius:10px;padding:15px;font-weight:800">Adaugă la clienți în CRM</button>
+  <div id="crmFeedback" class="note" role="status" aria-live="polite"></div>
+ </div>
+ <div id="internalPanel" class="panel hidden"></div>
+ <p class="note">Calculul suprafeței și cantităților de lemn este estimativ. Rata lunară este orientativă; graficul exact se confirmă cu finanțatorul. Arhiva se păstrează în browserul acestui dispozitiv.</p>`;
+ $('internalToggle').onclick=()=>{
+   const panel=$('internalPanel');
+   if(panel.classList.contains('hidden')){panel.innerHTML=internalHtml();panel.classList.remove('hidden');$('internalToggle').textContent='Ascunde calculul intern';$('exportInternalPdf').onclick=()=>makePdf('internal');}
+   else{panel.classList.add('hidden');$('internalToggle').textContent='Calcul intern';}
+ };
+ $('saveArchive').onclick=saveCurrentOffer;
+ $('saveToCrm').onclick=addToCrm;
+ $('newOffer').onclick=()=>{if(confirm('Începi o ofertă nouă?'))location.reload()};
+}
+function internalHtml(){
+ const c=costs(),w=wood();
+ let h='<h2 style="margin:0 0 12px">Calcul intern VALMEX</h2><div class="internal-grid">';
+ if(state.type==='turnkey'||state.type==='materials')h+=row('Țiglă metalică – cost intern',money(c.tile));
+ if(state.type==='turnkey')h+=row('Accesorii '+settings.accessoriesPercent+'% – cost intern',money(c.accessories))+row('Căpriori 5×15 cm / 80 cm',fmt(w.rafters)+' m³')+row('Contrașipci 5×3 cm / 80 cm',fmt(w.counter)+' m³')+row('Șipci 10×3 cm / 30 cm',fmt(w.battens)+' m³')+row('Cost total lemn ('+fmt(settings.woodCostPerM3)+' lei/m³)',fmt(w.total)+' m³ · '+money(c.woodCost))+row('Manoperă',money(c.labor))+row('Consumabile',money(c.consumables));
+ if(state.type==='install')h+=row('Cost intern manoperă',money(c.labor));
+ if(c.beamCost)h+=row('Centură beton armat ('+fmt(settings.beamCostPerM3)+' lei/m³)',fmt(c.beamVol)+' m³ · '+money(c.beamCost));
+  if(state.masonry==='yes')h+=row('Perimetru zidărie',fmt(c.masonryPerimeter)+' m')+row('Înălțime zidărie',fmt(state.masonryHeightCm)+' cm')+row('Suprafață zidită după goluri',fmt(c.masonryArea)+' m²')+row('Volum zidărie',fmt(c.masonryVolume)+' m³')+row('Blocuri '+settings.blockLengthCm+'×'+settings.blockHeightCm+'×'+settings.blockThicknessCm+' cm',c.blockCount+' buc. × '+money(state.blockPrice)+' = '+money(c.blockCost))+row('Manoperă zidărie ('+fmt(state.masonryLaborRate)+' lei/m³)',money(c.masonryLaborCost));
+  if(state.slab==='yes')h+=row('Suprafață planșeu',fmt(c.slabArea)+' m²')+row('Grosime planșeu',fmt(state.slabThickness)+' cm')+row('Volum beton geometric',fmt(c.slabVolume)+' m³')+row('Beton',money(c.concreteCost))+row('Pompă și alte cheltuieli',money(c.slabExtras));
+ if(state.payment==='installments')h+=row('Comision finanțare ('+commissions()+'%)',money(c.commission));
+ h+=row('Cheltuieli cunoscute',money(c.known))+row('Diferență înainte de alte cheltuieli',money(c.remaining));
+ h+='</div><p class="note">'+(Number(state.slopes)===4?'La 4 ape, lemnul este estimat separat pentru căpriori comuni, căpriori de capăt și 4 căpriori diagonali. Verificarea finală se face după măsurători. ':'')+'Diferența nu este profit net. Include doar costurile introduse în calculator; transportul și eventualele cheltuieli suplimentare trebuie adăugate separat. Cantitățile de lemn sunt estimative.</p><button class="plain-btn" id="exportInternalPdf">Exportă calculul intern · PDF</button>';
+ return h;
+}
+const ARCHIVE_KEY='valmex_live_archive_v1';
+function getArchive(){try{return JSON.parse(localStorage.getItem(ARCHIVE_KEY)||'[]')}catch(e){return []}}
+function saveCurrentOffer(){
+ const c=costs();
+ const record={id:Date.now(),date:new Date().toISOString(),state:{...state},calc:{...c}};
+ const list=getArchive();list.unshift(record);localStorage.setItem(ARCHIVE_KEY,JSON.stringify(list));
+ $('saveArchive').textContent='Salvată în arhivă';$('saveArchive').disabled=true;
+}
+function showArchive(){
+ $('screen').classList.add('hidden');$('result').classList.add('hidden');$('archive').classList.remove('hidden');$('nav').classList.add('hidden');
+ const list=getArchive();
+ let html='<div class="stepcount">VALMEX · ISTORIC OFERTE</div><h1>Arhivă</h1>';
+ if(!list.length)html+='<p class="hint">Nu există oferte salvate pe acest dispozitiv.</p>';
+ list.forEach((r,i)=>{
+  const st={...stateDefaults(),...(r.state||{})},cl={A:0,sale:0,...(r.calc||{})};
+  html+=`<div class="archive-item"><strong>${esc(st.clientName||'Client fără nume')} · ${new Date(r.date).toLocaleDateString('ro-RO')}</strong><div class="note">${esc(st.clientPhone||'')} · ${st.length} × ${st.width} m</div>
+   <div class="sumrow"><span>Suprafață estimată</span><strong>${fmt(cl.A)} m²</strong></div>
+   <div class="sumrow"><span>Valoare lucrare</span><strong>${money(cl.sale)}</strong></div>
+   <div class="archive-actions"><button onclick="loadArchived(${r.id})">Deschide</button><button onclick="exportArchived(${r.id},'client')">Export client</button><button onclick="exportArchived(${r.id},'internal')">Calcul intern</button><button class="danger-btn" onclick="deleteArchived(${r.id})">Șterge</button></div></div>`;
+ });
+ html+='<button class="option" id="archiveBack">← Înapoi la calculator</button>';
+ $('archive').innerHTML=html;$('archiveBack').onclick=()=>{ $('archive').classList.add('hidden');$('result').classList.remove('hidden');$('nav').classList.add('hidden');};
+}
+function loadArchived(id){
+ const r=getArchive().find(x=>x.id===id);if(!r)return;
+ Object.assign(state,stateDefaults(),r.state||{});
+ if(r.state&&r.state.masonryHeightCm===undefined&&r.state.masonryHeight!==undefined)state.masonryHeightCm=Math.round(Number(r.state.masonryHeight)*100/20)*20;
+ if(r.state&&r.state.masonryLaborRate!==undefined&&r.state.masonryHeightCm===undefined)alert('Ofertă veche: verifică tariful de manoperă la zidărie. Versiunea veche folosea lei/m².');
+ finalView();
+}
+function deleteArchived(id){
+ if(!confirm('Ștergi această ofertă din arhivă?'))return;
+ localStorage.setItem(ARCHIVE_KEY,JSON.stringify(getArchive().filter(x=>x.id!==id)));showArchive();
+}
+function exportArchived(id,kind){
+ const r=getArchive().find(x=>x.id===id);if(!r)return;
+ const old={...state};Object.assign(state,stateDefaults(),r.state||{});makePdf(kind);Object.assign(state,old);
+}
+
+function renderSettings(){
+ const p=$('settingsPanel');
+ const fields=[['tileCost','Cost țiglă metalică (lei/m²)'],['accessoriesPercent','Accesorii (% din costul țiglei)'],['laborCost','Cost manoperă acoperiș (lei/m²)'],['consumables','Consumabile (lei/ofertă)'],['woodCostPerM3','Cost lemn (lei/m³)'],['beamCostPerM3','Cost beton centură (lei/m³)'],['beamWidth','Lățime centură implicită (m)'],['beamHeight','Înălțime centură implicită (m)'],['blockLengthCm','Lungime bloc (cm)'],['blockHeightCm','Înălțime bloc (cm)'],['blockThicknessCm','Grosime bloc (cm)'],['blockWastePercent','Rezervă blocuri (%)'],['masonryLaborPerM3','Manoperă zidărie implicită (lei/m³)']];
+ let h='<div style="display:flex;justify-content:space-between;align-items:center"><h2>Setări calculator</h2><button class="plain-btn" id="closeSettings">Închide</button></div><p class="note">Tarifele și costurile se salvează în acest browser. Tarifele standard pentru acoperiș la cheie rămân 1.250, 1.350, 1.450 și 1.600 lei/m² până când le modifici aici.</p><h3>Tarife fixe de vânzare – acoperiș la cheie</h3><div class="fields">';
+ settings.roofTariffs.forEach((v,i)=>h+=`<div class="field"><label>Tarif ${i+1} (lei/m²)</label><input type="number" min="1" step="1" id="tariff_${i}" value="${v}"></div>`);
+ h+='</div><h3>Costuri interne și parametri</h3><div class="fields">';
+ fields.forEach(([k,l])=>h+=`<div class="field"><label>${l}</label><input type="number" min="0" step="any" id="setting_${k}" value="${settings[k]}"></div>`);
+ h+='</div><h3>Comision finanțare (%)</h3><div class="fields">';
+ Object.entries(settings.commission).forEach(([k,v])=>h+=`<div class="field"><label>${k} luni</label><input type="number" min="0" step="any" id="commission_${k}" value="${v}"></div>`);
+ h+='</div><div class="actions" style="margin-top:14px"><button id="saveSettings">Salvează setările</button><button class="secondary" id="resetSettings">Restabilește valorile inițiale</button></div><p class="note">Atenție: setările sunt locale dispozitivului și browserului. Pentru sincronizare între utilizatori va fi necesară conectarea la o bază de date.</p>';
+ p.innerHTML=h;p.classList.remove('hidden');$('closeSettings').onclick=()=>p.classList.add('hidden');
+ $('saveSettings').onclick=()=>{const nums=ids=>ids.map(id=>Number($(id).value));const tariffs=settings.roofTariffs.map((_,i)=>Number($('tariff_'+i).value));if(tariffs.some(x=>!Number.isFinite(x)||x<=0)||new Set(tariffs).size!==tariffs.length)return alert('Tarifele trebuie să fie pozitive și diferite.');settings.roofTariffs=tariffs;for(const [k] of fields){const n=Number($('setting_'+k).value);if(!Number.isFinite(n)||n<0||(['blockLengthCm','blockHeightCm','blockThicknessCm'].includes(k)&&n===0))return alert('Valoare invalidă: '+k);settings[k]=n;}for(const k of Object.keys(settings.commission)){const n=Number($('commission_'+k).value);if(!Number.isFinite(n)||n<0)return alert('Comision invalid pentru '+k+' luni.');settings.commission[k]=n;}if(saveSettings()){state.beamWidth=settings.beamWidth;state.beamHeight=settings.beamHeight;alert('Setările au fost salvate.');p.classList.add('hidden');}}
+ $('resetSettings').onclick=()=>{if(!confirm('Restabilești toate valorile inițiale?'))return;settings={...DEFAULT_SETTINGS,roofTariffs:[...DEFAULT_SETTINGS.roofTariffs],commission:{...DEFAULT_SETTINGS.commission}};saveSettings();renderSettings();};
+}
+
+// Integrare CRM VALMEX – folosește aceeași sesiune Supabase ca modulele CRM.
+const CRM_SUPABASE_URL='https://qejnbbzhpvfjeqzwotwt.supabase.co';
+const CRM_SUPABASE_KEY='sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov';
+const CRM_STORAGE_KEY='sb-qejnbbzhpvfjeqzwotwt-auth-token';
+let crmDb=null, crmSaveResult=null, crmPdfUploaded=false, crmSaveBusy=false;
+function crmStorage(){return localStorage.getItem(CRM_STORAGE_KEY)?localStorage:(sessionStorage.getItem(CRM_STORAGE_KEY)?sessionStorage:null)}
+function crmClient(){const storage=crmStorage();if(!storage)return null;return window.supabase.createClient(CRM_SUPABASE_URL,CRM_SUPABASE_KEY,{auth:{storage,storageKey:CRM_STORAGE_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})}
+function crmFeedback(msg){const el=$('crmFeedback');if(el)el.textContent=msg}
+function splitClientName(full){const parts=String(full||'').trim().split(/\s+/).filter(Boolean);return {first_name:parts.shift()||'',last_name:parts.join(' ')||'—'}}
+function crmWorkType(){return state.type==='turnkey'?'Acoperiș la cheie':state.type==='install'?'Montare acoperiș':'Doar materiale'}
+function crmItems(c){const items=[];const add=(name,description,quantity,unit,unit_price,item_type='lucrare')=>{if(Number(quantity)>0&&Number(unit_price)>=0)items.push({item_type,name,description:description||null,quantity:Number(quantity),unit,unit_price:Number(unit_price),discount_percent:0,position:items.length+1})};
+ add('Lucrare acoperiș',crmWorkType(),c.A,'m²',Number(state.price));
+ if(state.beam==='yes')add('Centură beton armat','Volum estimativ centură',c.beamVol,'m³',settings.beamCostPerM3);
+ if(state.masonry==='yes'){if(c.blockCount)add('Blocuri zidărie',`${settings.blockLengthCm}×${settings.blockHeightCm}×${settings.blockThicknessCm} cm`,c.blockCount,'buc.',Number(state.blockPrice));if(c.masonryVolume)add('Manoperă zidărie','Manoperă calculată la volum',c.masonryVolume,'m³',Number(state.masonryLaborRate));}
+ if(state.slab==='yes'){if(c.slabVolume)add('Beton planșeu','Volum geometric estimativ',c.slabVolume,'m³',Number(state.concretePrice));if(Number(state.pumpCost)>0)add('Pompă beton','Cost fix',1,'serviciu',Number(state.pumpCost));if(Number(state.slabOtherCost)>0)add('Alte cheltuieli planșeu','Cost fix',1,'serviciu',Number(state.slabOtherCost));}
+ (state.extraItems||[]).forEach((it,i)=>add(it.description,'Lucrare suplimentară / nestandard',1,'serviciu',Number(it.price)));
+ return items;}
+function crmPayload(){const c=costs(),name=splitClientName(state.clientName),address=String(state.clientAddress||'').trim(),locality=address?address.split(',')[0].trim():null;
+ const phone=String(state.clientPhone||'').replace(/\D/g,'');
+ if(!/^373\d{8}$/.test(phone))throw new Error('Numărul trebuie să conțină +373 și exact 8 cifre.');
+ const technical={roof:{type:crmWorkType(),length_m:Number(state.length),width_m:Number(state.width),slopes:Number(state.slopes),pitch_degrees:Number(state.pitch),eave_m:Number(state.eave),area_m2:c.A,tile:state.tile,tariff_m2:Number(state.price),wood_estimate_m3:c.woodVol.total},beam:{included:state.beam==='yes',volume_m3:c.beamVol,cost:c.beamCost,width_m:settings.beamWidth,height_m:settings.beamHeight},masonry:{included:state.masonry==='yes',height_cm:Number(state.masonryHeightCm),area_m2:c.masonryArea,volume_m3:c.masonryVolume,block_count:c.blockCount,block_dimensions_cm:[settings.blockLengthCm,settings.blockHeightCm,settings.blockThicknessCm],block_price:Number(state.blockPrice),labor_rate_m3:Number(state.masonryLaborRate),cost:c.masonryCost},slab:{included:state.slab==='yes',area_m2:c.slabArea,thickness_cm:Number(state.slabThickness),volume_m3:c.slabVolume,concrete_price_m3:Number(state.concretePrice),pump_cost:Number(state.pumpCost),other_cost:Number(state.slabOtherCost),cost:c.slabCost},extras:state.extraItems||[],financial:{total_offer:c.sale,client_total:c.clientTotal,advance_to_valmex:c.firstPayment,financed_balance:c.financedBalance,months:Number(state.months),monthly_payment:c.monthlyBase,last_payment:c.lastMonthly,commission_percent:state.payment==='installments'?commissions():0,commission_amount:c.commission,commission_payer:state.payer,payment:state.payment}};
+ const notes=`Ofertă generată în VALMEX LIVE. Total: ${fmt(c.clientTotal)} lei. ${state.payment==='installments'?`Avans VALMEX: ${fmt(c.firstPayment)} lei. Sold finanțat: ${fmt(c.financedBalance)} lei. ${state.months} rate; rată lunară ${fmt(c.monthlyBase)} lei; ultima ${fmt(c.lastMonthly)} lei. Comision finanțare suportat de ${state.payer==='valmex'?'VALMEX':'client'}.`:'Plată integrală.'}`;
+ return {p_client:{phone:'+373'+phone.slice(3),first_name:name.first_name,last_name:name.last_name,email:state.clientEmail||null,region:null,locality,address:address||null,work_type:crmWorkType()},p_project:{title:`${crmWorkType()} – ${state.clientName}`,work_type:crmWorkType(),address:address||null},p_measurement:{work_type:crmWorkType(),length_m:Number(state.length),width_m:Number(state.width),height_m:state.masonry==='yes'?Number(state.masonryHeightCm)/100:null,area_m2:c.A,slope_degrees:Number(state.pitch),technical_details:technical,notes},p_quotation:{title:`Ofertă ${crmWorkType()} – ${state.clientName}`,status:'ciorna',valid_until:null,discount_percent:0,notes,terms:state.payment==='installments'?`Avans către VALMEX: ${fmt(c.firstPayment)} lei. Sold finanțat: ${fmt(c.financedBalance)} lei în ${state.months} rate către compania de finanțare.`:'Plată integrală.'},p_items:crmItems(c)};
+}
+async function makeClientPdfBlob(){
+ if(!window.html2pdf)throw new Error('Modulul PDF nu s-a încărcat. Verifică conexiunea la internet și încearcă din nou.');
+ makePdf('client',false);
+ const source=$('printdoc');
+ if(!source||!source.innerHTML.trim())throw new Error('Conținutul ofertei PDF este gol.');
+ const wrap=document.createElement('div');
+ wrap.setAttribute('aria-hidden','true');
+ wrap.style.cssText='position:absolute;left:0;top:0;width:190mm;min-height:20mm;z-index:2147483647;background:#fff;color:#171717;padding:8mm;font-family:Arial,Helvetica,sans-serif;display:block;visibility:visible;opacity:1;pointer-events:none;';
+ wrap.innerHTML=source.innerHTML;
+ document.body.appendChild(wrap);
+ try{
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  const canvas=await html2canvas(wrap,{
+   scale:2,useCORS:true,allowTaint:false,backgroundColor:'#ffffff',logging:false,
+   scrollX:0,scrollY:0,windowWidth:Math.max(794,wrap.scrollWidth),
+   windowHeight:Math.max(1123,wrap.scrollHeight)
+  });
+  if(!canvas || canvas.width<300 || canvas.height<300)throw new Error('Conținutul ofertei nu a putut fi randat pentru PDF.');
+  const imageData=canvas.toDataURL('image/jpeg',0.96);
+  if(!imageData || imageData.length<1000)throw new Error('Imaginea ofertei este goală. PDF-ul nu a fost încărcat.');
+  const {jsPDF}=window.jspdf || {};
+  if(!jsPDF)throw new Error('Modulul jsPDF nu s-a încărcat.');
+  const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const pageWidth=pdf.internal.pageSize.getWidth();
+  const pageHeight=pdf.internal.pageSize.getHeight();
+  const margin=8;
+  const contentWidth=pageWidth-margin*2;
+  const contentHeight=canvas.height*contentWidth/canvas.width;
+  let remaining=contentHeight, y=margin, sourceY=0;
+  while(remaining>0){
+   const sliceHeight=Math.min(pageHeight-margin*2,remaining);
+   const sliceCanvas=document.createElement('canvas');
+   sliceCanvas.width=canvas.width;
+   sliceCanvas.height=Math.max(1,Math.round(sliceHeight*canvas.width/contentWidth));
+   const ctx=sliceCanvas.getContext('2d');
+   ctx.fillStyle='#ffffff';ctx.fillRect(0,0,sliceCanvas.width,sliceCanvas.height);
+   ctx.drawImage(canvas,0,Math.round(sourceY*canvas.width/contentWidth),canvas.width,sliceCanvas.height,0,0,sliceCanvas.width,sliceCanvas.height);
+   if(sourceY>0)pdf.addPage();
+   pdf.addImage(sliceCanvas.toDataURL('image/jpeg',0.96),'JPEG',margin,margin,contentWidth,sliceHeight,undefined,'FAST');
+   sourceY+=sliceHeight;remaining-=sliceHeight;
+  }
+  const blob=pdf.output('blob');
+  if(!blob || blob.size<1000)throw new Error('PDF-ul generat nu conține date suficiente. Nu a fost încărcat în CRM.');
+  const header=new Uint8Array(await blob.slice(0,5).arrayBuffer());
+  if(String.fromCharCode(...header)!=='%PDF-')throw new Error('Fișierul generat nu are format PDF valid.');
+  return blob;
+ }finally{wrap.remove();}
+}
+async function uploadClientPdf(result){const {data:{user},error:userError}=await crmDb.auth.getUser();if(userError||!user)throw new Error('Sesiunea CRM a expirat. Autentifică-te din nou.');const blob=await makeClientPdfBlob();const path=`clients/${result.client_id}/projects/${result.project_id}/${result.quotation_code}-oferta-client.pdf`;const {error:uploadError}=await crmDb.storage.from('valmex-clienti').upload(path,blob,{contentType:'application/pdf',upsert:true});if(uploadError)throw new Error('Oferta a fost salvată în CRM, dar PDF-ul nu a putut fi încărcat: '+uploadError.message);const {error:docError}=await crmDb.from('documents').insert({client_id:result.client_id,project_id:result.project_id,file_name:`${result.quotation_code}-oferta-client.pdf`,storage_path:path,category:'oferta_client',uploaded_by:user.id});if(docError)throw new Error('PDF-ul a fost încărcat, dar înregistrarea documentului a eșuat: '+docError.message);crmPdfUploaded=true;}
+async function addToCrm(){if(crmSaveBusy)return;const button=$('saveToCrm');if(!button)return;crmSaveBusy=true;button.disabled=true;button.textContent='Se salvează în CRM...';try{
+ if(!crmDb)crmDb=crmClient();if(!crmDb){window.location.href='index.html';return;}
+ const {data:{session},error:sessionError}=await crmDb.auth.getSession();if(sessionError||!session)throw new Error('Nu există o sesiune CRM activă. Autentifică-te în CRM, apoi redeschide calculatorul.');
+ const {data:profile,error:profileError}=await crmDb.from('profiles').select('id,role,active').eq('id',session.user.id).maybeSingle();if(profileError||!profile||profile.active!==true)throw new Error('Contul nu este activ sau profilul CRM nu este configurat.');
+ if(!crmSaveResult){const payload=crmPayload();const {data,error}=await crmDb.rpc('valmex_live_save_offer',payload);if(error)throw new Error(error.message);crmSaveResult=Array.isArray(data)?data[0]:data;if(!crmSaveResult?.success||!crmSaveResult.client_id||!crmSaveResult.project_id||!crmSaveResult.quotation_id)throw new Error('CRM nu a confirmat salvarea completă.');}
+ if(!crmPdfUploaded)await uploadClientPdf(crmSaveResult);
+ crmFeedback(`Salvat cu succes: client ${crmSaveResult.client_code}, proiect ${crmSaveResult.project_code}, măsurătoare ${crmSaveResult.measurement_code}, ofertă ${crmSaveResult.quotation_code}. PDF-ul clientului este atașat în dosar.`);
+ button.textContent='Salvat în CRM ✓';button.disabled=true;
+ const link=document.createElement('a');link.href=`https://valmex.md/Crm/clienti.html?phone=${encodeURIComponent(state.clientPhone)}`;link.textContent='Deschide clientul în CRM';link.style.cssText='display:inline-block;margin-top:10px;color:#e30613;font-weight:700';$('crmFeedback').appendChild(document.createElement('br'));$('crmFeedback').appendChild(link);
+ }catch(error){crmFeedback('Nu s-a finalizat integrarea: '+(error.message||error));button.textContent=crmSaveResult?'Reîncarcă PDF-ul în dosar':'Încearcă din nou';button.disabled=false;}finally{crmSaveBusy=false;}}
+
+$('settingsBtn').onclick=renderSettings;
+
+$('archiveBtn').onclick=showArchive;
+function makePdf(kind,shouldPrint=true){
+ const c=costs(),w=wood();
+ let title=kind==='client'?'OFERTĂ VALMEX – '+(state.type==='turnkey'?'ACOPERIȘ LA CHEIE':state.type==='install'?'MONTARE ACOPERIȘ':'MATERIALE'):'CALCUL INTERN VALMEX – CONFIDENȚIAL';
+ let body=`<h1>${title}</h1><p><strong><span style="color:#171717">VAL</span><span style="color:#e30613">MEX</span></strong> · www.valmex.md · +373 780 26212</p><p>Data: ${new Date().toLocaleDateString('ro-RO')}</p><div class="summary">
+ ${row('Client',state.clientName||'—')}${row('Telefon',state.clientPhone||'—')}${row('Adresa obiectului',state.clientAddress||'Necompletată')}${row('Dimensiuni casă',state.length+' × '+state.width+' m')}${row('Configurație',(Number(state.slopes)===4?'4 laturi / 4 ape':'2 ape')+' · '+state.pitch+'° · șandrama '+Math.round(state.eave*100)+' cm')}${row('Suprafață estimată',fmt(c.A)+' m²')}
+ ${row('Învelitoare',state.tile)}${row('Tip lucrare',state.type==='turnkey'?'Acoperiș la cheie':state.type==='install'?'Montare acoperiș':'Doar materiale')}${row('Tarif',money(state.price)+'/m²')}${row('Valoare lucrare',money(c.roofSale))}
+ ${state.beam==='yes'?row('Centură beton armat',fmt(c.beamVol)+' m³ × '+fmt(settings.beamCostPerM3)+' lei/m³ = '+money(c.beamCost)):row('Centură beton armat','Nu este inclusă')}
+  ${state.masonry==='yes'?row('Zidărie',fmt(c.masonryArea)+' m² · '+fmt(c.masonryVolume)+' m³ · '+c.blockCount+' blocuri'):''}
+  ${state.masonry==='yes'&&Number(state.blockPrice)>0?row('Blocuri ('+c.blockCount+' buc. × '+money(state.blockPrice)+')',money(c.blockCost)):''}
+  ${state.masonry==='yes'&&Number(state.masonryLaborRate)>0?row('Manoperă zidărie ('+fmt(state.masonryLaborRate)+' lei/m³)',money(c.masonryLaborCost)):''}
+  ${state.masonry==='yes'?row('Volum zidărie',fmt(c.masonryVolume)+' m³')+row('Cost total zidărie',money(c.masonryCost)):''}
+  ${state.slab==='yes'?row('Planșeu din beton',fmt(c.slabArea)+' m² · '+fmt(state.slabThickness)+' cm · '+fmt(c.slabVolume)+' m³'):''}
+  ${state.slab==='yes'&&Number(state.concretePrice)>0?row('Beton ('+fmt(state.concretePrice)+' lei/m³)',money(c.concreteCost)):''}
+  ${state.slab==='yes'&&Number(state.pumpCost)>0?row('Pompă',money(state.pumpCost)):''}
+  ${state.slab==='yes'&&Number(state.slabOtherCost)>0?row('Alte cheltuieli planșeu',money(state.slabOtherCost)):''}
+  ${state.slab==='yes'?row('Cost total planșeu',money(c.slabCost)):''}
+  ${(state.extraItems||[]).map((it,i)=>row('Suplimentar '+(i+1)+': '+it.description,money(it.price))).join('')}
+  ${(state.extraItems||[]).length?row('Total lucrări suplimentare',money(c.extraTotal)):''}
+ ${row('Valoare totală ofertă',money(c.sale))}
+ ${kind==='client'?row('Total achitat de client',money(c.clientTotal)):''}
+ ${kind==='client'&&state.payment==='installments'&&state.payer==='client'?row('Comision finanțare',money(c.commission)):''}
+ ${kind==='client'&&state.payment==='installments'?row('Avans către VALMEX',money(c.firstPayment))+row('Sold finanțat',money(c.financedBalance))+row('Numărul ratelor lunare',String(state.months))+row('Rate lunare către compania de finanțare',money(c.monthlyBase)+' · ultima rată '+money(c.lastMonthly)):''}
+ </div>${Number(state.slopes)===4?'<p>Acoperiș în 4 ape: calcul geometric separat pentru două versante trapezoidale și două triunghiulare. Suprafața poate coincide cu cea a unui acoperiș în 2 ape la aceeași amprentă și aceeași înclinație. Cantitățile de lemn sunt estimative și trebuie verificate la măsurători.</p>':''}`;
+ if(kind==='internal'){
+  body+='<h2>Cheltuieli interne</h2><div class="summary">';
+  body+=row('Țiglă metalică',money(c.tile))+row('Accesorii '+settings.accessoriesPercent+'% – cost estimat',money(c.accessories));
+  body+=row('Căpriori 5×15 cm / 80 cm',fmt(w.rafters)+' m³')+row('Contrașipci 5×3 cm / 80 cm',fmt(w.counter)+' m³')+row('Șipci 10×3 cm / 30 cm',fmt(w.battens)+' m³')+row('Total lemn',fmt(w.total)+' m³ · '+money(c.woodCost));
+  body+=row('Manoperă',money(c.labor))+row('Consumabile',money(c.consumables));
+  if(c.beamCost)body+=row('Centură beton armat – cost calculat',fmt(c.beamVol)+' m³ × 4.000 lei = '+money(c.beamCost));
+   if(state.masonry==='yes')body+=row('Zidărie: perimetru / înălțime',fmt(c.masonryPerimeter)+' m / '+fmt(state.masonryHeightCm)+' cm')+row('Suprafață zidită după goluri',fmt(c.masonryArea)+' m²')+row('Volum zidărie',fmt(c.masonryVolume)+' m³')+row('Blocuri '+settings.blockLengthCm+'×'+settings.blockHeightCm+'×'+settings.blockThicknessCm+' cm',c.blockCount+' buc. × '+money(state.blockPrice)+' = '+money(c.blockCost))+row('Manoperă zidărie ('+fmt(state.masonryLaborRate)+' lei/m³)',money(c.masonryLaborCost));
+   if(state.slab==='yes')body+=row('Planșeu: suprafață / grosime',fmt(c.slabArea)+' m² / '+fmt(state.slabThickness)+' cm')+row('Volum beton geometric',fmt(c.slabVolume)+' m³')+row('Beton',fmt(state.concretePrice)+' lei/m³ · '+money(c.concreteCost))+row('Pompă și alte cheltuieli',money(c.slabExtras));
+  if((state.extraItems||[]).length)body+=(state.extraItems||[]).map((it,i)=>row('Suplimentar '+(i+1)+': '+it.description,money(it.price))).join('')+row('Total suplimentare introduse',money(c.extraTotal));
+  body+=row('Comision finanțare ('+commissions()+'%)',money(c.commission))+row('Cheltuieli cunoscute',money(c.known))+row('Diferență înainte de alte cheltuieli',money(c.remaining));
+  body+='</div><p>Notă: diferența nu este profit net. Nu include transportul și eventualele cheltuieli suplimentare. Lemnul este estimativ. Centura este calculată pe perimetrul casei folosind parametrii din Setări.</p>';
+ }
+ if(kind==='client'&&state.masonry==='yes')body+='<p>Blocuri: dimensiuni '+settings.blockLengthCm+'×'+settings.blockHeightCm+'×'+settings.blockThicknessCm+' cm; rezervă '+settings.blockWastePercent+'%. Volumul și cantitățile sunt estimative.</p>';
+  if(kind==='client'&&state.slab==='yes')body+='<p>Volumul betonului este geometric; grinzile, golurile, pierderile și elementele structurale se stabilesc separat conform proiectului tehnic.</p>';
+  body+='<p style="margin-top:40px"><strong><span style="color:#171717">VAL</span><span style="color:#e30613">MEX</span></strong> · Valmex.md@gmail.com</p>';
+ $('printdoc').innerHTML=body;
+ if(shouldPrint){document.body.classList.add('printing');window.print();document.body.classList.remove('printing');}
+}
+window.makePdf=makePdf;window.loadArchived=loadArchived;window.deleteArchived=deleteArchived;window.exportArchived=exportArchived;
+$('continue').classList.add('hidden');
+render();
+</script>
+</body></html>
