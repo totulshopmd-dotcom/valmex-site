@@ -1,0 +1,102 @@
+{
+  "official_site": {
+    "label": "Site oficial Valmex.md",
+    "url": "https://valmex.md/",
+    "status": "known"
+  },
+  "design_calculator": {
+    "label": "Calculator de proiectare",
+    "url": "https://totulshopmd-dotcom.github.io/Proiectare/",
+    "status": "known_from_prior_context"
+  },
+  "roof_calculator": {
+    "label": "Calculator acoperiș",
+    "url": "https://valmex.md/calculator-acoperis.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "whatsapp_contact": {
+    "label": "WhatsApp Valmex",
+    "url": "https://wa.me/37378026212",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "email": {
+    "label": "Email Valmex",
+    "url": "mailto:Valmex.md@gmail.com",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "facebook": {
+    "label": "Facebook Valmex",
+    "url": "https://www.facebook.com/share/18v4sd1se6/",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "tiktok": {
+    "label": "TikTok Valmex",
+    "url": null,
+    "status": "needs_repository_verification"
+  },
+  "facade_calculator": {
+    "label": "Calculator fațadă",
+    "url": "https://valmex.md/calculator-fatada.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "amk_calculator": {
+    "label": "Calculator AMK",
+    "url": "https://valmex.md/calculator-amk.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "viber": {
+    "label": "Viber Valmex",
+    "url": "viber://chat?number=%2B37378026212",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "page_roofing": {
+    "label": "Acoperișuri metalice",
+    "url": "https://valmex.md/acoperis.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "page_facades": {
+    "label": "Fațade decorative",
+    "url": "https://valmex.md/fatade.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "page_amk": {
+    "label": "Fațade AMK",
+    "url": "https://valmex.md/amk.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "page_paving": {
+    "label": "Pavaje",
+    "url": "https://valmex.md/pavaj.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "page_products": {
+    "label": "Produse",
+    "url": "https://valmex.md/produse.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "page_projects": {
+    "label": "Proiecte",
+    "url": "https://valmex.md/proiecte.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "page_about": {
+    "label": "Despre",
+    "url": "https://valmex.md/despre.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "page_contact": {
+    "label": "Contact și ofertă",
+    "url": "https://valmex.md/contact.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "page_blog": {
+    "label": "Blog",
+    "url": "https://valmex.md/blog.html",
+    "status": "verified_on_site_2026-10-16"
+  },
+  "page_privacy": {
+    "label": "Politica de confidențialitate",
+    "url": "https://valmex.md/politica-confidentialitate.html",
+    "status": "verified_on_site_2026-10-16"
+  }
+}
