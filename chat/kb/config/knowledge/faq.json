@@ -1,0 +1,191 @@
+{
+  "faq": [
+    {
+      "id": "request_quote",
+      "question_patterns": [
+        "Cum pot cere o ofertă?",
+        "Vreau un preț",
+        "Puteți calcula lucrarea?"
+      ],
+      "answer": "Pentru o estimare, spuneți ce lucrare vă interesează, localitatea și suprafața aproximativă. Oferta exactă se confirmă de echipa Valmex.",
+      "requires_operator": true
+    },
+    {
+      "id": "roof_scope",
+      "question_patterns": [
+        "Cât costă acoperișul?",
+        "Preț acoperiș la cheie"
+      ],
+      "answer_policy": "Verifică knowledge/prices.json. Nu oferi valori marcate needs_confirmation. Clarifică suprafața și tipul lucrării, apoi oferă contact cu operatorul.",
+      "requires_operator": true
+    },
+    {
+      "id": "facade_scope",
+      "question_patterns": [
+        "Cât costă fațada?",
+        "Preț tencuială decorativă"
+      ],
+      "answer_policy": "Verifică knowledge/prices.json. Nu prezenta 850 lei/m² ca preț oficial până la confirmare.",
+      "requires_operator": true
+    },
+    {
+      "id": "images",
+      "question_patterns": [
+        "Arată-mi imagini",
+        "Aveți exemple de acoperișuri/fațade?"
+      ],
+      "answer_policy": "Caută în media/images.csv după categorie și cuvinte-cheie. Afișează numai rânduri verified. Nu prezenta produsul ca proiect real.",
+      "requires_operator": false
+    },
+    {
+      "id": "availability",
+      "question_patterns": [
+        "Când puteți începe?",
+        "Aveți loc săptămâna viitoare?"
+      ],
+      "answer": "Termenele și disponibilitatea se confirmă de echipa Valmex după evaluarea solicitării.",
+      "requires_operator": true,
+      "keywords": [
+        "termen",
+        "cand",
+        "disponibil",
+        "liber",
+        "incepe",
+        "saptamana",
+        "cat dureaza",
+        "durata"
+      ],
+      "status": "published"
+    },
+    {
+      "id": "delivery",
+      "keywords": [
+        "livrare",
+        "transport",
+        "raion",
+        "zona"
+      ],
+      "answer": "Conform site-ului, livrăm și montăm în Republica Moldova. Pentru o localitate anume, echipa Valmex confirmă.",
+      "status": "published_on_site",
+      "requires_operator": false
+    },
+    {
+      "id": "measuring",
+      "keywords": [
+        "masurare",
+        "masuratori",
+        "deplasare",
+        "consultanta"
+      ],
+      "answer": "Conform site-ului, consultanța și măsurarea sunt gratuite. Programarea o confirmă echipa Valmex.",
+      "status": "published_on_site",
+      "requires_operator": true
+    },
+    {
+      "id": "warranty",
+      "keywords": [
+        "garantie",
+        "garantii",
+        "garantat"
+      ],
+      "answer": "Valmex oferă garanție de până la 25 de ani. Condițiile exacte le confirmă echipa pentru fiecare proiect.",
+      "status": "confirmed_by_owner_2026-10-16",
+      "requires_operator": true
+    },
+    {
+      "id": "metal_thickness",
+      "keywords": [
+        "grosime",
+        "grosimea",
+        "vopsea",
+        "otel",
+        "coreea",
+        "strat",
+        "milimetri"
+      ],
+      "answer": "Țigla metalică are oțel de 0,45 mm și strat de vopsea de 0,03 mm, deci grosimea totală este 0,48 mm. Toate modelele de țiglă metalică au oțel din Coreea.",
+      "status": "confirmed_by_owner_2026-10-16",
+      "requires_operator": false
+    },
+    {
+      "id": "payment",
+      "keywords": [
+        "plata",
+        "plati",
+        "avans",
+        "rate",
+        "achitare",
+        "credit"
+      ],
+      "answer": "Este posibilă plata în rate cu 0% dobândă. Condițiile le confirmă echipa Valmex.",
+      "status": "confirmed_by_owner_2026-10-16",
+      "requires_operator": true
+    },
+    {
+      "id": "colors",
+      "keywords": [
+        "culori",
+        "culoare",
+        "ral",
+        "nuante"
+      ],
+      "answer": "Culorile disponibile le poți vedea în paleta Lider Moldova. Echipa Valmex te ajută să alegi culoarea potrivită.",
+      "status": "confirmed_by_owner_2026-10-16",
+      "requires_operator": false
+    },
+    {
+      "id": "season",
+      "keywords": [
+        "iarna",
+        "sezon",
+        "vara",
+        "toamna"
+      ],
+      "answer": null,
+      "status": "needs_owner_input",
+      "requires_operator": true
+    },
+    {
+      "id": "sheet_size",
+      "keywords": [
+        "lungime",
+        "lungimea",
+        "lungimi",
+        "latime",
+        "latimea",
+        "dimensiuni",
+        "foaie",
+        "foi"
+      ],
+      "answer": "Lungimea totală la transport este de 12 m, iar lățimea foii de țiglă este standard.",
+      "status": "confirmed_by_owner_2026-10-16",
+      "requires_operator": false
+    },
+    {
+      "id": "included_facade",
+      "keywords": [
+        "fatada",
+        "fatade",
+        "fatadei"
+      ],
+      "answer": "Prețul fațadei la cheie include materialele (tencuială decorativă, polistiren) și manopera.",
+      "status": "confirmed_by_owner_2026-10-16",
+      "requires_operator": false
+    },
+    {
+      "id": "included",
+      "keywords": [
+        "include",
+        "inclus",
+        "accesorii",
+        "jgheaburi",
+        "scurgere",
+        "manopera"
+      ],
+      "answer": "Prețul unui acoperiș la cheie include țigla, lemnul, sistemul de scurgere, accesoriile și manopera.",
+      "status": "confirmed_by_owner_2026-10-16",
+      "requires_operator": false
+    }
+  ],
+  "note": "answer=null înseamnă că răspunsul trebuie completat de proprietar; până atunci chatul spune că echipa confirmă."
+}
