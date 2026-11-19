@@ -31,7 +31,7 @@ th,td{text-align:left;padding:13px 14px;border-bottom:1px solid #eee;font-size:1
 th{background:#fafafa;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
 tr:last-child td{border-bottom:0}
 .code{font-weight:700;color:var(--red);white-space:nowrap}
-.name{font-weight:700}.small{color:#777;font-size:12px;margin-top:4px}
+.name{font-weight:700}.small{color:#777;font-size:12px;margin-top:4px}.clientpic{width:38px;height:38px;border-radius:50%;object-fit:cover;background:#eee;border:1px solid #ddd}.picbtn{border:0;background:transparent;padding:2px;display:inline-flex;align-items:center;gap:8px;text-align:left}.picbtn span{font-size:11px;color:#777}
 .status{display:inline-block;padding:5px 8px;border-radius:20px;background:#f0f0f0;color:#555;font-size:11px}
 .status.nou{background:#fff1f1;color:#b0000b}.status.contactat{background:#eef5ff;color:#245a9b}.status.in_lucru{background:#fff5df;color:#875900}.status.finalizat{background:#e9f7ed;color:#26743c}
 .action{border:1px solid #ddd;background:#fff;border-radius:7px;padding:7px 10px;font-size:12px}
@@ -90,6 +90,7 @@ button:disabled{opacity:.55;cursor:wait}
     </div>
   </div>
   <div id="feedback" role="status" aria-live="polite"></div>
+  <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" hidden>
 </main>
 
 <div class="overlay" id="clientOverlay">
@@ -142,6 +143,8 @@ let currentUser = null;
 let currentProfile = null;
 let clients = [];
 let profiles = [];
+let photoUrls = {};
+let photoClientId = null;
 
 const $ = id => document.getElementById(id);
 const feedback = text => $("feedback").textContent = text;
@@ -182,7 +185,7 @@ async function loadProfiles() {
 async function loadClients() {
   $("clientRows").innerHTML = '<tr><td colspan="8" class="empty">Se încarcă...</td></tr>';
   const { data, error } = await db.from("clients")
-    .select("id,client_code,first_name,last_name,phone,email,locality,work_type,status,assigned_to,created_at")
+    .select("id,client_code,first_name,last_name,phone,email,locality,work_type,status,assigned_to,photo_path,created_at")
     .order("created_at",{ascending:false});
   if (error) {
     $("clientRows").innerHTML = '<tr><td colspan="8" class="empty">Nu s-au putut încărca clienții.</td></tr>';
@@ -190,6 +193,11 @@ async function loadClients() {
     return;
   }
   clients = data || [];
+  photoUrls = {};
+  await Promise.all(clients.filter(c => c.photo_path).map(async c => {
+    const { data: signed } = await db.storage.from("valmex-clienti").createSignedUrl(c.photo_path, 3600);
+    if (signed?.signedUrl) photoUrls[c.id] = signed.signedUrl;
+  }));
   renderClients();
   feedback(`${clients.length} client(i) înregistrați.`);
 }
@@ -212,7 +220,7 @@ function renderClients() {
     const canEdit = ["administrator","vanzari"].includes(currentProfile.role);
     return `<tr>
       <td class="code">${escapeHtml(c.client_code)}</td>
-      <td><div class="name">${escapeHtml(c.first_name)} ${escapeHtml(c.last_name)}</div><div class="small">${escapeHtml(c.email || "")}</div></td>
+      <td><div style="display:flex;align-items:center;gap:9px"><button class="picbtn" type="button" data-photo="${escapeHtml(c.id)}" title="Încarcă sau schimbă fotografia">${photoUrls[c.id] ? `<img class="clientpic" src="${escapeHtml(photoUrls[c.id])}" alt="Fotografia clientului">` : `<span class="clientpic" style="display:inline-flex;align-items:center;justify-content:center;font-size:18px">👤</span>`}<span>Foto</span></button><div><div class="name">${escapeHtml(c.first_name)} ${escapeHtml(c.last_name)}</div><div class="small">${escapeHtml(c.email || "")}</div></div></div></td>
       <td>${escapeHtml(c.phone)}</td>
       <td>${escapeHtml(c.locality || "—")}</td>
       <td>${escapeHtml(c.work_type || "—")}</td>
@@ -224,6 +232,8 @@ function renderClients() {
 
   $("clientRows").querySelectorAll("[data-edit]").forEach(btn =>
     btn.addEventListener("click", () => editClient(btn.dataset.edit)));
+  $("clientRows").querySelectorAll("[data-photo]").forEach(btn =>
+    btn.addEventListener("click", () => { photoClientId = btn.dataset.photo; $("photoInput").click(); }));
 }
 
 function openModal(client=null) {
@@ -337,6 +347,24 @@ $("clientOverlay").addEventListener("click",e=>{if(e.target===$("clientOverlay")
 $("search").addEventListener("input",renderClients);
 $("statusFilter").addEventListener("change",renderClients);
 $("refreshBtn").addEventListener("click",loadClients);
+
+
+$("photoInput").addEventListener("change", async event => {
+  const file = event.target.files?.[0], clientId = photoClientId;
+  event.target.value = "";
+  if (!file || !clientId) return;
+  if (!["image/jpeg","image/png","image/webp"].includes(file.type)) { feedback("Alege o imagine JPG, PNG sau WEBP."); return; }
+  if (file.size > 5 * 1024 * 1024) { feedback("Fotografia nu poate depăși 5 MB."); return; }
+  const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+  const path = `client-avatars/${clientId}/profile.${ext}`;
+  feedback("Se încarcă fotografia...");
+  const { error: uploadError } = await db.storage.from("valmex-clienti").upload(path,file,{upsert:true,contentType:file.type,cacheControl:"3600"});
+  if (uploadError) { feedback("Fotografia nu a putut fi încărcată: " + uploadError.message); return; }
+  const { error: updateError } = await db.from("clients").update({photo_path:path}).eq("id",clientId);
+  if (updateError) { feedback("Imaginea a fost încărcată, dar nu s-a putut salva în fișa clientului: " + updateError.message); return; }
+  feedback("Fotografia clientului a fost actualizată.");
+  await loadClients();
+});
 
 db.auth.onAuthStateChange((event,session)=>{
   if(event==="SIGNED_OUT" || !session) location.replace("index.html");
