@@ -21,7 +21,7 @@
   "smart": {
     "enabled": true,
     "pausedUntil": "",
-    "maxPerSession": 1,
+    "maxPerSession": 2,
     "popups": [
       {
         "key": "acoperisuri",
@@ -83,7 +83,7 @@
   },
   "meta": {
     "version": 1,
-    "updated": "2026-11-19T22:04:41.855Z"
+    "updated": "2026-11-19T22:16:20.778Z"
   },
   "prices": {
     "roof": 1150,
