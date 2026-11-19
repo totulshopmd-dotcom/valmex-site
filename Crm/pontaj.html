@@ -140,7 +140,7 @@ function renderMain(){
  $("pauseTotal").textContent=active?shortDuration(pauseMsFor(active.id)):shortDuration(today.reduce((n,s)=>n+pauseMsFor(s.id),0));
  $("sessionState").textContent=!active?"Fără sesiune activă":currentPause(active)?"În pauză":"Program activ";
  $("sessionState").className="state "+(active?(currentPause(active)?"pause":"work"):"");
- $("startBtn").disabled=!!active;$("pauseBtn").disabled=!active||!!currentPause(active);$("resumeBtn").disabled=!active||!currentPause(active);$("endBtn").disabled=!active;
+
  updateClock();
 }
 async function refresh(){
@@ -159,7 +159,7 @@ async function refresh(){
  sessions=sr.data||[];const ids=new Set(sessions.map(s=>s.id));pauses=(pr.data||[]).filter(x=>ids.has(x.work_session_id));corrections=cr.data||[];
  active=sessions.find(s=>!s.ended_at)||null;
  renderMain();renderMine();renderCorrections();await loadCorrectionSelect();
- startActivityTracker();if(trackerCanRun()){await loadPendingActivity();if(!idleEvent)setActivityText("Monitorizare activă în CRM. Prag: 20 minute.")}else setActivityText(active?"Trackerul este suspendat pe durata pauzei oficiale.":"Trackerul pornește automat la începutul sesiunii de lucru.");
+ startActivityTracker();lastCrmInteraction=Date.now();if(!active&&inWorkSchedule())await autoStartIfNeeded();
  if(isAdmin)await loadAdmin();
  say("Pontaj încărcat.");
 }
