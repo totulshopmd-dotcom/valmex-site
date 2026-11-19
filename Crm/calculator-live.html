@@ -617,6 +617,31 @@ const CRM_STORAGE_KEY='sb-qejnbbzhpvfjeqzwotwt-auth-token';
 let crmDb=null, crmSaveResult=null, crmPdfUploaded=false, crmSaveBusy=false;
 function crmStorage(){return localStorage.getItem(CRM_STORAGE_KEY)?localStorage:(sessionStorage.getItem(CRM_STORAGE_KEY)?sessionStorage:null)}
 function crmClient(){const storage=crmStorage();if(!storage)return null;return window.supabase.createClient(CRM_SUPABASE_URL,CRM_SUPABASE_KEY,{auth:{storage,storageKey:CRM_STORAGE_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})}
+let crmAccess={admin:false,calculator:false,internalCosts:false,internalProfit:false,ready:false};
+async function initializeCrmAccess(){
+ if(!crmDb)crmDb=crmClient();
+ if(!crmDb)throw new Error('Sesiunea CRM nu a fost găsită. Autentifică-te pentru a utiliza calculatorul.');
+ const {data:{session},error}=await crmDb.auth.getSession();
+ if(error||!session)throw new Error('Autentificarea CRM este necesară.');
+ const {data:profile,error:profileError}=await crmDb.from('profiles').select('id,role,active').eq('id',session.user.id).maybeSingle();
+ if(profileError||!profile||profile.active!==true)throw new Error('Contul CRM nu este activ.');
+ crmAccess.admin=profile.role==='administrator';
+ if(crmAccess.admin){crmAccess.calculator=true;crmAccess.internalCosts=true;crmAccess.internalProfit=true;}
+ else{
+  const {data:permissions,error:permissionError}=await crmDb.from('employee_permissions').select('permission_key').eq('employee_id',session.user.id).eq('granted',true);
+  if(permissionError)throw new Error('Nu s-au putut verifica permisiunile contului.');
+  const keys=new Set((permissions||[]).map(x=>x.permission_key));
+  crmAccess.calculator=keys.has('calculator.access');
+  crmAccess.internalCosts=keys.has('quotes.internal_costs');
+  crmAccess.internalProfit=keys.has('quotes.internal_profit');
+ }
+ crmAccess.ready=true;
+ const settingsButton=$('settingsBtn');
+ if(settingsButton&&!crmAccess.internalCosts)settingsButton.classList.add('hidden');
+ if(!crmAccess.calculator)throw new Error('Contul nu are permisiunea Calculator LIVE (calculator.access). Solicită acces administratorului.');
+}
+function requireInternalCosts(){if(!crmAccess.ready||!crmAccess.internalCosts){alert('Nu ai permisiunea de a consulta costurile interne VALMEX.');return false;}return true;}
+function requireInternalProfit(){if(!crmAccess.ready||!crmAccess.internalProfit){alert('Nu ai permisiunea de a consulta diferența financiară internă.');return false;}return true;}
 function crmFeedback(msg){const el=$('crmFeedback');if(el)el.textContent=msg}
 function splitClientName(full){const parts=String(full||'').trim().split(/\s+/).filter(Boolean);return {first_name:parts.shift()||'',last_name:parts.join(' ')||'—'}}
 function crmWorkType(){return state.type==='turnkey'?'Acoperiș la cheie':state.type==='install'?'Montare acoperiș':'Doar materiale'}
@@ -699,6 +724,7 @@ $('settingsBtn').onclick=renderSettings;
 
 $('archiveBtn').onclick=showArchive;
 function makePdf(kind,shouldPrint=true){
+ if(kind==='internal'&&!requireInternalCosts())return;
  const c=costs(),w=wood();
  let title=kind==='client'?'OFERTĂ VALMEX – '+(state.type==='turnkey'?'ACOPERIȘ LA CHEIE':state.type==='install'?'MONTARE ACOPERIȘ':'MATERIALE'):'CALCUL INTERN VALMEX – CONFIDENȚIAL';
  let body=`<h1>${title}</h1><p><strong><span style="color:#171717">VAL</span><span style="color:#e30613">MEX</span></strong> · www.valmex.md · +373 780 26212</p><p>Data: ${new Date().toLocaleDateString('ro-RO')}</p><div class="summary">
@@ -749,12 +775,11 @@ reminderTimer=setInterval(checkReminders,15000);
 // Reia verificarea imediat după revenirea în filă sau redeschiderea browserului.
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});
 window.addEventListener('focus',checkReminders);
-try{checkReminders();render();}
-catch(initError){
+initializeCrmAccess().then(()=>{checkReminders();render();}).catch(initError=>{
  console.error('VALMEX LIVE – eroare la inițializare:',initError);
  const screen=$('screen');
  if(screen){screen.classList.remove('hidden');$('result').classList.add('hidden');$('archive').classList.add('hidden');$('nav').classList.remove('hidden');screen.innerHTML='<div class="panel"><h2>Calculatorul nu s-a putut încărca</h2><p class="note">Eroare: '+esc(initError&&initError.message?initError.message:String(initError))+'</p><button class="option" onclick="location.reload()">Reîncarcă calculatorul</button></div>';}
-}
+});
 
 // OneSignal Web Push – conectează abonamentul browserului cu utilizatorul CRM.
 window.OneSignalDeferred = window.OneSignalDeferred || [];
