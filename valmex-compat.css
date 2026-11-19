@@ -197,3 +197,22 @@ html:not(.dk) .theme{display:none!important}
 @media(prefers-reduced-motion:reduce){
  .hero-slide,.hero-slide.is-active,.hero-bg-crossfade{transition:none;transform:none;animation:none}
 }
+
+
+/* VALMEX footer – fundal inchis pentru contrastul logo-ului si lizibilitate */
+html:not(.dk) footer.site-footer{
+  background:#17191f!important;
+  color:#f1f2f4!important;
+  border-top:1px solid #30343d!important;
+}
+html:not(.dk) footer.site-footer .footer-brand p,
+html:not(.dk) footer.site-footer .footer-links a,
+html:not(.dk) footer.site-footer .footer-links span,
+html:not(.dk) footer.site-footer .footer-bottom,
+html:not(.dk) footer.site-footer .footer-bottom a{
+  color:#c4c8d0!important;
+}
+html:not(.dk) footer.site-footer .footer-title{color:#ff3340!important}
+html:not(.dk) footer.site-footer .footer-links a:hover,
+html:not(.dk) footer.site-footer .footer-bottom a:hover{color:#fff!important}
+html:not(.dk) footer.site-footer .footer-bottom{border-top:1px solid #343740!important}
