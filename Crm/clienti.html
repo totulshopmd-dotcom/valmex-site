@@ -184,7 +184,7 @@ async function loadClients() {
   $("clientRows").innerHTML = '<tr><td colspan="8" class="empty">Se încarcă...</td></tr>';
   const { data, error } = await db.from("clients")
     .select("id,client_code,first_name,last_name,phone,email,locality,work_type,status,assigned_to,created_at")
-    .order("created_at",{ascending:false});
+    .is("deleted_at",null).order("created_at",{ascending:false});
   if (error) {
     $("clientRows").innerHTML = '<tr><td colspan="8" class="empty">Nu s-au putut încărca clienții.</td></tr>';
     feedback("Eroare la încărcarea clienților: " + error.message);
@@ -255,15 +255,14 @@ async function deleteClient(id) {
   const btn = [...$("clientRows").querySelectorAll("[data-delete]")].find(x => x.dataset.delete === id);
   if (btn) { btn.disabled = true; btn.textContent = "Se șterge..."; }
 
-  const { data: deleted, error } = await db.from("clients").delete().eq("id", id).select("id").maybeSingle();
-  if (error || !deleted) {
-    const detail = error?.code === "23503" ? "Clientul are proiecte, oferte, contracte sau alte înregistrări asociate. Păstrează istoricul; clientul nu poate fi șters cât timp aceste înregistrări există." : error?.code === "42501" ? "Contul nu are dreptul de ștergere în baza de date. Verifică rolul administratorului și politica RLS." : error?.message || "Clientul nu a fost găsit sau ștergerea nu este permisă.";
-    feedback(detail);
+    const { error } = await db.rpc("archive_crm_record", { p_type: "client", p_id: id });
+  if (error) {
+    feedback("Clientul nu a putut fi mutat în Coș: " + error.message);
     if (btn) { btn.disabled = false; btn.textContent = "Șterge"; }
     return;
   }
 
-  feedback("Clientul " + (client.client_code || fullName) + " a fost șters.");
+  feedback("Clientul " + (client.client_code || fullName) + " a fost mutat în Coș. Îl poți restaura din Dashboard.");
   await loadClients();
 }
 
