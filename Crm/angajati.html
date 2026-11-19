@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111"><title>VALMEX CRM – Angajați</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f4f6;color:#202124;font-family:Arial,sans-serif}
+header{background:#151515;color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-size:25px;font-weight:900}.logo span{color:#e30613}a{color:inherit}
+main{max-width:1100px;margin:28px auto;padding:0 16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:25px;margin:0 0 6px}.muted{color:#777;font-size:13px}
+.panel{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:20px;margin-top:20px}
+.panel h2{font-size:17px;margin:0 0 16px}form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+label{display:block;font-size:12px;color:#555;margin-bottom:6px}input{width:100%;padding:12px;border:1px solid #d7d7d7;border-radius:8px;font:inherit}
+.full{grid-column:1/-1}button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:9px 12px}
+button:disabled{opacity:.55;cursor:wait}.primary{background:#e30613;color:white;font-weight:bold}.secondary{background:#eee;color:#222}
+.action{font-size:12px;margin:2px;white-space:nowrap}.suspend{background:#fff0e6;color:#9a3412}.activate{background:#e7f6ec;color:#18794e}.password{background:#ecebff;color:#4036a8}
+#message,#passwordMessage{font-size:13px;margin-top:12px;white-space:pre-wrap;line-height:1.5}.error{color:#b42318}.ok{color:#18794e}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:12px 9px;border-bottom:1px solid #eee;overflow-wrap:anywhere;vertical-align:middle}
+th{color:#777}.pill{padding:4px 8px;border-radius:20px;background:#eee;font-size:11px}.on{background:#e7f6ec;color:#18794e}.off{background:#fdecec;color:#b42318}
+.empty{padding:18px;color:#777}.notice{background:#fff7df;border:1px solid #f0dfaa;padding:12px;border-radius:8px;margin-top:14px;font-size:13px}
+#passwordPanel{display:none}.password-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:650px){form{grid-template-columns:1fr}.full{grid-column:auto}.panel{padding:15px}table{min-width:760px}}
+a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;height:38px;border:1px solid #e5e7eb;border-radius:11px;text-decoration:none;font-size:20px;font-weight:700;color:#252a33;background:#fff}a[href="dashboard.html"]:hover{border-color:#e30613;color:#e30613}</style></head>
+<body>
+<header><div class="logo">VAL<span>MEX</span> CRM</div></header>
+<main>
+<div class="top"><div><h1>Angajați</h1><div class="muted">Administrarea conturilor de acces VALMEX</div></div><button class="secondary" id="reload" type="button">Reîncarcă lista</button></div>
+
+<section class="panel">
+<h2>Adaugă angajat</h2>
+<form id="employeeForm">
+<div><label for="fullName">Nume și prenume *</label><input id="fullName" autocomplete="name" required></div>
+<div><label for="email">Email *</label><input id="email" type="email" autocomplete="email" required></div>
+<div><label for="phone">Telefon</label><input id="phone" type="tel" autocomplete="tel"></div>
+<div><label for="position">Funcția</label><input id="position" placeholder="Ex.: Montator, responsabil lucrări"></div>
+<div class="full"><label for="password">Parola inițială * (minimum 8 caractere)</label><input id="password" type="password" minlength="8" autocomplete="new-password" required></div>
+<div class="full"><button class="primary" id="createBtn" type="submit">Creează cont angajat</button></div>
+</form>
+<div id="message" role="status" aria-live="polite"></div>
+<div class="notice">Conturile noi primesc rolul employee. Suspendarea blochează autentificarea prin Supabase Auth. Resetarea parolei stabilește o parolă temporară comunicată separat angajatului.</div>
+</section>
+
+<section class="panel" id="passwordPanel">
+<h2>Resetare parolă – <span id="passwordEmployeeName"></span></h2>
+<div class="muted">Introdu parola temporară. Minimum 8 caractere.</div>
+<div style="margin-top:12px"><label for="temporaryPassword">Parolă temporară</label><input id="temporaryPassword" type="password" minlength="8" autocomplete="new-password"></div>
+<div class="password-actions"><button class="primary" id="savePassword" type="button">Salvează parola nouă</button><button class="secondary" id="cancelPassword" type="button">Anulează</button></div>
+<div id="passwordMessage" role="status" aria-live="polite"></div>
+</section>
+
+<section class="panel">
+<h2>Conturi existente</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Nume</th><th>ID utilizator</th><th>Rol</th><th>Statut</th><th>Administrare</th></tr></thead>
+<tbody id="employees"><tr><td colspan="5" class="empty">Se inițializează...</td></tr></tbody>
+</table></div>
+</section>
+</main>
+
+<script>
+(() => {
+  const SUPABASE_URL = "https://qejnbbzhpvfjeqzwotwt.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov";
+  const $ = id => document.getElementById(id);
+  const tbody = $("employees");
+  let selectedEmployee = null;
+
+  function showMessage(text, type = "error") {
+    $("message").textContent = text;
+    $("message").className = type;
+  }
+  function showPasswordMessage(text, type = "error") {
+    $("passwordMessage").textContent = text;
+    $("passwordMessage").className = type;
+  }
+  function esc(v) {
+    return String(v ?? "").replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+  function timeout(promise, label, ms = 15000) {
+    return Promise.race([promise,new Promise((_,reject)=>setTimeout(
+      ()=>reject(new Error(label+" a depășit "+(ms/1000)+" secunde.")),ms
+    ))]);
+  }
+
+  if (!window.supabase?.createClient) {
+    tbody.innerHTML="<tr><td colspan='5' class='empty'>Biblioteca Supabase nu s-a încărcat.</td></tr>";
+    showMessage("Nu s-a încărcat biblioteca Supabase din CDN.");
+    return;
+  }
+
+  const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+  async function requireAdmin() {
+    const {data:{session},error}=await timeout(db.auth.getSession(),"Verificarea sesiunii");
+    if(error) throw new Error("Sesiune: "+error.message);
+    if(!session){location.replace("index.html");return false;}
+
+    const {data:p,error:e}=await timeout(
+      db.from("profiles").select("role,active").eq("id",session.user.id).maybeSingle(),
+      "Verificarea profilului"
+    );
+    if(e) throw new Error("Profil administrator: "+e.message);
+    if(!p||p.active!==true||String(p.role).toLowerCase()!=="administrator"){
+      document.querySelector("main").innerHTML="<section class='panel'><h2>Acces restricționat</h2><p>Modul disponibil doar administratorului.</p><a href='dashboard.html'>Înapoi</a></section>";
+      return false;
+    }
+    return true;
+  }
+
+  async function invokeAdmin(payload,label) {
+    const {data,error}=await timeout(
+      db.functions.invoke("admin-manage-employees",{body:payload}),label,25000
+    );
+    if(error){
+      let detail=error.message||String(error);
+      if(error.context&&typeof error.context.clone==="function"){
+        try{
+          const raw=await error.context.clone().text();
+          if(raw){
+            try{const parsed=JSON.parse(raw);detail=parsed.error||parsed.message||raw;}
+            catch{detail=raw;}
+          }
+        }catch{}
+      }
+      throw new Error(detail);
+    }
+    if(data?.error) throw new Error(data.error);
+    if(!data?.success) throw new Error("Răspuns neașteptat de la server: "+JSON.stringify(data));
+    return data;
+  }
+
+  async function loadEmployees() {
+    $("reload").disabled=true;
+    tbody.innerHTML="<tr><td colspan='5' class='empty'>Se încarcă lista...</td></tr>";
+    try{
+      const {data,error}=await timeout(
+        db.from("profiles").select("id,full_name,role,active,created_at").order("full_name",{ascending:true}),
+        "Citirea listei angajaților"
+      );
+      if(error) throw new Error(error.message+" (cod: "+(error.code||"necunoscut")+")");
+      const employees=(data||[]).filter(x=>String(x.role||"").toLowerCase()==="employee");
+      tbody.innerHTML=employees.length?employees.map(x=>`
+        <tr>
+          <td><strong>${esc(x.full_name||"Fără nume")}</strong></td>
+          <td>${esc(x.id)}</td>
+          <td>${esc(x.role)}</td>
+          <td><span class="pill ${x.active?"on":"off"}">${x.active?"Activ":"Suspendat"}</span></td>
+          <td>
+            <button type="button" class="action ${x.active?"suspend":"activate"}"
+              data-action="status" data-id="${esc(x.id)}"
+              data-name="${esc(x.full_name||"angajat")}" data-active="${x.active?"true":"false"}">
+              ${x.active?"Suspendă":"Reactivează"}
+            </button>
+            <button type="button" class="action password" data-action="password"
+              data-id="${esc(x.id)}" data-name="${esc(x.full_name||"angajat")}">Resetare parolă</button>
+          </td>
+        </tr>`).join(""):"<tr><td colspan='5' class='empty'>Nu există încă angajați.</td></tr>";
+    }catch(err){
+      tbody.innerHTML=`<tr><td colspan="5" class="empty">Eroare la încărcare: ${esc(err.message||err)}</td></tr>`;
+    }finally{$("reload").disabled=false;}
+  }
+
+  $("reload").addEventListener("click",loadEmployees);
+
+  $("employeeForm").addEventListener("submit",async e=>{
+    e.preventDefault();showMessage("");
+    const payload={
+      action:"create",
+      full_name:$("fullName").value.trim(),
+      email:$("email").value.trim(),
+      password:$("password").value,
+      phone:$("phone").value.trim(),
+      position:$("position").value.trim()
+    };
+    if(!payload.full_name||!payload.email||payload.password.length<8){
+      showMessage("Completează numele, emailul și o parolă de minimum 8 caractere.");return;
+    }
+    const btn=$("createBtn");btn.disabled=true;btn.textContent="Se creează contul...";
+    try{
+      await invokeAdmin(payload,"Crearea contului");
+      showMessage("Contul angajatului a fost creat cu succes.","ok");
+      $("employeeForm").reset();await loadEmployees();
+    }catch(err){
+      showMessage("Contul nu a fost creat. Detalii: "+(err.message||err));
+    }finally{btn.disabled=false;btn.textContent="Creează cont angajat";}
+  });
+
+  tbody.addEventListener("click",async e=>{
+    const btn=e.target.closest("button[data-action]");
+    if(!btn)return;
+    const action=btn.dataset.action,userId=btn.dataset.id,name=btn.dataset.name||"angajat";
+
+    if(action==="status"){
+      const nextActive=btn.dataset.active!=="true";
+      const verb=nextActive?"reactivezi":"suspendi";
+      if(!confirm(`Confirmi că dorești să ${verb} contul ${name}?`))return;
+      btn.disabled=true;
+      try{
+        const result=await invokeAdmin({action:"set_status",user_id:userId,active:nextActive},"Modificarea statutului");
+        showMessage(result.message||"Statutul contului a fost actualizat.","ok");
+        await loadEmployees();
+      }catch(err){
+        showMessage("Statutul nu a fost modificat. Detalii: "+(err.message||err));
+        btn.disabled=false;
+      }
+    }
+
+    if(action==="password"){
+      selectedEmployee={id:userId,name};
+      $("passwordEmployeeName").textContent=name;
+      $("temporaryPassword").value="";
+      showPasswordMessage("");
+      $("passwordPanel").style.display="block";
+      $("temporaryPassword").focus();
+      $("passwordPanel").scrollIntoView({behavior:"smooth",block:"center"});
+    }
+  });
+
+  $("cancelPassword").addEventListener("click",()=>{
+    selectedEmployee=null;
+    $("passwordPanel").style.display="none";
+    $("temporaryPassword").value="";
+    showPasswordMessage("");
+  });
+
+  $("savePassword").addEventListener("click",async()=>{
+    if(!selectedEmployee)return;
+    const newPassword=$("temporaryPassword").value;
+    if(newPassword.length<8){
+      showPasswordMessage("Parola temporară trebuie să aibă minimum 8 caractere.");return;
+    }
+    const btn=$("savePassword");btn.disabled=true;btn.textContent="Se salvează...";
+    try{
+      const result=await invokeAdmin({
+        action:"reset_password",user_id:selectedEmployee.id,new_password:newPassword
+      },"Resetarea parolei");
+      showPasswordMessage(result.message||"Parola a fost schimbată. Comunică parola temporară angajatului.","ok");
+      $("temporaryPassword").value="";
+      setTimeout(()=>{
+        $("passwordPanel").style.display="none";
+        selectedEmployee=null;
+      },1800);
+    }catch(err){
+      showPasswordMessage("Parola nu a fost schimbată. Detalii: "+(err.message||err));
+    }finally{
+      btn.disabled=false;btn.textContent="Salvează parola nouă";
+    }
+  });
+
+  (async()=>{
+    try{
+      const ok=await requireAdmin();
+      if(ok)await loadEmployees();
+    }catch(err){
+      tbody.innerHTML=`<tr><td colspan="5" class="empty">Eroare la inițializare: ${esc(err.message||err)}</td></tr>`;
+      showMessage("Nu s-a putut inițializa pagina: "+(err.message||err));
+    }
+  })();
+})();
+</script>
+<script src="components/persistent-nav.js"></script>
+</body></html>

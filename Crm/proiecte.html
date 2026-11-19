@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111111">
+<title>VALMEX CRM – Proiecte</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--red:#e30613;--ink:#171717;--muted:#777;--line:#e8e8e8;--bg:#f4f5f7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#202124;font-family:Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.top{height:64px;background:#171717;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+.brand{font-size:23px;font-weight:900;letter-spacing:-1px}.brand span{color:var(--red)}.top a{color:#fff;text-decoration:none;font-size:13px}
+.wrap{max-width:1250px;margin:0 auto;padding:26px 20px}.head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:20px}
+h1{font-size:25px;margin:0 0 6px}.sub{font-size:13px;color:var(--muted)}
+.btn{border:0;border-radius:8px;padding:11px 16px;font-weight:700}.primary{background:var(--red);color:#fff}.secondary{background:#fff;border:1px solid var(--line);color:#333}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);padding:14px;border-radius:12px;margin-bottom:14px}
+.toolbar input,.toolbar select{min-width:180px;flex:1}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d8d8d8;border-radius:8px;background:#fff;color:#222;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--red)}
+.tablebox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:920px}th,td{text-align:left;padding:13px 14px;border-bottom:1px solid #eee;font-size:13px;vertical-align:middle}
+th{background:#fafafa;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:.4px}tr:last-child td{border-bottom:0}
+.code{font-weight:700;color:var(--red);white-space:nowrap}.name{font-weight:700}.small{color:#777;font-size:12px;margin-top:4px}
+.status{display:inline-block;padding:5px 8px;border-radius:20px;background:#f0f0f0;color:#555;font-size:11px}
+.status.planificare{background:#eef5ff;color:#245a9b}.status.in_lucru{background:#fff5df;color:#875900}.status.finalizat{background:#e9f7ed;color:#26743c}.status.suspendat{background:#fff1f1;color:#b0000b}
+.action{border:1px solid #ddd;background:#fff;border-radius:7px;padding:7px 10px;font-size:12px}
+.open-file{display:inline-block;background:#171717;color:#fff;border:1px solid #171717;border-radius:7px;padding:8px 11px;font-size:12px;text-decoration:none;white-space:nowrap;margin-right:5px}
+.open-file:hover{background:var(--red);border-color:var(--red)}
+#feedback{min-height:22px;margin:12px 2px;color:#555;font-size:13px}.empty{padding:35px;text-align:center;color:#777;font-size:14px}
+.overlay{display:none;position:fixed;inset:0;background:#0008;z-index:20;padding:16px;overflow:auto}.overlay.show{display:flex;align-items:center;justify-content:center}
+.modal{width:100%;max-width:700px;background:#fff;border-radius:14px;padding:22px;box-shadow:0 20px 60px #0003;margin:auto}
+.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modalhead h2{font-size:19px;margin:0}
+.close{border:0;background:#eee;border-radius:50%;width:34px;height:34px;font-size:20px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field label{display:block;font-size:12px;color:#555;margin:0 0 6px}.field.full{grid-column:1/-1}
+.formactions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}button:disabled{opacity:.55;cursor:wait}
+@media(max-width:650px){.top{padding:0 15px}.wrap{padding:19px 12px}.head{align-items:flex-start;flex-direction:column}.head .btn{width:100%}.toolbar{padding:10px}.toolbar input,.toolbar select{min-width:100%;flex-basis:100%}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.modal{padding:17px}}
+a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;height:38px;border:1px solid #e5e7eb;border-radius:11px;text-decoration:none;font-size:20px;font-weight:700;color:#252a33;background:#fff}a[href="dashboard.html"]:hover{border-color:#e30613;color:#e30613}</style>
+</head>
+<body>
+<header class="top"><div class="brand">VAL<span>MEX</span> CRM</div></header>
+<main class="wrap">
+  <div class="head"><div><h1>Proiecte</h1><div class="sub">Dosare individuale de lucrări, asociate clienților VALMEX</div></div><button class="btn primary" id="addBtn">＋ Adaugă proiect</button></div>
+  <div class="toolbar">
+    <input id="search" type="search" placeholder="Caută după cod, proiect, client sau localitate...">
+    <select id="statusFilter"><option value="">Toate statusurile</option><option value="planificare">Planificare</option><option value="in_lucru">În lucru</option><option value="finalizat">Finalizat</option><option value="suspendat">Suspendat</option><option value="anulat">Anulat</option></select>
+    <button class="btn secondary" id="refreshBtn">Reîncarcă</button>
+  </div>
+  <div class="tablebox"><div class="table-scroll"><table>
+    <thead><tr><th>Cod proiect</th><th>Proiect</th><th>Client</th><th>Lucrare</th><th>Localitate / adresă</th><th>Responsabil</th><th>Perioadă estimată</th><th>Status</th><th>Acțiuni</th></tr></thead>
+    <tbody id="projectRows"><tr><td colspan="9" class="empty">Se încarcă proiectele...</td></tr></tbody>
+  </table></div></div>
+  <div id="feedback" role="status" aria-live="polite"></div>
+</main>
+<div class="overlay" id="projectOverlay"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modalhead"><h2 id="modalTitle">Adaugă proiect</h2><button class="close" id="closeModal" aria-label="Închide">×</button></div>
+  <form id="projectForm"><input type="hidden" id="projectId">
+    <div class="formgrid">
+      <div class="field full"><label for="clientId">Client *</label><select id="clientId" required><option value="">Selectează clientul</option></select></div>
+      <div class="field full"><label for="title">Denumirea proiectului *</label><input id="title" required maxlength="200" placeholder="Ex.: Acoperiș casă – obiectiv principal"></div>
+      <div class="field"><label for="workType">Tip lucrare</label><select id="workType"><option value="">Selectează</option><option>Acoperiș</option><option>Fațadă</option><option>Pavaj</option><option>Gard / porți</option><option>Alte lucrări</option></select></div>
+      <div class="field"><label for="status">Status</label><select id="status"><option value="planificare">Planificare</option><option value="in_lucru">În lucru</option><option value="finalizat">Finalizat</option><option value="suspendat">Suspendat</option><option value="anulat">Anulat</option></select></div>
+      <div class="field full"><label for="address">Adresa obiectivului</label><input id="address" maxlength="300" placeholder="Localitate, stradă, număr"></div>
+      <div class="field"><label for="startDate">Început estimat</label><input id="startDate" type="date"></div>
+      <div class="field"><label for="endDate">Finalizare estimată</label><input id="endDate" type="date"></div>
+      <div class="field full"><label for="managerId">Responsabil proiect</label><select id="managerId"><option value="">Fără responsabil</option></select></div>
+    </div>
+    <div class="formactions"><button type="button" class="btn secondary" id="cancelBtn">Anulează</button><button type="submit" class="btn primary" id="saveBtn">Salvează proiectul</button></div>
+  </form>
+</section></div>
+<script>
+const SUPABASE_URL="https://qejnbbzhpvfjeqzwotwt.supabase.co";
+const SUPABASE_KEY="sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov";
+const STORAGE_KEY="sb-qejnbbzhpvfjeqzwotwt-auth-token";
+const storage=localStorage.getItem(STORAGE_KEY)?localStorage:(sessionStorage.getItem(STORAGE_KEY)?sessionStorage:null);
+if(!storage) location.replace("index.html");
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{storage,storageKey:STORAGE_KEY,persistSession:true,autoRefreshToken:true}});
+const $=id=>document.getElementById(id);
+const escapeHtml=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const statusNames={planificare:"Planificare",in_lucru:"În lucru",finalizat:"Finalizat",suspendat:"Suspendat",anulat:"Anulat"};
+let currentUser=null,currentProfile=null,projects=[],clients=[],profiles=[];
+const feedback=t=>$("feedback").textContent=t;
+
+async function initialize(){
+ const {data:{session},error}=await db.auth.getSession();
+ if(error||!session){location.replace("index.html");return;}
+ currentUser=session.user;
+ const {data:profile,error:pe}=await db.from("profiles").select("id,full_name,role,active").eq("id",currentUser.id).maybeSingle();
+ if(pe||!profile||!profile.active){await db.auth.signOut();location.replace("index.html");return;}
+ currentProfile=profile;
+ const canCreate=["administrator","vanzari","responsabil_santier"].includes(profile.role);
+ if(!canCreate){$("addBtn").disabled=true;$("addBtn").title="Rolul contului nu permite crearea proiectelor.";}
+ await Promise.all([loadClients(),loadProfiles()]);
+ await loadProjects();
+}
+async function loadClients(){
+ const {data,error}=await db.from("clients").select("id,client_code,first_name,last_name,phone,locality,address").order("created_at",{ascending:false});
+ if(error){feedback("Nu s-a putut încărca lista clienților: "+error.message);return;}
+ clients=data||[];
+ $("clientId").innerHTML='<option value="">Selectează clientul</option>'+clients.map(c=>`<option value="${escapeHtml(c.id)}">${escapeHtml(c.client_code)} — ${escapeHtml(c.first_name)} ${escapeHtml(c.last_name)} (${escapeHtml(c.phone)})</option>`).join("");
+}
+async function loadProfiles(){
+ const {data,error}=await db.from("profiles").select("id,full_name,role,active").eq("active",true).order("full_name");
+ if(error){feedback("Nu s-au putut încărca responsabilii: "+error.message);return;}
+ profiles=data||[];
+ $("managerId").innerHTML='<option value="">Fără responsabil</option>'+profiles.map(p=>`<option value="${escapeHtml(p.id)}">${escapeHtml(p.full_name)}</option>`).join("");
+}
+async function loadProjects(){
+ $("projectRows").innerHTML='<tr><td colspan="9" class="empty">Se încarcă...</td></tr>';
+ const {data,error}=await db.from("projects").select("id,project_code,client_id,title,work_type,status,address,estimated_start,estimated_end,manager_id,created_at").order("created_at",{ascending:false});
+ if(error){$("projectRows").innerHTML='<tr><td colspan="9" class="empty">Nu s-au putut încărca proiectele.</td></tr>';feedback("Eroare la încărcare: "+error.message);return;}
+ projects=data||[];renderProjects();feedback(`${projects.length} proiect(e) înregistrate.`);
+}
+function dateText(s){if(!s)return "—";const d=new Date(s+"T00:00:00");return d.toLocaleDateString("ro-RO");}
+function renderProjects(){
+ const q=$("search").value.trim().toLocaleLowerCase("ro"),st=$("statusFilter").value;
+ const filtered=projects.filter(p=>{
+  const c=clients.find(x=>x.id===p.client_id);
+  const m=profiles.find(x=>x.id===p.manager_id);
+  const hay=[p.project_code,p.title,p.work_type,p.address,c?.client_code,c?.first_name,c?.last_name,c?.phone,c?.locality,m?.full_name].join(" ").toLocaleLowerCase("ro");
+  return (!q||hay.includes(q))&&(!st||p.status===st);
+ });
+ if(!filtered.length){$("projectRows").innerHTML='<tr><td colspan="9" class="empty">Nu există proiecte care corespund căutării.</td></tr>';return;}
+ const canEdit=["administrator","vanzari","responsabil_santier","montaj"].includes(currentProfile.role);
+ const canDelete=currentProfile.role==="administrator";
+ $("projectRows").innerHTML=filtered.map(p=>{
+  const c=clients.find(x=>x.id===p.client_id),m=profiles.find(x=>x.id===p.manager_id);
+  const period=(p.estimated_start||p.estimated_end)?`${dateText(p.estimated_start)} – ${dateText(p.estimated_end)}`:"—";
+  return `<tr>
+<td class="code">${escapeHtml(p.project_code)}</td>
+<td><div class="name">${escapeHtml(p.title)}</div><div class="small">${escapeHtml(p.work_type||"Lucrare nespecificată")}</div></td>
+<td><div class="name">${escapeHtml(c?`${c.first_name} ${c.last_name}`:"Client indisponibil")}</div><div class="small">${escapeHtml(c?.client_code||"")}</div></td>
+<td>${escapeHtml(p.work_type||"—")}</td>
+<td>${escapeHtml(p.address||c?.locality||"—")}</td>
+<td>${escapeHtml(m?.full_name||"—")}</td>
+<td>${escapeHtml(period)}</td>
+<td><span class="status ${escapeHtml(p.status)}">${escapeHtml(statusNames[p.status]||p.status)}</span></td>
+<td>
+<a class="open-file" href="fisa-proiect.html?id=${encodeURIComponent(p.id)}">Deschide fișa</a>
+${canEdit?`<button class="action" data-edit="${escapeHtml(p.id)}">Editează</button>`:""}
+${canDelete?`<button class="action" data-delete="${escapeHtml(p.id)}" style="border-color:#e30613;color:#b0000b">Șterge</button>`:""}
+</td>
+</tr>`;
+ }).join("");
+ $("projectRows").querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>editProject(b.dataset.edit)));
+ $("projectRows").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteProject(b.dataset.delete)));
+}
+
+async function deleteProject(id){
+ if(currentProfile?.role!=="administrator"){feedback("Doar administratorul poate șterge proiecte.");return;}
+ const p=projects.find(x=>x.id===id);if(!p)return;
+ const typed=prompt("Pentru confirmare, scrie codul proiectului "+p.project_code+":");
+ if(typed===null)return;
+ if(typed.trim()!==p.project_code){feedback("Codul introdus nu corespunde. Proiectul nu a fost șters.");return;}
+ if(!confirm("Confirmi ștergerea proiectului "+p.project_code+" – "+p.title+"? Operațiunea poate fi ireversibilă."))return;
+ const btn=[...$("projectRows").querySelectorAll("[data-delete]")].find(x=>x.dataset.delete===id);
+ if(btn){btn.disabled=true;btn.textContent="Se șterge...";}
+ const {error}=await db.from("projects").delete().eq("id",id);
+ if(error){
+  feedback("Proiectul nu a fost șters: "+error.message+". Verifică politica RLS și dacă există înregistrări asociate care împiedică ștergerea.");
+  if(btn){btn.disabled=false;btn.textContent="Șterge";}
+  return;
+ }
+ feedback("Proiectul "+p.project_code+" a fost șters.");
+ await loadProjects();
+}
+function openModal(p=null){
+ $("projectForm").reset();$("projectId").value=p?.id||"";
+ $("modalTitle").textContent=p?"Editează proiect":"Adaugă proiect";
+ $("saveBtn").textContent=p?"Salvează modificările":"Salvează proiectul";
+ if(p){$("clientId").value=p.client_id;$("title").value=p.title||"";$("workType").value=p.work_type||"";$("status").value=p.status||"planificare";$("address").value=p.address||"";$("startDate").value=p.estimated_start||"";$("endDate").value=p.estimated_end||"";$("managerId").value=p.manager_id||"";}
+ else{$("status").value="planificare";if(profiles.some(x=>x.id===currentUser.id))$("managerId").value=currentUser.id;}
+ $("projectOverlay").classList.add("show");
+}
+function closeModal(){$("projectOverlay").classList.remove("show");}
+function editProject(id){const p=projects.find(x=>x.id===id);if(p)openModal(p);}
+async function nextProjectCode(){
+ const {data,error}=await db.from("projects").select("project_code");
+ if(error)throw new Error("Nu pot determina codul proiectului: "+error.message);
+ const max=(data||[]).reduce((n,r)=>{const m=/^PR-(\d+)$/.exec(r.project_code||"");return m?Math.max(n,Number(m[1])):n;},0);
+ return "PR-"+String(max+1).padStart(4,"0");
+}
+$("projectForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const id=$("projectId").value;
+ const canCreate=["administrator","vanzari","responsabil_santier"].includes(currentProfile.role);
+ const canEdit=["administrator","vanzari","responsabil_santier","montaj"].includes(currentProfile.role);
+ if((id&&!canEdit)||(!id&&!canCreate)){feedback("Rolul contului nu permite această operațiune.");return;}
+ const payload={client_id:$("clientId").value,title:$("title").value.trim(),work_type:$("workType").value||null,status:$("status").value,address:$("address").value.trim()||null,estimated_start:$("startDate").value||null,estimated_end:$("endDate").value||null,manager_id:$("managerId").value||null};
+ if(!payload.client_id||!payload.title){feedback("Selectează clientul și completează denumirea proiectului.");return;}
+ if(payload.estimated_start&&payload.estimated_end&&payload.estimated_end<payload.estimated_start){feedback("Data estimată de finalizare nu poate fi înaintea datei de început.");return;}
+ $("saveBtn").disabled=true;$("saveBtn").textContent="Se salvează...";
+ try{
+  if(id){const {error}=await db.from("projects").update(payload).eq("id",id);if(error)throw error;feedback("Proiectul a fost actualizat.");}
+  else{
+   let saved=false,lastError=null;
+   for(let i=0;i<3&&!saved;i++){
+    const project_code=await nextProjectCode();
+    const {error}=await db.from("projects").insert({...payload,project_code,created_by:currentUser.id});
+    if(!error)saved=true;else{lastError=error;if(error.code!=="23505")throw error;}
+   }
+   if(!saved)throw lastError||new Error("Nu s-a putut atribui codul proiectului.");
+   feedback("Proiectul a fost creat cu succes.");
+  }
+  closeModal();await loadProjects();
+ }catch(err){feedback("Eroare la salvare: "+(err.message||"verifică datele și permisiunile."));}
+ finally{$("saveBtn").disabled=false;$("saveBtn").textContent=id?"Salvează modificările":"Salvează proiectul";}
+});
+$("addBtn").addEventListener("click",()=>{if(["administrator","vanzari","responsabil_santier"].includes(currentProfile.role))openModal();});
+$("closeModal").addEventListener("click",closeModal);$("cancelBtn").addEventListener("click",closeModal);
+$("projectOverlay").addEventListener("click",e=>{if(e.target===$("projectOverlay"))closeModal();});
+$("search").addEventListener("input",renderProjects);$("statusFilter").addEventListener("change",renderProjects);$("refreshBtn").addEventListener("click",loadProjects);
+db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)location.replace("index.html");});
+if(storage)initialize();
+</script>
+<script src="components/persistent-nav.js"></script>
+</body>
+</html>

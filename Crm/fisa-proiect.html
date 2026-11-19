@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111111">
+<title>VALMEX CRM – Fișa proiectului</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--red:#e30613;--ink:#171717;--muted:#777;--line:#e7e7e7;--bg:#f4f5f7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#202124;font-family:Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.top{background:var(--ink);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-size:22px;font-weight:900}.brand span{color:var(--red)}.top a{color:#fff;text-decoration:none}
+.wrap{max-width:1300px;margin:auto;padding:22px 16px}.heading{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 14px}.muted{color:var(--muted);font-size:13px}
+.panel,.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px;margin-top:15px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}.stat b{display:block;font-size:25px;margin-top:7px}
+.tabs{display:flex;gap:7px;overflow:auto;margin:18px 0 0;padding-bottom:4px}.tab{white-space:nowrap;background:#fff;border:1px solid var(--line);border-radius:8px;padding:11px 14px}.tab.active{background:#171717;color:#fff}
+.section{display:none}.section.active{display:block}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}
+.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:700}.red{background:var(--red);color:white}.light{background:#fff;border:1px solid var(--line)}
+.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:680px}th,td{text-align:left;padding:11px;border-bottom:1px solid #eee;font-size:13px;vertical-align:top}th{font-size:11px;color:#777;background:#fafafa;text-transform:uppercase}
+.empty{text-align:center;color:#888;padding:26px}.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.field label{display:block;font-size:12px;color:#666;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #d8d8d8;border-radius:8px;background:#fff}.field textarea{min-height:80px;resize:vertical}
+.status{padding:5px 9px;border-radius:20px;background:#edf4ff;font-size:11px}.notice{padding:10px;background:#fff6df;border-radius:8px;color:#765500;font-size:13px;margin:10px 0}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:12px;z-index:10}.modal.show{display:flex}.dialog{background:white;border-radius:14px;width:min(850px,100%);max-height:92vh;overflow:auto;padding:20px}.dialoghead{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.dialoghead h2{margin:0}.close{border:0;background:#eee;border-radius:50%;width:36px;height:36px;font-size:20px}.formactions{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}
+#feedback{min-height:22px;margin-top:12px;font-size:13px;color:#555}.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}.photo{border:1px solid var(--line);border-radius:9px;overflow:hidden;background:white}.photo img{width:100%;height:155px;object-fit:cover;display:block;background:#eee}.photo div{padding:8px;font-size:12px}.photo a,.doc a{color:var(--red);font-weight:bold;text-decoration:none}.doc{padding:12px;border:1px solid var(--line);border-radius:9px;margin:8px 0;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.fields{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.wrap{padding:15px 10px}.panel{padding:12px}.fields{grid-template-columns:1fr}.top{padding:14px}.grid{gap:8px}.brand{font-size:19px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand">VAL<span>MEX</span> CRM</div></header>
+<main class="wrap">
+ <div class="heading"><div><h1>Fișa proiectului</h1><div class="muted">Dosar tehnic și administrativ individual</div></div><button class="btn light" id="reload">Reîncarcă datele</button></div>
+ <div id="feedback">Se verifică autentificarea...</div>
+ <section class="panel" id="projectHeader" hidden>
+  <div class="heading"><div><b class="filelink" id="projectCode"></b><h2 id="projectTitle" style="margin:7px 0"></h2><div class="muted" id="clientLabel"></div></div><span class="status" id="projectStatus"></span></div>
+  <div class="grid"><div class="stat">Măsurători<b id="nMeasurements">0</b></div><div class="stat">Materiale<b id="nMaterials">0</b></div><div class="stat">Fotografii<b id="nPhotos">0</b></div><div class="stat">Documente<b id="nDocuments">0</b></div></div>
+ </section>
+ <nav class="tabs" id="tabs" hidden>
+  <button class="tab active" data-tab="general">General</button><button class="tab" data-tab="measurements">Măsurători</button><button class="tab" data-tab="materials">Materiale</button><button class="tab" data-tab="photos">Fotografii</button><button class="tab" data-tab="documents">Documente</button><button class="tab" data-tab="tasks">Sarcini</button><button class="tab" data-tab="finance">Contracte și plăți</button><button class="tab" data-tab="warranty">Garanție și intervenții</button>
+ </nav>
+ <div class="notice" id="adminNotice" hidden>Mod administrare: poți edita și șterge înregistrările.</div><section class="panel section active" id="sec-general"><div class="actions"><button class="btn red" onclick="openForm('project')">Editează datele proiectului</button></div><div class="fields" id="generalFields"></div></section>
+ <section class="panel section" id="sec-measurements"><div class="actions"><button class="btn red" onclick="openForm('measurement')">＋ Adaugă măsurătoare</button></div><div class="tablewrap"><table><thead><tr><th>Cod</th><th>Tip lucrare</th><th>Data</th><th>Suprafață</th><th>Pantă</th><th>Dimensiuni</th><th>Versiune</th><th>Note</th><th>Acțiuni</th></tr></thead><tbody id="measurementRows"></tbody></table></div></section>
+ <section class="panel section" id="sec-materials"><div class="actions"><button class="btn red" onclick="openForm('material')">＋ Adaugă material</button></div><div class="tablewrap"><table><thead><tr><th>Material</th><th>Producător/model</th><th>Grosime</th><th>Culoare</th><th>Cantitate plan.</th><th>Cantitate reală</th><th>Status</th><th>Acțiuni</th></tr></thead><tbody id="materialRows"></tbody></table></div></section>
+ <section class="panel section" id="sec-photos"><div class="notice">Fotografiile pot fi făcute cu camera din spate sau selectate din galerie. Data și ora încărcării se salvează automat.</div><div class="actions"><button class="btn red" onclick="openForm('photo')">＋ Fotografiază / Încarcă fotografii</button></div><div class="photo-grid" id="photoRows"></div></section>
+ <section class="panel section" id="sec-documents"><div class="actions"><button class="btn red" onclick="openForm('document')">＋ Încarcă document</button></div><div id="documentRows"></div></section>
+ <section class="panel section" id="sec-tasks"><div class="actions"><button class="btn red" onclick="openForm('task')">＋ Creează sarcină</button></div><div class="tablewrap"><table><thead><tr><th>Sarcină</th><th>Responsabil</th><th>Prioritate</th><th>Termen</th><th>Status</th><th>Acțiuni</th></tr></thead><tbody id="taskRows"></tbody></table></div></section>
+ <section class="panel section" id="sec-finance"><h2>Contracte</h2><div class="actions"><button class="btn red" onclick="openForm('contract')">＋ Adaugă contract</button></div><div class="tablewrap"><table><thead><tr><th>Cod</th><th>Titlu</th><th>Valoare</th><th>Avans</th><th>Total achitat</th><th>Sold rămas</th><th>Status</th><th>Acțiuni</th></tr></thead><tbody id="contractRows"></tbody></table></div><h2 style="margin-top:22px">Plăți</h2><div class="actions"><button class="btn red" onclick="openForm('payment')">＋ Înregistrează plată</button></div><div class="tablewrap"><table><thead><tr><th>Data</th><th>Sumă</th><th>Contract asociat</th><th>Metodă</th><th>Note</th><th>Acțiune</th><th>Acțiuni</th></tr></thead><tbody id="paymentRows"></tbody></table></div></section>
+ <section class="panel section" id="sec-warranty"><h2>Garanții</h2><div class="actions"><button class="btn red" onclick="openForm('warranty')">＋ Adaugă garanție</button></div><div class="tablewrap"><table><thead><tr><th>Cod</th><th>Tip</th><th>Început</th><th>Sfârșit</th><th>Status</th><th>Acțiuni</th></tr></thead><tbody id="warrantyRows"></tbody></table></div><h2 style="margin-top:22px">Intervenții</h2><div class="actions"><button class="btn red" onclick="openForm('intervention')">＋ Înregistrează intervenție</button></div><div class="tablewrap"><table><thead><tr><th>Cod</th><th>Intervenție</th><th>Prioritate</th><th>Programare</th><th>Status</th><th>Responsabil</th><th>Acțiuni</th></tr></thead><tbody id="interventionRows"></tbody></table></div></section>
+</main>
+<div class="modal" id="modal"><div class="dialog"><div class="dialoghead"><h2 id="modalTitle">Adaugă înregistrare</h2><button class="close" onclick="closeForm()">×</button></div><form id="dataForm"><div class="fields" id="formFields"></div><div class="formactions"><button type="button" class="btn light" onclick="closeForm()">Anulează</button><button class="btn red" type="submit">Salvează</button></div></form></div></div>
+<script>
+const SUPABASE_URL="https://qejnbbzhpvfjeqzwotwt.supabase.co";
+const SUPABASE_KEY="sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov";
+const STORAGE_KEY="sb-qejnbbzhpvfjeqzwotwt-auth-token";
+const store=localStorage.getItem(STORAGE_KEY)?localStorage:(sessionStorage.getItem(STORAGE_KEY)?sessionStorage:null);
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{storage:store||localStorage,storageKey:STORAGE_KEY,persistSession:true,autoRefreshToken:true}});
+const $=id=>document.getElementById(id), esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pid=new URLSearchParams(location.search).get("id");let project,client,profiles=[],currentForm=null,projectContracts=[],isAdmin=false,editingRecord=null,pendingPhotos=[];
+function say(t){$("feedback").textContent=t}
+function fmtDate(v){return v?new Date(v+"T00:00:00").toLocaleDateString("ro-RO"):"—"}
+function cell(v){return v===null||v===undefined||v===""?"—":esc(v)}
+function table(id,data,render){$(id).innerHTML=data.length?data.map(x=>"<tr>"+render(x)+"</tr>").join(""):`<tr><td class="empty" colspan="8">Nu există înregistrări.</td></tr>`}
+async function getRows(name,cols="*"){const r=await db.from(name).select(cols).eq("project_id",pid);if(r.error){console.error(name,r.error);say("Eroare la încărcarea "+name+": "+r.error.message);return []}return r.data||[]}
+async function currentUser(){const {data:{user}}=await db.auth.getUser();if(!user)throw Error("Sesiunea a expirat. Autentifică-te din nou.");return user}
+async function initialize(){
+ const {data:{session}}=await db.auth.getSession();if(!session){location.replace("index.html");return}
+ if(!pid){say("Lipsește ID-ul proiectului din adresă.");return}
+ const {data:p,error}=await db.from("projects").select("*").eq("id",pid).maybeSingle();if(error||!p){say("Proiectul nu a fost găsit sau nu aveți acces.");return}project=p;
+ const {data:me}=await db.from("profiles").select("active,role").eq("id",session.user.id).maybeSingle();if(!me?.active){await db.auth.signOut();location.replace("index.html");return}isAdmin=me.role==="administrator";$("adminNotice").hidden=!isAdmin;
+ const [cr,pr]=await Promise.all([db.from("clients").select("*").eq("id",p.client_id).maybeSingle(),db.from("profiles").select("id,full_name")]);client=cr.data;profiles=pr.data||[];
+ $("projectHeader").hidden=false;$("tabs").hidden=false;$("projectCode").textContent=p.project_code||"Proiect";$("projectTitle").textContent=p.title||"Fără denumire";
+ $("clientLabel").textContent=client?`${client.client_code||""} · ${client.first_name||""} ${client.last_name||""} · ${client.phone||""}`:"Client";
+ $("projectStatus").textContent=p.status||"—";
+ const vals=[["Client",client?`${client.first_name||""} ${client.last_name||""}`:"—"],["Telefon",client?.phone],["Email",client?.email],["Localitate",client?.locality],["Adresă obiectiv",p.address],["Tip lucrare",p.work_type],["Responsabil",profiles.find(x=>x.id===p.manager_id)?.full_name],["Început estimat",fmtDate(p.estimated_start)],["Finalizare estimată",fmtDate(p.estimated_end)],["Creat la",p.created_at?new Date(p.created_at).toLocaleString("ro-RO"):"—"]];
+ $("generalFields").innerHTML=vals.map(([k,v])=>`<div class="field"><label>${esc(k)}</label>${cell(v)}</div>`).join("");
+ await Promise.all([loadMeasurements(),loadMaterials(),loadPhotos(),loadDocuments(),loadTasks(),loadFinance(),loadWarranty()]);say("Fișa proiectului a fost încărcată.");
+}
+const tableNames={measurement:"measurements",material:"project_materials",task:"tasks",contract:"contracts",payment:"payments",warranty:"warranties",intervention:"interventions",photo:"project_photos",document:"documents"};
+function adminActions(type,id){return isAdmin?`<td><button class="btn light" type="button" onclick="editRecord('${type}','${id}')">Editează</button> <button class="btn light" type="button" onclick="deleteRecord('${type}','${id}')">Șterge</button></td>`:""}
+async function editRecord(type,id){
+ if(!isAdmin){alert("Doar administratorul poate modifica înregistrări.");return}
+ const tableName=tableNames[type];const {data,error}=await db.from(tableName).select("*").eq("id",id).eq("project_id",pid).maybeSingle();
+ if(error||!data){alert("Înregistrarea nu a putut fi încărcată.");return}
+ editingRecord={type,id,data};openForm(type,data);
+}
+async function deleteRecord(type,id){
+ if(!isAdmin){alert("Doar administratorul poate șterge înregistrări.");return}
+ if(!confirm("Confirmi ștergerea acestei înregistrări? Operația poate fi ireversibilă."))return;
+ const tableName=tableNames[type];
+ if(type==="photo"||type==="document"){
+  const {data,error}=await db.from(tableName).select("storage_path").eq("id",id).eq("project_id",pid).maybeSingle();
+  if(error||!data){alert("Fișierul nu a putut fi identificat.");return}
+  const {error:storageError}=await db.storage.from("valmex-clienti").remove([data.storage_path]);
+  if(storageError){alert("Fișierul nu a fost șters din Storage: "+storageError.message);return}
+ }
+ const {error}=await db.from(tableName).delete().eq("id",id).eq("project_id",pid);
+ if(error){alert("Nu s-a putut șterge: "+error.message);return}
+ say("Înregistrarea a fost ștearsă.");await initialize();
+}
+async function loadMeasurements(){let a=await getRows("measurements","id,measurement_code,work_type,measurement_date,length_m,width_m,height_m,area_m2,slope_degrees,technical_details,version,notes");$("nMeasurements").textContent=a.length;table("measurementRows",a,x=>[x.measurement_code,x.work_type,fmtDate((x.measurement_date||"").slice(0,10)),x.area_m2,x.slope_degrees,[x.length_m,x.width_m,x.height_m].filter(v=>v!=null).join(" × "),x.version,x.notes].map(v=>`<td>${cell(v)}</td>`).join("")+adminActions("measurement",x.id))}
+async function loadMaterials(){let a=await getRows("project_materials","id,material_name,manufacturer,model,thickness_mm,color_name,color_code,planned_quantity,actual_quantity,status");$("nMaterials").textContent=a.length;table("materialRows",a,x=>[x.material_name,[x.manufacturer,x.model].filter(Boolean).join(" / "),x.thickness_mm?x.thickness_mm+" mm":"",[x.color_name,x.color_code].filter(Boolean).join(" / "),x.planned_quantity,x.actual_quantity,x.status].map(v=>`<td>${cell(v)}</td>`).join("")+adminActions("material",x.id))}
+async function signedUrl(path){const {data,error}=await db.storage.from("valmex-clienti").createSignedUrl(path,3600);if(error)throw error;return data.signedUrl}
+async function loadPhotos(){let a=await getRows("project_photos","id,file_name,storage_path,stage,description,photo_date,photo_category");$("nPhotos").textContent=a.length;if(!a.length){$("photoRows").innerHTML='<div class="empty">Nu există fotografii.</div>';return}
+ const cards=await Promise.all(a.map(async x=>{try{const url=await signedUrl(x.storage_path);return `<div class="photo"><a href="${url}" target="_blank" rel="noopener"><img src="${url}" alt="${esc(x.file_name)}" loading="lazy"></a><div><b>${cell(x.stage||x.photo_category)}</b><br>${cell(x.file_name)}<br><span class="muted">${x.photo_date?new Date(x.photo_date).toLocaleString("ro-RO"):"Dată indisponibilă"}</span><br><a href="${url}" target="_blank" rel="noopener">Deschide fotografia</a>${isAdmin?`<div>${adminActions("photo",x.id).replace("<td>","").replace("</td>","")}</div>`:""}</div></div>`}catch(e){return `<div class="photo"><div>Nu se poate afișa fotografia</div><div>${cell(x.file_name)}<br>${esc(e.message)}</div></div>`}}));$("photoRows").innerHTML=cards.join("")}
+async function loadDocuments(){let a=await getRows("documents","id,file_name,storage_path,category,created_at");$("nDocuments").textContent=a.length;$("documentRows").innerHTML=a.length?(await Promise.all(a.map(async x=>{let url="#";try{url=await signedUrl(x.storage_path)}catch(e){}return `<div class="doc"><div><b>${cell(x.file_name)}</b><div class="muted">${cell(x.category)} · ${x.created_at?new Date(x.created_at).toLocaleDateString("ro-RO"):"—"}</div></div><a href="${url}" target="_blank" rel="noopener">Deschide documentul</a>${isAdmin?adminActions("document",x.id):""}</div>`}))).join(""):'<div class="empty">Nu există documente.</div>'}
+async function loadTasks(){let a=await getRows("tasks","id,title,assigned_to,priority,due_at,status");table("taskRows",a,x=>[x.title,profiles.find(p=>p.id===x.assigned_to)?.full_name,x.priority,x.due_at?new Date(x.due_at).toLocaleString("ro-RO"):"—",x.status].map(v=>`<td>${cell(v)}</td>`).join("")+adminActions("task",x.id))}
+async function loadFinance(){
+ const {data:contracts,error:contractError}=await db.from("contracts")
+  .select("id,contract_code,title,contract_value,advance_amount,initial_balance,status")
+  .eq("project_id",pid);
+ if(contractError)throw contractError;
+ projectContracts=contracts||[];
+
+ const {data:summary,error:summaryError}=await db.from("contract_financial_summary")
+  .select("*").eq("project_id",pid);
+ if(summaryError)throw summaryError;
+
+ table("contractRows",projectContracts,c=>{
+  const s=(summary||[]).find(x=>x.contract_id===c.id);
+  return [
+   c.contract_code,c.title,
+   Number(c.contract_value||0).toLocaleString("ro-RO")+" lei",
+   Number(c.advance_amount||0).toLocaleString("ro-RO")+" lei",
+   Number(s?.total_paid??c.advance_amount??0).toLocaleString("ro-RO")+" lei",
+   Number(s?.remaining_balance??(Number(c.contract_value||0)-Number(c.advance_amount||0))).toLocaleString("ro-RO")+" lei",
+   c.status
+  ].map(v=>`<td>${cell(v)}</td>`).join("")+adminActions("contract",c.id);
+ });
+
+ const b=await getRows("payments","id,contract_id,payment_date,amount,method,notes");
+ $("paymentRows").innerHTML=b.length?b.map(x=>{
+  const selected=x.contract_id||"";
+  const options=`<option value="">Fără contract</option>`+projectContracts.map(c=>`<option value="${c.id}" ${selected===c.id?"selected":""}>${esc(c.contract_code)} — ${esc(c.title)}</option>`).join("");
+  return `<tr>
+   <td>${fmtDate(x.payment_date)}</td>
+   <td>${Number(x.amount||0).toLocaleString("ro-RO")} lei</td>
+   <td><select id="payment-contract-${x.id}" style="min-width:190px;padding:7px;border:1px solid #ddd;border-radius:6px">${options}</select></td>
+   <td>${cell(x.method)}</td>
+   <td>${cell(x.notes)}</td>
+   <td><button type="button" class="btn light" onclick="associatePayment('${x.id}')">Salvează</button></td>
+  </tr>`;
+ }).join(""):'<tr><td class="empty" colspan="6">Nu există înregistrări.</td></tr>';
+}
+async function associatePayment(paymentId){
+ const select=$("payment-contract-"+paymentId);
+ if(!select)return;
+ const contractId=select.value||null;
+ const {error}=await db.from("payments")
+  .update({contract_id:contractId})
+  .eq("id",paymentId)
+  .eq("project_id",pid);
+ if(error){alert("Nu s-a putut actualiza plata: "+error.message);return}
+ say("Asocierea plății a fost actualizată.");
+ await loadFinance();
+}
+async function loadWarranty(){let a=await getRows("warranties","id,warranty_code,warranty_type,start_date,end_date,status");table("warrantyRows",a,x=>[x.warranty_code,x.warranty_type,fmtDate(x.start_date),fmtDate(x.end_date),x.status].map(v=>`<td>${cell(v)}</td>`).join("")+adminActions("warranty",x.id));let b=await getRows("interventions","id,intervention_code,title,priority,scheduled_at,status,assigned_to");table("interventionRows",b,x=>[x.intervention_code,x.title,x.priority,x.scheduled_at?new Date(x.scheduled_at).toLocaleString("ro-RO"):"—",x.status,profiles.find(p=>p.id===x.assigned_to)?.full_name].map(v=>`<td>${cell(v)}</td>`).join("")+adminActions("intervention",x.id))}
+const fields={
+ project:[["title","Denumirea proiectului","text"],["work_type","Tip lucrare","text"],["status","Status","select","planificare|in_lucru|finalizat|suspendat"],["address","Adresa obiectivului","text"],["estimated_start","Început estimat","date"],["estimated_end","Finalizare estimată","date"],["manager_id","Responsabil proiect","person"]],
+ measurement:[["measurement_code","Cod măsurătoare","text"],["work_type","Tip lucrare","text"],["measurement_date","Data măsurării","date"],["length_m","Lungime (m)","number"],["width_m","Lățime (m)","number"],["height_m","Înălțime (m)","number"],["area_m2","Suprafață (m²)","number"],["slope_degrees","Pantă (grade)","number"],["technical_details","Detalii tehnice (JSON opțional)","textarea"],["notes","Note","textarea"]],
+ material:[["material_name","Denumire material","text"],["manufacturer","Producător","text"],["model","Model","text"],["thickness_mm","Grosime (mm)","number"],["color_name","Culoare","text"],["color_code","Cod culoare","text"],["unit","Unitate","text"],["planned_quantity","Cantitate planificată","number"],["actual_quantity","Cantitate reală","number"],["planned_unit_price","Preț unitar planificat","number"],["actual_unit_price","Preț unitar real","number"],["status","Status","select","planificat|comandat|livrat|montat"]],
+ photo:[["file","Fotografiază sau selectează fotografii","photo-file"],["stage","Etapa lucrării","select","initiala|in_timpul_lucrarii|finala|generala"],["photo_category","Categorie","text"],["description","Descriere","textarea"]],
+ document:[["file","Fișier document","file"],["category","Categorie document","select","contract|deviz|factura|act_receptie|garantie|fotografie|altul"]],
+ task:[["title","Titlul sarcinii","text"],["description","Descriere","textarea"],["assigned_to","Responsabil","person"],["priority","Prioritate","select","scazuta|normala|ridicata|urgenta"],["due_at","Termen","datetime-local"],["status","Status","select","nou|in_lucru|finalizata|anulata"]],
+ contract:[["contract_code","Cod contract","text"],["title","Titlu","text"],["contract_value","Valoare contract (lei)","number"],["advance_amount","Avans (lei)","number"],["signing_date","Data semnării","date"],["start_date","Data începerii","date"],["end_date","Data finalizării","date"],["payment_terms","Condiții de plată","textarea"],["warranty_terms","Condiții garanție","textarea"],["status","Status","select","pregatire|semnat|in_lucru|finalizat|anulat"]],
+ payment:[["contract_id","Contract asociat","contract"],["amount","Suma încasată (lei)","number"],["payment_date","Data încasării","date"],["method","Metoda de plată","select","numerar|transfer|card|alta"],["notes","Note","textarea"]],
+ warranty:[["warranty_code","Cod garanție","text"],["warranty_type","Tip garanție","select","manopera|materiale|completa"],["start_date","Data începerii","date"],["end_date","Data expirării","date"],["warranty_terms","Condiții","textarea"],["coverage_details","Acoperire","textarea"],["exclusions","Excluderi","textarea"],["status","Status","select","activa|expirata|suspendata"]],
+ intervention:[["title","Titlul intervenției","text"],["problem_description","Problema sesizată","textarea"],["diagnosis","Diagnostic","textarea"],["resolution","Soluție","textarea"],["priority","Prioritate","select","scazuta|normala|ridicata|urgenta"],["scheduled_at","Data programării","datetime-local"],["assigned_to","Responsabil","person"],["status","Status","select","nou|programata|in_lucru|finalizata"]]
+};
+const titles={project:"Editează proiectul",measurement:"Adaugă măsurătoare",material:"Adaugă material",photo:"Încarcă fotografii",document:"Încarcă document",task:"Creează sarcină",contract:"Adaugă contract",payment:"Înregistrează plată",warranty:"Adaugă garanție",intervention:"Înregistrează intervenție"};
+function openForm(type,record=null){currentForm=type;editingRecord=record?{type,id:record.id,data:record}:null;$("modalTitle").textContent=editingRecord?"Editează înregistrarea":titles[type];$("formFields").innerHTML=fields[type].map(([name,label,kind,opts])=>{let val=editingRecord?(editingRecord.data[name]??""):(type==="project"?(project[name]??""):"");let input;if(kind==="textarea")input=`<textarea name="${name}">${esc(val)}</textarea>`;else if(kind==="select")input=`<select name="${name}">${(opts.split("|").includes(String(val))?opts.split("|"):([String(val),...opts.split("|")].filter(Boolean))).map(x=>`<option value="${x}" ${val===x?"selected":""}>${x.replaceAll("_"," ")}</option>`).join("")}</select>`;else if(kind==="person")input=`<select name="${name}"><option value="">Selectează</option>${profiles.map(p=>`<option value="${p.id}" ${val===p.id?"selected":""}>${esc(p.full_name)}</option>`).join("")}</select>`;else if(kind==="contract")input=`<select name="${name}"><option value="">Fără contract asociat</option>${projectContracts.map(c=>`<option value="${c.id}">${esc(c.contract_code)} — ${esc(c.title)}</option>`).join("")}</select>`;else if(kind==="photo-file")input=`<div class="actions"><button type="button" class="btn red" id="cameraPick">Deschide camera</button><button type="button" class="btn light" id="galleryPick">Alege din galerie</button></div><input id="cameraInput" type="file" accept="image/*" capture="environment" hidden><input id="galleryInput" type="file" accept="image/*" multiple hidden><div id="pendingPhotoList" class="muted">Nu ai selectat fotografii.</div>`;else input=`<input name="${name}" type="${kind}" ${kind==="file"?'accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" '+(type==="photo"?"multiple":""):''} value="${kind!=="file"?esc(val):""}">`;return `<div class="field"><label>${label}</label>${input}</div>`}).join("");$("modal").classList.add("show");
+ if(type==="photo"){
+  pendingPhotos=[];
+  $("cameraPick").onclick=()=>$("cameraInput").click();
+  $("galleryPick").onclick=()=>$("galleryInput").click();
+  $("cameraInput").onchange=e=>{pendingPhotos.push(...Array.from(e.target.files||[]));e.target.value="";renderPendingPhotos()};
+  $("galleryInput").onchange=e=>{pendingPhotos.push(...Array.from(e.target.files||[]));e.target.value="";renderPendingPhotos()};
+ }
+}
+function renderPendingPhotos(){
+ const box=$("pendingPhotoList");if(!box)return;
+ box.innerHTML=pendingPhotos.length
+  ? pendingPhotos.map((f,i)=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #eee"><span>${esc(f.name)}</span><button type="button" class="btn light" onclick="removePendingPhoto(${i})">Elimină</button></div>`).join("")
+  : "Nu ai selectat fotografii.";
+}
+function removePendingPhoto(index){pendingPhotos.splice(index,1);renderPendingPhotos()}
+function closeForm(){$("modal").classList.remove("show");$("dataForm").reset();currentForm=null;editingRecord=null;pendingPhotos=[]}
+async function uploadFile(file,folder){const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");const path=`${project.client_id}/${pid}/${folder}/${Date.now()}_${safe}`;const {error}=await db.storage.from("valmex-clienti").upload(path,file,{upsert:false});if(error)throw error;return path}
+function makeCode(prefix){const d=new Date();const date=[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("");const rand=Math.random().toString(36).slice(2,6).toUpperCase();return `${prefix}-${date}-${rand}`}
+$("dataForm").addEventListener("submit",async e=>{e.preventDefault();const form=e.currentTarget,fd=new FormData(form),type=currentForm;const user=await currentUser();if(editingRecord&&!isAdmin)throw Error("Doar administratorul poate modifica înregistrări.");const payload={project_id:pid};
+ try{
+  if(type==="project"){if(!isAdmin)throw Error("Doar administratorul poate modifica proiectul.");const changes={};for(const [k,v] of fd.entries())if(v!=="")changes[k]=v;const {error}=await db.from("projects").update(changes).eq("id",pid);if(error)throw error}
+  else if(type==="photo"){const files=pendingPhotos;if(editingRecord){const changes={};for(const k of ["stage","photo_category","description"])if(fd.get(k)!=="")changes[k]=fd.get(k);const {error}=await db.from("project_photos").update(changes).eq("id",editingRecord.id).eq("project_id",pid);if(error)throw error;}else{if(!files.length)throw Error("Fotografiază sau selectează cel puțin o imagine.");for(const f of files){const path=await uploadFile(f,"fotografii");const {error}=await db.from("project_photos").insert({...payload,file_name:f.name,storage_path:path,stage:fd.get("stage")||"generala",photo_category:fd.get("photo_category")||"generala",description:fd.get("description")||null,photo_date:new Date().toISOString(),uploaded_by:user.id});if(error)throw error}}}
+  else if(type==="document"){if(editingRecord){const {error}=await db.from("documents").update({category:fd.get("category")}).eq("id",editingRecord.id).eq("project_id",pid);if(error)throw error;}else{const file=form.querySelector('[name="file"]').files[0];if(!file)throw Error("Selectează un document.");const path=await uploadFile(file,"documente");const {error}=await db.from("documents").insert({...payload,file_name:file.name,storage_path:path,category:fd.get("category"),uploaded_by:user.id});if(error)throw error}}
+  else{
+   for(const [k,v] of fd.entries())if(v!=="")payload[k]=v;
+   if(["measurement","task","contract","warranty","intervention"].includes(type))payload.client_id=project.client_id;
+   if(type==="measurement"){
+    payload.measured_by=user.id;
+    const rawDetails=String(payload.technical_details||"").trim();
+    if(rawDetails){
+     try{payload.technical_details=JSON.parse(rawDetails)}
+     catch(_){payload.technical_details={descriere:rawDetails}}
+    }else payload.technical_details={};
+    payload.version=1;payload.is_current=true
+   }
+   if(type==="material"){payload.created_by=user.id;for(const k of ["thickness_mm","planned_quantity","actual_quantity","planned_unit_price","actual_unit_price"])if(payload[k]!==undefined)payload[k]=Number(payload[k])}
+   if(type==="task")payload.created_by=user.id;
+   if(type==="contract"){payload.created_by=user.id;payload.contract_code=String(payload.contract_code||"").trim()||makeCode("CTR");payload.title=String(payload.title||"").trim()||project.title||"Contract VALMEX";payload.contract_value=Number(payload.contract_value);payload.advance_amount=Number(payload.advance_amount||0);if(!Number.isFinite(payload.contract_value)||payload.contract_value<=0)throw Error("Introdu o valoare validă pentru contract.");if(!Number.isFinite(payload.advance_amount)||payload.advance_amount<0||payload.advance_amount>payload.contract_value)throw Error("Avansul trebuie să fie între 0 și valoarea contractului.");delete payload.initial_balance}
+   if(type==="payment"){payload.recorded_by=user.id;payload.amount=Number(payload.amount);if(!Number.isFinite(payload.amount)||payload.amount<=0)throw Error("Introdu o sumă validă pentru plată.");if(!payload.contract_id)delete payload.contract_id}
+   if(type==="warranty"){payload.created_by=user.id;if(!payload.warranty_code)payload.warranty_code=makeCode("GAR")}
+   if(type==="intervention"){payload.created_by=user.id;payload.intervention_code=makeCode("INT")}
+   const tableName={measurement:"measurements",material:"project_materials",task:"tasks",contract:"contracts",payment:"payments",warranty:"warranties",intervention:"interventions"}[type];
+   let saveResult;
+    if(editingRecord&&editingRecord.type===type){
+     delete payload.project_id;
+     delete payload.client_id;
+     delete payload.created_by;
+     delete payload.recorded_by;
+     delete payload.measured_by;
+     saveResult=await db.from(tableName).update(payload).eq("id",editingRecord.id).eq("project_id",pid);
+    }else saveResult=await db.from(tableName).insert(payload);
+    if(saveResult.error)throw saveResult.error;
+  }
+  closeForm();say("Înregistrarea a fost salvată.");await initialize();
+ }catch(err){console.error(err);alert("Nu s-a putut salva: "+(err.message||"Eroare necunoscută"))}
+});
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".section").forEach(x=>x.classList.toggle("active",x.id==="sec-"+b.dataset.tab))}));
+$("reload").addEventListener("click",initialize);
+db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)location.replace("index.html")});
+initialize();
+</script>
+<script src="components/persistent-nav.js"></script>
+</body></html>

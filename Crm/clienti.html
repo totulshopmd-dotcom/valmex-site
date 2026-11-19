@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111111">
+<title>VALMEX CRM – Clienți</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--red:#e30613;--ink:#171717;--muted:#777;--line:#e8e8e8;--bg:#f4f5f7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#202124;font-family:Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.top{height:64px;background:#171717;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+.brand{font-size:23px;font-weight:900;letter-spacing:-1px}.brand span{color:var(--red)}
+.top a{color:#fff;text-decoration:none;font-size:13px}
+.wrap{max-width:1200px;margin:0 auto;padding:26px 20px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:20px}
+h1{font-size:25px;margin:0 0 6px}.sub{font-size:13px;color:var(--muted)}
+.btn{border:0;border-radius:8px;padding:11px 16px;font-weight:700}
+.primary{background:var(--red);color:#fff}.secondary{background:#fff;border:1px solid var(--line);color:#333}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);padding:14px;border-radius:12px;margin-bottom:14px}
+.toolbar input,.toolbar select{min-width:180px;flex:1}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d8d8d8;border-radius:8px;background:#fff;color:#222;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--red)}
+.tablebox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{text-align:left;padding:13px 14px;border-bottom:1px solid #eee;font-size:13px;vertical-align:middle}
+th{background:#fafafa;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+tr:last-child td{border-bottom:0}
+.code{font-weight:700;color:var(--red);white-space:nowrap}
+.name{font-weight:700}.small{color:#777;font-size:12px;margin-top:4px}
+.status{display:inline-block;padding:5px 8px;border-radius:20px;background:#f0f0f0;color:#555;font-size:11px}
+.status.nou{background:#fff1f1;color:#b0000b}.status.contactat{background:#eef5ff;color:#245a9b}.status.in_lucru{background:#fff5df;color:#875900}.status.finalizat{background:#e9f7ed;color:#26743c}
+.action{border:1px solid #ddd;background:#fff;border-radius:7px;padding:7px 10px;font-size:12px}
+#feedback{min-height:22px;margin:12px 2px;color:#555;font-size:13px}
+.empty{padding:35px;text-align:center;color:#777;font-size:14px}
+.overlay{display:none;position:fixed;inset:0;background:#0008;z-index:20;padding:16px;overflow:auto}
+.overlay.show{display:flex;align-items:center;justify-content:center}
+.modal{width:100%;max-width:680px;background:#fff;border-radius:14px;padding:22px;box-shadow:0 20px 60px #0003;margin:auto}
+.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modalhead h2{font-size:19px;margin:0}
+.close{border:0;background:#eee;border-radius:50%;width:34px;height:34px;font-size:20px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field label{display:block;font-size:12px;color:#555;margin:0 0 6px}
+.field.full{grid-column:1/-1}
+textarea{min-height:85px;resize:vertical}
+.formactions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+button:disabled{opacity:.55;cursor:wait}
+@media(max-width:650px){
+ .top{padding:0 15px}.wrap{padding:19px 12px}.head{align-items:flex-start;flex-direction:column}
+ .head .btn{width:100%}.toolbar{padding:10px}.toolbar input,.toolbar select{min-width:100%;flex-basis:100%}
+ .formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.modal{padding:17px}
+}
+a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;height:38px;border:1px solid #e5e7eb;border-radius:11px;text-decoration:none;font-size:20px;font-weight:700;color:#252a33;background:#fff}a[href="dashboard.html"]:hover{border-color:#e30613;color:#e30613}</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">VAL<span>MEX</span> CRM</div>
+  
+</header>
+
+<main class="wrap">
+  <div class="head">
+    <div><h1>Clienți</h1><div class="sub">Registrul clienților VALMEX</div></div>
+    <button class="btn primary" id="addBtn">＋ Adaugă client</button>
+  </div>
+
+  <div class="toolbar">
+    <input id="search" type="search" placeholder="Caută după nume, telefon sau cod...">
+    <select id="statusFilter">
+      <option value="">Toate statusurile</option>
+      <option value="nou">Nou</option>
+      <option value="contactat">Contactat</option>
+      <option value="in_lucru">În lucru</option>
+      <option value="finalizat">Finalizat</option>
+      <option value="pierdut">Pierdut</option>
+    </select>
+    <button class="btn secondary" id="refreshBtn">Reîncarcă</button>
+  </div>
+
+  <div class="tablebox">
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Cod client</th><th>Client</th><th>Telefon</th><th>Localitate</th><th>Serviciu</th><th>Status</th><th>Responsabil</th><th></th></tr></thead>
+        <tbody id="clientRows"><tr><td colspan="8" class="empty">Se încarcă lista clienților...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="feedback" role="status" aria-live="polite"></div>
+</main>
+
+<div class="overlay" id="clientOverlay">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modalhead"><h2 id="modalTitle">Adaugă client</h2><button class="close" id="closeModal" aria-label="Închide">×</button></div>
+    <form id="clientForm">
+      <input type="hidden" id="clientId">
+      <div class="formgrid">
+        <div class="field"><label for="firstName">Prenume *</label><input id="firstName" required maxlength="100"></div>
+        <div class="field"><label for="lastName">Nume *</label><input id="lastName" required maxlength="100"></div>
+        <div class="field"><label for="phone">Telefon *</label><input id="phone" required type="tel" maxlength="40"></div>
+        <div class="field"><label for="email">Email</label><input id="email" type="email" maxlength="200"></div>
+        <div class="field"><label for="region">Raion / regiune</label><input id="region" maxlength="120"></div>
+        <div class="field"><label for="locality">Localitate</label><input id="locality" maxlength="120"></div>
+        <div class="field full"><label for="address">Adresă</label><input id="address" maxlength="250"></div>
+        <div class="field"><label for="workType">Tip lucrare solicitată</label>
+          <select id="workType"><option value="">Selectează</option><option>Acoperiș</option><option>Fațadă</option><option>Pavaj</option><option>Gard / porți</option><option>Alte lucrări</option></select>
+        </div>
+        <div class="field"><label for="source">Sursa solicitării</label>
+          <select id="source"><option value="">Selectează</option><option>Facebook</option><option>Instagram</option><option>TikTok</option><option>Google</option><option>Recomandare</option><option>Telefon</option><option>Altă sursă</option></select>
+        </div>
+        <div class="field"><label for="status">Status</label>
+          <select id="status"><option value="nou">Nou</option><option value="contactat">Contactat</option><option value="in_lucru">În lucru</option><option value="finalizat">Finalizat</option><option value="pierdut">Pierdut</option></select>
+        </div>
+        <div class="field"><label for="assignedTo">Responsabil</label><select id="assignedTo"><option value="">Fără responsabil</option></select></div>
+        <div class="field full"><label for="notes">Note</label><textarea id="notes" maxlength="5000"></textarea></div>
+      </div>
+      <div class="formactions">
+        <button type="button" class="btn secondary" id="cancelBtn">Anulează</button>
+        <button type="submit" class="btn primary" id="saveBtn">Salvează clientul</button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<script>
+const SUPABASE_URL = "https://qejnbbzhpvfjeqzwotwt.supabase.co";
+const SUPABASE_KEY = "sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov";
+const STORAGE_KEY = "sb-qejnbbzhpvfjeqzwotwt-auth-token";
+const storage = localStorage.getItem(STORAGE_KEY) ? localStorage :
+  (sessionStorage.getItem(STORAGE_KEY) ? sessionStorage : null);
+
+if (!storage) location.replace("index.html");
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { storage, storageKey: STORAGE_KEY, persistSession: true, autoRefreshToken: true }
+});
+
+let currentUser = null;
+let currentProfile = null;
+let clients = [];
+let profiles = [];
+
+const $ = id => document.getElementById(id);
+const feedback = text => $("feedback").textContent = text;
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c =>
+  ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const statusNames = {nou:"Nou",contactat:"Contactat",in_lucru:"În lucru",finalizat:"Finalizat",pierdut:"Pierdut"};
+
+async function initialize() {
+  const { data:{session}, error } = await db.auth.getSession();
+  if (error || !session) { location.replace("index.html"); return; }
+  currentUser = session.user;
+
+  const { data:profile, error:profileError } = await db.from("profiles")
+    .select("id,full_name,role,active").eq("id",currentUser.id).maybeSingle();
+
+  if (profileError || !profile || !profile.active) {
+    await db.auth.signOut(); location.replace("index.html"); return;
+  }
+  currentProfile = profile;
+
+  if (!["administrator","vanzari"].includes(profile.role)) {
+    $("addBtn").disabled = true;
+    $("addBtn").title = "Doar administratorul și rolul Vânzări pot adăuga clienți.";
+  }
+
+  await loadProfiles();
+  await loadClients();
+}
+
+async function loadProfiles() {
+  const { data, error } = await db.from("profiles").select("id,full_name,role,active").eq("active",true).order("full_name");
+  if (error) { feedback("Lista responsabililor nu a putut fi încărcată: " + error.message); return; }
+  profiles = data || [];
+  $("assignedTo").innerHTML = '<option value="">Fără responsabil</option>' +
+    profiles.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.full_name)}</option>`).join("");
+}
+
+async function loadClients() {
+  $("clientRows").innerHTML = '<tr><td colspan="8" class="empty">Se încarcă...</td></tr>';
+  const { data, error } = await db.from("clients")
+    .select("id,client_code,first_name,last_name,phone,email,locality,work_type,status,assigned_to,created_at")
+    .order("created_at",{ascending:false});
+  if (error) {
+    $("clientRows").innerHTML = '<tr><td colspan="8" class="empty">Nu s-au putut încărca clienții.</td></tr>';
+    feedback("Eroare la încărcarea clienților: " + error.message);
+    return;
+  }
+  clients = data || [];
+  renderClients();
+  feedback(`${clients.length} client(i) înregistrați.`);
+}
+
+function renderClients() {
+  const q = $("search").value.trim().toLocaleLowerCase("ro");
+  const status = $("statusFilter").value;
+  const filtered = clients.filter(c => {
+    const haystack = [c.client_code,c.first_name,c.last_name,c.phone,c.email,c.locality].join(" ").toLocaleLowerCase("ro");
+    return (!q || haystack.includes(q)) && (!status || c.status === status);
+  });
+
+  if (!filtered.length) {
+    $("clientRows").innerHTML = '<tr><td colspan="8" class="empty">Nu există clienți care corespund căutării.</td></tr>';
+    return;
+  }
+
+  $("clientRows").innerHTML = filtered.map(c => {
+    const responsible = profiles.find(p => p.id === c.assigned_to);
+    const canEdit = ["administrator","vanzari"].includes(currentProfile.role);
+    return `<tr>
+      <td class="code">${escapeHtml(c.client_code)}</td>
+      <td><div class="name">${escapeHtml(c.first_name)} ${escapeHtml(c.last_name)}</div><div class="small">${escapeHtml(c.email || "")}</div></td>
+      <td>${escapeHtml(c.phone)}</td>
+      <td>${escapeHtml(c.locality || "—")}</td>
+      <td>${escapeHtml(c.work_type || "—")}</td>
+      <td><span class="status ${escapeHtml(c.status)}">${escapeHtml(statusNames[c.status] || c.status)}</span></td>
+      <td>${escapeHtml(responsible?.full_name || "—")}</td>
+      <td>${canEdit ? `<button class="action" data-edit="${escapeHtml(c.id)}">Editează</button>` : "—"}</td>
+    </tr>`;
+  }).join("");
+
+  $("clientRows").querySelectorAll("[data-edit]").forEach(btn =>
+    btn.addEventListener("click", () => editClient(btn.dataset.edit)));
+}
+
+function openModal(client=null) {
+  $("clientForm").reset();
+  $("clientId").value = client?.id || "";
+  $("modalTitle").textContent = client ? "Editează client" : "Adaugă client";
+  $("saveBtn").textContent = client ? "Salvează modificările" : "Salvează clientul";
+  if (client) {
+    $("firstName").value = client.first_name || "";
+    $("lastName").value = client.last_name || "";
+    $("phone").value = client.phone || "";
+    $("email").value = client.email || "";
+    $("region").value = client.region || "";
+    $("locality").value = client.locality || "";
+    $("address").value = client.address || "";
+    $("workType").value = client.work_type || "";
+    $("source").value = client.source || "";
+    $("status").value = client.status || "nou";
+    $("assignedTo").value = client.assigned_to || "";
+    $("notes").value = client.notes || "";
+  } else {
+    $("status").value = "nou";
+    if (profiles.some(p => p.id === currentUser.id)) $("assignedTo").value = currentUser.id;
+  }
+  $("clientOverlay").classList.add("show");
+}
+function closeModal() { $("clientOverlay").classList.remove("show"); }
+function editClient(id) {
+  const client = clients.find(c => c.id === id);
+  if (client) openModal(client);
+}
+
+/* Codul VMX este atribuit în browser pe baza celui mai mare număr existent.
+   La coliziune de cod, aplicația reîncarcă lista și încearcă următorul cod. */
+async function nextClientCode() {
+  const { data, error } = await db.from("clients").select("client_code");
+  if (error) throw new Error("Nu pot determina următorul cod client: " + error.message);
+  const max = (data || []).reduce((n,row) => {
+    const match = /^VMX-(\d+)$/.exec(row.client_code || "");
+    return match ? Math.max(n, Number(match[1])) : n;
+  }, 0);
+  return "VMX-" + String(max + 1).padStart(4,"0");
+}
+
+$("clientForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!["administrator","vanzari"].includes(currentProfile.role)) {
+    feedback("Rolul contului nu permite adăugarea sau modificarea clienților."); return;
+  }
+
+  const id = $("clientId").value;
+  const payload = {
+    first_name:$("firstName").value.trim(),
+    last_name:$("lastName").value.trim(),
+    phone:$("phone").value.trim(),
+    email:$("email").value.trim() || null,
+    region:$("region").value.trim() || null,
+    locality:$("locality").value.trim() || null,
+    address:$("address").value.trim() || null,
+    work_type:$("workType").value || null,
+    source:$("source").value || null,
+    status:$("status").value,
+    assigned_to:$("assignedTo").value || null,
+    notes:$("notes").value.trim() || null
+  };
+
+  if (!payload.first_name || !payload.last_name || !payload.phone) {
+    feedback("Completează prenumele, numele și telefonul."); return;
+  }
+
+  $("saveBtn").disabled = true;
+  $("saveBtn").textContent = "Se salvează...";
+  try {
+    if (id) {
+      const { error } = await db.from("clients").update(payload).eq("id",id);
+      if (error) throw error;
+      feedback("Datele clientului au fost actualizate.");
+    } else {
+      let saved = false;
+      let lastError = null;
+      for (let attempt=0; attempt<3 && !saved; attempt++) {
+        const client_code = await nextClientCode();
+        const { error } = await db.from("clients").insert({
+          ...payload, client_code, created_by:currentUser.id
+        });
+        if (!error) saved = true;
+        else {
+          lastError = error;
+          if (error.code !== "23505") throw error;
+        }
+      }
+      if (!saved) throw lastError || new Error("Nu s-a putut atribui codul clientului.");
+      feedback("Clientul a fost înregistrat cu succes.");
+    }
+    closeModal();
+    await loadClients();
+  } catch (error) {
+    feedback("Eroare la salvare: " + (error.message || "verifică datele și permisiunile."));
+  } finally {
+    $("saveBtn").disabled = false;
+    $("saveBtn").textContent = id ? "Salvează modificările" : "Salvează clientul";
+  }
+});
+
+$("addBtn").addEventListener("click", () => {
+  if (["administrator","vanzari"].includes(currentProfile.role)) openModal();
+});
+$("closeModal").addEventListener("click",closeModal);
+$("cancelBtn").addEventListener("click",closeModal);
+$("clientOverlay").addEventListener("click",e=>{if(e.target===$("clientOverlay"))closeModal();});
+$("search").addEventListener("input",renderClients);
+$("statusFilter").addEventListener("change",renderClients);
+$("refreshBtn").addEventListener("click",loadClients);
+
+db.auth.onAuthStateChange((event,session)=>{
+  if(event==="SIGNED_OUT" || !session) location.replace("index.html");
+});
+if (storage) initialize();
+</script>
+<script src="components/persistent-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#151515"><title>VALMEX – Dashboard central</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--red:#e30613;--ink:#151820;--muted:#77808e;--line:#e8ebf0;--bg:#f4f6f9;--white:#fff;--shadow:0 8px 28px rgba(20,28,40,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#202631;font:14px Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif}button,a{font:inherit}.layout{min-height:100vh;display:flex}
+.side{width:264px;background:linear-gradient(180deg,#171a22,#11141a);color:#fff;padding:22px 14px 16px;display:flex;flex-direction:column;flex:none;position:fixed;inset:0 auto 0 0;height:100dvh;overflow:auto;z-index:20;box-shadow:8px 0 30px #1112}
+.logo{font-size:28px;font-weight:900;letter-spacing:-1.3px;padding:3px 12px}.logo span{color:var(--red)}.sub{font-size:9px;letter-spacing:2px;color:#89919e;padding:0 13px 20px;border-bottom:1px solid #ffffff14}
+.nav{padding-top:8px}.navcap{font-size:9px;color:#77808d;letter-spacing:1.5px;margin:19px 11px 7px;text-transform:uppercase;font-weight:800}.nav a{display:flex;width:100%;gap:12px;align-items:center;padding:10px 11px;margin:3px 0;border:1px solid transparent;border-radius:10px;background:transparent;color:#c5cbd4;text-decoration:none;text-align:left;font-size:12px;font-weight:600;transition:.16s}.nav a:hover{background:#ffffff0d;color:#fff}.nav a.active{background:linear-gradient(90deg,#e3061329,#e306130b);border-color:#e3061344;color:#fff;box-shadow:inset 3px 0 var(--red)}.nav-ico{width:30px;height:30px;flex:none;border-radius:9px;background:#ffffff10;display:grid;place-items:center;font-size:15px}.nav a.active .nav-ico{background:#e30613;color:#fff}.sidefoot{margin-top:auto;padding:16px 10px 4px;border-top:1px solid #ffffff14;color:#747d89;font-size:10px;line-height:1.7}
+.main{flex:1;min-width:0;margin-left:264px}.top{height:70px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:10}.left{display:flex;align-items:center;gap:12px}.menu{display:none;border:0;background:#f2f3f6;border-radius:9px;width:38px;height:38px;font-size:19px}.crumb{font-size:12px;color:#8a929e;font-weight:600}.identity{display:flex;align-items:center;gap:11px;color:var(--muted);font-size:11px}.identity:before{content:'V';display:grid;place-items:center;width:35px;height:35px;border-radius:12px;background:#171a22;color:#fff;font-weight:900;font-size:14px}.identity strong{display:block;color:#242a34;font-size:12px;margin-bottom:3px}
+.content{max-width:1500px;margin:auto;padding:30px 32px 46px}.welcome{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:25px}.eyebrow{font-size:10px;letter-spacing:1.7px;color:var(--red);font-weight:900;margin-bottom:8px}.welcome h1{margin:0 0 7px;font-size:29px;letter-spacing:-.8px}.muted{color:var(--muted);font-size:13px;line-height:1.55}.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:10px 14px;cursor:pointer;text-decoration:none;color:#303743;font-size:12px;font-weight:700;box-shadow:0 2px 7px #15182008}.btn:hover{border-color:#e3061366;color:var(--red)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.stat,.panel,.module{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}.stat{padding:18px 19px;position:relative;overflow:hidden}.stat:after{content:'';position:absolute;right:-20px;top:-22px;width:85px;height:85px;border-radius:50%;background:#f5f6f8}.stat small{color:var(--muted);font-size:11px;font-weight:700}.stat strong{display:block;font-size:30px;margin:9px 0 4px;letter-spacing:-.8px;position:relative;z-index:1}.stat em{font-style:normal;font-size:10px;color:#a0a7b1}
+.section{margin-top:31px}.section-head{display:flex;align-items:end;justify-content:space-between;margin-bottom:14px}.section h2{font-size:17px;margin:0 0 4px;letter-spacing:-.3px}.section-head p{font-size:11px;color:var(--muted);margin:0}.modules{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.module{display:flex;gap:13px;align-items:flex-start;padding:16px;text-decoration:none;color:#222a35;min-height:112px;transition:transform .16s,border-color .16s,box-shadow .16s}.module:hover{border-color:#e3061377;transform:translateY(-2px);box-shadow:0 12px 28px #202a3a12}.module-ico{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;background:#f2f3f6;color:#333;font-size:20px}.module:nth-child(4n+1) .module-ico{background:#fff0f0;color:#d91d2a}.module b{display:block;margin:2px 0 6px;font-size:13px}.module span{display:block;color:var(--muted);font-size:11px;line-height:1.45}.notice{padding:13px 15px;border:1px solid #f0dfbd;background:#fffaf0;border-radius:11px;color:#76521b;font-size:11px;line-height:1.55;margin-top:23px}#notice{font-size:12px;color:#b42318;margin-top:12px}
+@media(max-width:1200px){.modules{grid-template-columns:repeat(3,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.side{width:278px;transform:translateX(-105%);transition:transform .22s}.side.open{transform:translateX(0);box-shadow:15px 0 40px #0005}.main{margin-left:0}.menu{display:block}.top{padding:0 15px;height:62px}.content{padding:22px 15px 36px}.welcome{align-items:flex-start;flex-direction:column}.welcome h1{font-size:24px}.modules{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.module{min-height:105px;padding:12px;gap:10px}.module-ico{width:36px;height:36px;font-size:17px}.identity{font-size:10px}.stats{gap:9px}.stat{padding:14px}.stat strong{font-size:25px}}
+@media(max-width:390px){.modules{grid-template-columns:1fr}.module{min-height:80px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<style id="valmex-dashboard-modern-v2">
+:root{--red:#e30613;--ink:#111827;--muted:#697586;--line:#e3e8ef;--bg:#eef1f5;--shadow:0 12px 32px rgba(15,23,42,.075)}
+body{background:radial-gradient(ellipse at 82% 0%,#e4e9f2 0,transparent 34%),#eef1f5;color:#172033}
+.side{background:linear-gradient(165deg,#182333 0%,#111722 62%,#0d121b 100%);width:258px;padding:22px 15px}.main{margin-left:258px}.logo{font-size:30px}.sub{font-size:9px;letter-spacing:2.1px}.navcap{margin-top:17px;color:#8b9aab}.nav a{min-height:43px;border-radius:11px;font-size:12px;color:#cbd5e1}.nav-ico{width:32px;height:32px;border-radius:10px;background:#ffffff12;font-size:16px}.nav a.active{background:linear-gradient(90deg,#e3061338,#e306130d);border-color:#e306134a;box-shadow:inset 3px 0 #ed1b2a}
+.top{height:68px;padding:0 30px;background:#ffffffed;backdrop-filter:blur(12px)}.content{max-width:1600px;padding:30px 34px 48px}.welcome{background:linear-gradient(115deg,#172334,#26374d);color:#fff;border-radius:20px;padding:26px 28px;margin-bottom:20px;box-shadow:0 16px 36px #14203322;position:relative;overflow:hidden}.welcome:after{content:'V';position:absolute;right:34px;top:-52px;font-size:220px;font-weight:950;color:#ffffff09;line-height:1;pointer-events:none}.welcome .eyebrow{color:#ff6570}.welcome h1{font-size:32px;letter-spacing:-1.1px}.welcome .muted{color:#c0cad7}.welcome .btn{position:relative;z-index:1;border:1px solid #ffffff35;background:#ffffff12;color:#fff;padding:12px 16px}.stats{gap:13px}.stat{border-radius:17px;padding:18px 20px;border-color:#e4e9f0;box-shadow:0 8px 24px #1622380a}.stat:after{width:74px;height:74px;right:-15px;top:-20px;background:#f1f4f8}.stat small{font-size:11px;color:#596779}.stat strong{font-size:32px;color:#172033}.stat em{font-size:10px;color:#929cab}.section{margin-top:26px}.section h2{font-size:18px}.modules{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.module{min-height:104px;border-radius:16px;padding:16px 17px;box-shadow:0 7px 22px #16223808;border-color:#e3e8ef;align-items:center}.module:hover{transform:translateY(-3px);box-shadow:0 15px 28px #17203316}.module-ico{width:46px;height:46px;border-radius:14px;background:#eef2f7;color:#334155;font-size:21px}.module:nth-child(4n+1) .module-ico{background:#fff0f1;color:#d71928}.module b{font-size:13px;color:#172033}.module span{font-size:11px}.notice{border-radius:13px;background:#fff8e9;border-color:#f0dfb8}
+@media(max-width:1200px){.modules{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.side{width:278px}.main{margin-left:0}.top{padding:0 14px}.content{padding:16px 13px 32px}.welcome{padding:21px 18px;border-radius:17px}.welcome h1{font-size:27px}.welcome:after{right:8px;top:-20px;font-size:150px}.modules{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.module{min-height:100px;padding:12px;align-items:flex-start;gap:9px}.module-ico{width:37px;height:37px;font-size:17px}.stat strong{font-size:27px}}
+@media(max-width:390px){.modules{grid-template-columns:1fr}.module{min-height:76px;align-items:center}}
+</style>
+</head><body>
+<div class="layout">
+<aside class="side" id="sidebar"><div class="logo">VAL<span>MEX</span></div><div class="sub">BUSINESS PLATFORM</div>
+<nav class="nav">
+<div class="navcap">Platformă</div><a class="active" href="dashboard.html"><span class="nav-ico">⌂</span>Dashboard</a>
+<div class="navcap">CRM și operațiuni</div>
+<a href="clienti.html"><span class="nav-ico">♙</span>Clienți</a><a href="proiecte.html"><span class="nav-ico">▦</span>Proiecte</a><a href="calculator-live.html"><span class="nav-ico">⌗</span>Calculator LIVE</a><a href="pontaj.html"><span class="nav-ico">◷</span>Pontaj</a><a href="angajati.html" id="employeesLink" hidden><span class="nav-ico">♧</span>Angajați</a>
+<a href="oferte.html"><span class="nav-ico">▤</span>Oferte</a><a href="sarcini.html"><span class="nav-ico">☑</span>Sarcini</a><a href="documente.html"><span class="nav-ico">▧</span>Documente</a><a href="contracte.html"><span class="nav-ico">▣</span>Contracte</a><a href="materiale.html"><span class="nav-ico">▥</span>Materiale</a><a href="financiar.html"><span class="nav-ico">₾</span>Financiar</a><a href="rapoarte.html"><span class="nav-ico">▥</span>Rapoarte</a><a href="chat.html"><span class="nav-ico">✉</span>Chat VALMEX AI</a><a href="fisa-proiect.html"><span class="nav-ico">▧</span>Fișa proiectului</a><a href="garantii.html"><span class="nav-ico">◇</span>Garanții</a><a href="interventii.html"><span class="nav-ico">⚒</span>Intervenții</a><a href="notificari.html"><span class="nav-ico">♢</span>Notificări</a><a href="audit.html"><span class="nav-ico">≋</span>Audit</a><a href="setari.html"><span class="nav-ico">⚙</span>Setări</a>
+<div class="navcap">Administrare centrală</div>
+<a href="admin.html" id="cmsLink" hidden><span class="nav-ico">⚙</span>CMS Website</a>
+<a href="angajati.html" id="employeesAdminLink" hidden><span class="nav-ico">♧</span>Administrare angajați</a>
+<a href="../index.html" target="_blank" rel="noopener"><span class="nav-ico">↗</span>Website VALMEX</a>
+</nav><button class="btn logout" id="logout">Deconectare</button>
+<div class="sidefoot">VALMEX.md · Dashboard + Admin<br>Interfață unificată · staging</div></aside>
+<main class="main"><header class="top"><div class="left"><button class="menu" id="menuBtn" aria-label="Meniu">☰</button><div class="crumb">VALMEX <span style="color:#c4c9d1">/</span> Dashboard</div></div><div class="identity"><strong id="userName">Se verifică sesiunea…</strong><span id="userRole">Autentificare</span></div></header>
+<div class="content"><div class="welcome"><div><div class="eyebrow">CENTRU DE CONTROL VALMEX</div><h1>Dashboard</h1><div class="muted">Acces unic către website, clienți, proiecte și administrarea VALMEX.</div></div><a class="btn" href="../index.html" target="_blank" rel="noopener">Website VALMEX <span aria-hidden="true">↗</span></a></div>
+<div class="stats">
+<div class="stat"><small>Clienți</small><strong id="clientsCount">—</strong><em>Total înregistrări accesibile</em></div>
+<div class="stat"><small>Proiecte</small><strong id="projectsCount">—</strong><em>Total înregistrări accesibile</em></div>
+<div class="stat"><small>Sarcini</small><strong id="tasksCount">—</strong><em>Total înregistrări accesibile</em></div>
+<div class="stat"><small>Contracte</small><strong id="contractsCount">—</strong><em>Total înregistrări accesibile</em></div>
+</div>
+<section class="section"><div class="section-head"><div><h2>Module de lucru</h2><p>Selectează modulul dorit. Navigarea rămâne disponibilă permanent în bara laterală.</p></div></div><div class="modules">
+<a class="module" href="clienti.html"><span class="module-ico">♙</span><span class="module-copy"><b>Clienți</b><span>Date de contact, solicitări și istoric.</span></span></a>
+<a class="module" href="proiecte.html"><span class="module-ico">▦</span><span class="module-copy"><b>Proiecte</b><span>Lucrări, responsabilități și dosare.</span></span></a>
+<a class="module" href="calculator-live.html"><span class="module-ico">⌗</span><span class="module-copy"><b>Calculator LIVE</b><span>Calcul și salvare ofertă în CRM.</span></span></a>
+<a class="module" href="chat.html"><span class="module-ico">✉</span><span class="module-copy"><b>Chat VALMEX</b><span>Conversații, AI, operator și rapoarte.</span></span></a>
+<a class="module" href="pontaj.html"><span class="module-ico">◷</span><span class="module-copy"><b>Pontaj</b><span>Sesiuni de lucru, pauze și corectări.</span></span></a>
+<a class="module" href="oferte.html"><span class="module-ico">▤</span><span class="module-copy"><b>Oferte</b><span>Oferte comerciale, versiuni și aprobări.</span></span></a>
+<a class="module" href="sarcini.html"><span class="module-ico">☑</span><span class="module-copy"><b>Sarcini</b><span>Responsabili, termene și stări.</span></span></a>
+<a class="module" href="documente.html"><span class="module-ico">▧</span><span class="module-copy"><b>Documente</b><span>Dosare și fișiere asociate.</span></span></a>
+<a class="module" href="contracte.html"><span class="module-ico">▣</span><span class="module-copy"><b>Contracte</b><span>Contracte și documente contractuale.</span></span></a>
+<a class="module" href="materiale.html"><span class="module-ico">▥</span><span class="module-copy"><b>Materiale</b><span>Catalog, necesar și consum.</span></span></a>
+<a class="module" href="financiar.html"><span class="module-ico">₾</span><span class="module-copy"><b>Financiar</b><span>Încasări, costuri și rezultate.</span></span></a>
+<a class="module" href="garantii.html"><span class="module-ico">◇</span><span class="module-copy"><b>Garanții</b><span>Termene și obligații de garanție.</span></span></a>
+<a class="module" href="interventii.html"><span class="module-ico">⚒</span><span class="module-copy"><b>Intervenții</b><span>Solicitări și lucrări de service.</span></span></a>
+<a class="module" href="rapoarte.html"><span class="module-ico">▥</span><span class="module-copy"><b>Rapoarte</b><span>Analiză comercială și operațională.</span></span></a>
+<a class="module" href="notificari.html"><span class="module-ico">♢</span><span class="module-copy"><b>Notificări</b><span>Alerte și preferințe.</span></span></a>
+<a class="module" href="setari.html" id="settingsCard" hidden><span class="module-ico">⚙</span><span class="module-copy"><b>Configurări</b><span>Configurări generale și integrări.</span></span></a>
+<a class="module" href="audit.html" id="auditCard" hidden><span class="module-ico">≋</span><span class="module-copy"><b>Jurnal de audit</b><span>Istoricul acțiunilor importante.</span></span></a>
+<a class="module" href="fisa-proiect.html"><span class="module-ico">▧</span><span class="module-copy"><b>Fișa proiectului</b><span>Detalii și documentația lucrării.</span></span></a>
+<a class="module" href="angajati.html" id="employeeCard" hidden><span class="module-ico">♧</span><span class="module-copy"><b>Angajați</b><span>Conturi, roluri și stare activă.</span></span></a>
+<a class="module" href="admin.html" id="cmsCard" hidden><span class="module-ico">⚙</span><span class="module-copy"><b>CMS Website</b><span>Texte, proiecte, imagini, SEO, popup-uri și istoric.</span></span></a>
+<a class="module" href="angajati.html" id="employeesAdminCard" hidden><span class="module-ico">♧</span><span class="module-copy"><b>Administrare angajați</b><span>Conturi, roluri și stare activă.</span></span></a>
+<a class="module" href="../index.html" target="_blank" rel="noopener"><span class="module-ico">↗</span><span class="module-copy"><b>Website VALMEX</b><span>Deschide noul redesign public.</span></span></a>
+</div></section>
+<div class="notice"><b>Notă de funcționare:</b> CMS Website este panoul de administrare al conținutului public. Salvările CMS sunt direcționate către ramura izolată <code>cms-staging</code>; nu modifică automat site-ul din producție. Prețurile și formulele Calculatorului LIVE nu se modifică în această etapă. Modulele nou adăugate în navigare au momentan structură de interfață; conectarea lor la date și operațiuni se va face etapizat. Prezența paginii nu înseamnă că funcția este deja activă.</div>
+<div id="notice" role="status"></div>
+</div></main></div>
+<script>
+const SUPABASE_URL="https://qejnbbzhpvfjeqzwotwt.supabase.co";
+const SUPABASE_KEY="sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+$("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
+async function countRows(table,id){const {count,error}=await db.from(table).select("*",{count:"exact",head:true});$(id).textContent=error?"—":String(count??0);return !error}
+async function init(){
+ const {data:{session},error}=await db.auth.getSession();
+ if(error||!session){location.replace("index.html");return}
+ const {data:p,error:pe}=await db.from("profiles").select("id,full_name,role,active").eq("id",session.user.id).maybeSingle();
+ if(pe||!p||p.active!==true||!p.role){await db.auth.signOut();location.replace("index.html");return}
+ $("userName").textContent=p.full_name||session.user.email||"Utilizator";
+ $("userRole").textContent=p.role;
+ const role=String(p.role).toLowerCase();
+ const isAdmin=["administrator","admin"].includes(role);
+ ["employeesLink","employeeCard","cmsLink","cmsCard","employeesAdminLink","employeesAdminCard","settingsCard","auditCard"].forEach(id=>$(id).hidden=!isAdmin);
+ const results=await Promise.all([countRows("clients","clientsCount"),countRows("projects","projectsCount"),countRows("tasks","tasksCount"),countRows("contracts","contractsCount")]);
+ if(results.some(x=>!x))$("notice").textContent="Unele statistici nu sunt disponibile pentru rolul curent. Permisiunile bazei de date rămân decisive.";
+}
+$("logout").addEventListener("click",async()=>{await db.auth.signOut();location.replace("index.html")});
+db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)location.replace("index.html")});
+init().catch(e=>{$("notice").textContent="Eroare la încărcarea Dashboard-ului: "+e.message});
+</script></body></html>
