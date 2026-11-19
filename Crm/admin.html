@@ -30,7 +30,6 @@ main{min-width:0;margin-left:258px}.top{height:68px;background:#ffffffed;border-
  <div class="brand">VAL<span>MEX</span><small>PANOU DE ADMINISTRARE</small></div>
  <div><div class="navcap">CONȚINUT WEBSITE</div><div class="nav">
   <button onclick="location.href='dashboard.html'"><i>⌂</i>Dashboard</button>
-  <button class="active" data-page="connect"><i>⚿</i>Conexiune securizată</button>
   <button data-page="prices"><i>₾</i>Prețuri</button>
   <button data-page="texts"><i>¶</i>Texte pagina principală</button>
   <button data-page="projects"><i>▤</i>Proiecte executate</button>
@@ -46,11 +45,6 @@ main{min-width:0;margin-left:258px}.top{height:68px;background:#ffffffed;border-
 <main>
 <header class="top"><a class="top-brand" href="dashboard.html" aria-label="Revenire la pagina principală VALMEX">VAL<span>MEX</span></a><div class="topright"><button class="top-back" id="backBtn" type="button">← Înapoi</button><span class="pill" id="status">Neconectat</span><button class="top-menu" id="menu" type="button" aria-label="Deschide meniul" aria-expanded="false">☰</button></div></header>
 <div class="wrap">
-<section class="page active" id="connect">
- <div class="head"><div><div class="eyebrow">ACCES SECURIZAT</div><h1>Conectare GitHub</h1><p class="sub">Panoul citește și scrie fișierul cms/content.json din repository.</p></div></div>
- <div class="notice">Accesul este verificat prin contul VALMEX CRM. Numai profilul activ cu rolul <b>administrator</b> poate modifica repository-ul. Cheia GitHub rămâne exclusiv în Supabase, nu în browser.</div>
- <div class="card"><div class="cardhead"><div><h2>Sesiune administrator</h2><p>Conexiune prin Supabase Edge Function · ramură de lucru: cms-staging</p></div><span class="pill" id="authStatus">Se verifică...</span></div><div class="body"><div id="adminIdentity" class="sub">Se verifică sesiunea CRM...</div><p class="sub" style="margin-top:10px">Repository: totulshopmd-dotcom/valmex-site</p><p class="sub">Ramură izolată: cms-staging</p></div><div class="actions"><button class="btn light" onclick="location.href='dashboard.html'" aria-label="Înapoi la Dashboard" title="Dashboard">←</button><button class="btn primary" id="btnConnect" onclick="connect()">Conectează repository-ul</button></div></div>
-</section>
 <section class="page" id="prices">
  <div class="head"><div><div class="eyebrow">SERVICII ȘI COSTURI</div><h1>Administrare prețuri</h1><p class="sub">Schimbă valorile orientative afișate în conținutul website-ului.</p></div></div>
  <div class="notice">Completează numai prețuri confirmate. Salvarea scrie în ramura de lucru, nu direct pe site. Lasă gol un preț nestabilit.</div>
@@ -92,14 +86,14 @@ main{min-width:0;margin-left:258px}.top{height:68px;background:#ffffffed;border-
  <div class="card"><div class="cardhead"><div><h2>Imagini din repository</h2><p id="libCount">0 imagini</p></div><div class="toolbar"><select id="libFolder" onchange="renderLib()"><option value="">Toate directoarele</option><option>proiecte</option><option>bannere</option><option>seo</option><option>produse</option></select><button class="btn light" onclick="refreshLib()">Reîncarcă</button></div></div><div class="body"><div class="tiles" id="libGrid"></div></div></div>
 </section>
 <section class="page" id="seo">
- <div class="head"><div><div class="eyebrow">OPTIMIZARE PENTRU CĂUTARE</div><h1>SEO și sitemap</h1><p class="sub">Meta Title, Description, cuvinte-cheie și Open Graph pentru fiecare pagină. „Aplică în pagină” scrie aceste valori direct în fișierul HTML, pe ramura cms-staging, ca să le vadă și Google și rețelele sociale. Câmpurile goale nu modifică nimic.</p></div><div><button class="btn light" onclick="importSitemap()">Importă din sitemap.xml</button> <button class="btn darkbtn" onclick="applySeoAll()">Aplică toate</button> <button class="btn primary" onclick="openSeo()">＋ Adaugă pagină</button></div></div>
+ <div class="head"><div><div class="eyebrow">OPTIMIZARE PENTRU CĂUTARE</div><h1>SEO și sitemap</h1><p class="sub">Meta Title, Description, cuvinte-cheie și Open Graph pentru fiecare pagină. „Aplică în pagină” scrie aceste valori direct în fișierul HTML, pe ramura main, ca să le vadă și Google și rețelele sociale. Câmpurile goale nu modifică nimic.</p></div><div><button class="btn light" onclick="importSitemap()">Importă din sitemap.xml</button> <button class="btn darkbtn" onclick="applySeoAll()">Aplică toate</button> <button class="btn primary" onclick="openSeo()">＋ Adaugă pagină</button></div></div>
  <div class="card"><div class="cardhead"><div><h2>Adresa site-ului</h2><p>Folosită la generarea sitemap.xml</p></div></div><div class="body"><div class="field"><label>URL de bază</label><input id="seSiteUrl" placeholder="https://valmex.md"></div></div><div class="actions"><button class="btn primary" onclick="saveSeoSite()">Salvează</button></div></div>
  <div class="card"><div class="cardhead"><div><h2>Pagini</h2><p id="seCount">0 pagini</p></div></div><div class="body" id="seList"></div></div>
- <div class="card"><div class="cardhead"><div><h2>sitemap.xml și robots.txt</h2><p>Se scriu în ramura cms-staging, în rădăcina repository-ului. Pe main ajung doar la publicare.</p></div></div><div class="actions"><button class="btn darkbtn" onclick="genFiles()">Generează / actualizează</button></div></div>
+ <div class="card"><div class="cardhead"><div><h2>sitemap.xml și robots.txt</h2><p>Se scriu în ramura main, în rădăcina repository-ului. Pe main ajung doar la publicare.</p></div></div><div class="actions"><button class="btn darkbtn" onclick="genFiles()">Generează / actualizează</button></div></div>
 </section>
 <section class="page" id="popup">
  <div class="head"><div><div class="eyebrow">VALMEX SMART CONVERSION</div><h1>Popup-uri inteligente</h1><p class="sub">Apar doar când comportamentul vizitatorului arată interes real. Fără popup-uri pe timer, fără insistență după un NU.</p></div><button class="btn primary" onclick="openSmart()">＋ Adaugă popup</button></div>
- <div class="notice">Sistemul estimează interesul din interacțiuni și vizibilitate reale (secțiuni văzute, timp activ, calculator, prețuri, revenire). Nu detectează privirea. Urmărirea se activează doar după consimțământul vizitatorului. Popup-urile apar pe site după ce activezi „Sistem activ” și salvezi, iar modificările ajung pe site după îmbinarea ramurii cms-staging în main. Aici nu se verifică încă afișarea reală.</div>
+ <div class="notice">Sistemul estimează interesul din interacțiuni și vizibilitate reale (secțiuni văzute, timp activ, calculator, prețuri, revenire). Nu detectează privirea. Urmărirea se activează doar după consimțământul vizitatorului. Popup-urile apar pe site după ce activezi „Sistem activ” și salvezi, iar modificările ajung pe site după îmbinarea ramurii main în main. Aici nu se verifică încă afișarea reală.</div>
  <div class="card"><div class="cardhead"><div><h2>Setări generale</h2><p id="gStatus"></p></div></div><div class="body"><div class="grid">
   <div class="field full"><div class="switchrow" style="border:0"><div><b>Sistem activ</b><small>Dezactivat = niciun popup inteligent pe site</small></div><input type="checkbox" class="switch" id="gOn"></div></div>
   <div class="field"><label>Dezactivare temporară până la</label><input id="gPause" type="date"></div>
@@ -159,7 +153,7 @@ main{min-width:0;margin-left:258px}.top{height:68px;background:#ffffffed;border-
 </div></div><div class="modalfoot"><button class="btn light" onclick="closeM('smModal')">Anulează</button><button class="btn primary" onclick="saveSmart()">Salvează</button></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
-const OWNER="totulshopmd-dotcom",REPO="valmex-site",BR="cms-staging",FILE="cms/content.json";
+const OWNER="totulshopmd-dotcom",REPO="valmex-site",BR="main",FILE="cms/content.json";
 const SUPABASE_URL="https://qejnbbzhpvfjeqzwotwt.supabase.co",SUPABASE_KEY="sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov",STORAGE_KEY="sb-qejnbbzhpvfjeqzwotwt-auth-token";
 const activeStorage=localStorage.getItem(STORAGE_KEY)?localStorage:(sessionStorage.getItem(STORAGE_KEY)?sessionStorage:localStorage);
 const authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{storage:activeStorage,storageKey:STORAGE_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
@@ -171,7 +165,7 @@ const D={projects:[],seo:{siteUrl:"https://valmex.md",pages:[]},smart:{enabled:f
 const PM=[["pRoof","roof"],["pTile","tile"],["pFacade","facade"],["pAmk","amk"]];
 const TM={tHero:"hero",tIntro:"intro",tRoofTitle:"roofTitle",tFacadeTitle:"facadeTitle",tRoof:"roof",tFacade:"facade",tButton:"button"};
 const CM={cPhone:"phone",cWhats:"whats",cEmail:"email",cWeb:"web",cHours:"hours",cArea:"area"};
-const names={connect:"Conectare GitHub",prices:"Prețuri",texts:"Texte pagina principală",contact:"Date de contact",projects:"Proiecte executate",seo:"SEO și sitemap",popup:"Fereastră popup",images:"Bibliotecă imagini",history:"Istoric și restaurare",forms:"Cereri primite",backup:"Export / import"};
+const names={prices:"Prețuri",texts:"Texte pagina principală",contact:"Date de contact",projects:"Proiecte executate",seo:"SEO și sitemap",popup:"Fereastră popup",images:"Bibliotecă imagini",history:"Istoric și restaurare",forms:"Cereri primite",backup:"Export / import"};
 function el(id){return document.getElementById(id)}function get(id){return el(id).value.trim()}function set(id,v){el(id).value=v??""}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(s){let t=el("toast");t.textContent=s;t.classList.add("show");clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove("show"),3500)}
@@ -188,16 +182,16 @@ async function gh(p,o={}){const method=(o.method||"GET").toUpperCase(),u=new URL
  }
  throw new Error("Operație GitHub neacceptată: "+method+" "+pathname);
 }
-function go(id){if(!connected&&id!=="connect"){toast("Conectează-te mai întâi la GitHub.");id="connect"}document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));el("crumb").textContent=names[id];el("sidebar").classList.remove("open");if(id==="history"&&connected)loadHistory();if(id==="images")renderLib();if(id==="forms")renderForms();if(id==="seo")renderSeo();if(id==="popup")renderPopup();if(id==="projects")renderProjects();window.scrollTo({top:0})}
+function go(id){if(!connected){toast("Se restabilește conexiunea cu repository-ul. Încearcă din nou în câteva secunde.");return}document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));el("crumb").textContent=names[id];el("sidebar").classList.remove("open");if(id==="history"&&connected)loadHistory();if(id==="images")renderLib();if(id==="forms")renderForms();if(id==="seo")renderSeo();if(id==="popup")renderPopup();if(id==="projects")renderProjects();window.scrollTo({top:0})}
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.page));el("menu").onclick=()=>{const open=el("sidebar").classList.toggle("open");el("menu").setAttribute("aria-expanded",String(open))};
 el("backBtn").onclick=()=>{if(history.length>1)history.back();else location.href="dashboard.html"};
 async function load(){try{const f=await gh("/contents/"+FILE+"?ref="+BR);sha=f.sha;db=merge(JSON.parse(ub64(f.content)))}catch(e){if(e.status!==404)throw e;sha=null;db=merge(null)}}
-async function connect(){el("btnConnect").disabled=true;try{const {data:{session:current},error}=await authClient.auth.getSession();if(error||!current)throw new Error("Nu există o sesiune CRM activă. Autentifică-te în CRM.");session=current;
+async function connect(){try{const {data:{session:current},error}=await authClient.auth.getSession();if(error||!current)throw new Error("Nu există o sesiune CRM activă. Autentifică-te în CRM.");session=current;
  const {data:p,error:pe}=await authClient.from("profiles").select("full_name,role,active").eq("id",session.user.id).maybeSingle();
  if(pe||!p||!["administrator","admin"].includes(String(p.role||"").toLowerCase())||p.active!==true)throw new Error("Acces permis doar administratorului activ.");profile=p;
  el("adminIdentity").textContent=(p.full_name||"Administrator")+" · administrator activ";el("authStatus").textContent="Autentificat";el("authStatus").classList.add("on");
- await bridge("ensureBranch");await load();await loadLib();connected=true;el("status").textContent="Conectat · "+BR;el("status").classList.add("on");render();go("prices");toast("Repository conectat prin Supabase.");
- }catch(e){connected=false;el("authStatus").textContent="Acces indisponibil";toast("Conectare eșuată: "+e.message)}finally{el("btnConnect").disabled=false}}
+ await load();await loadLib();connected=true;el("status").textContent="Repository · main";el("status").classList.add("on");render();go("prices");
+ }catch(e){connected=false;el("status").textContent="Deconectat";el("authStatus").textContent="Acces indisponibil";toast("Conectare eșuată: "+e.message)}}
 function render(){PM.forEach(([i,k])=>set(i,db.prices[k]));Object.entries(TM).forEach(([i,k])=>set(i,db.pages.home[k]));Object.entries(CM).forEach(([i,k])=>set(i,db.site.contact[k]))}
 async function save(msg){try{db.meta.updated=new Date().toISOString();const b={message:msg,content:b64(JSON.stringify(db,null,2)),branch:BR};if(sha)b.sha=sha;const r=await gh("/contents/"+FILE,{method:"PUT",body:JSON.stringify(b)});sha=r.content.sha;toast("Salvat în ramura "+BR+".");return true}
  catch(e){if(e.status===409||e.status===422){if(confirm("Conflict de versiune: fișierul a fost modificat în altă parte. Reîncarc versiunea curentă? Modificările nefăcute pe server se pierd din formular.")){try{await load();render();toast("Date reîncărcate. Reia modificarea.")}catch(x){toast("Eroare: "+x.message)}}}else toast("Eroare la salvare: "+e.message);return false}}
@@ -215,7 +209,7 @@ async function restore(c){
   const parsed=JSON.parse(f.content);
   if(!parsed||typeof parsed!=="object"||Array.isArray(parsed))throw new Error("Versiunea selectată nu conține un document CMS valid.");
   db=merge(parsed);
-  // Păstrăm SHA-ul versiunii curente din cms-staging pentru UPDATE, nu CREATE.
+  // Păstrăm SHA-ul versiunii curente din main pentru UPDATE, nu CREATE.
   const ok=await save("CMS: restaurare versiunea "+c.slice(0,7));
   if(ok){render();await loadHistory();toast("Versiunea a fost restaurată printr-un commit nou.")}
   else{db=previous;await load();render()}
@@ -331,7 +325,7 @@ async function applySeo(i){const p=db.seo.pages[i];if(!p.title&&!p.description&&
  try{toast((await seoOne(p))?"SEO aplicat în "+p.path+".":"Pagina avea deja aceste valori.")}catch(e){toast("Eroare la "+p.path+": "+e.message)}}
 async function applySeoAll(){const a=db.seo.pages.filter(p=>p.title||p.description||p.keywords||p.ogTitle||p.ogDescription||p.ogImage);if(!a.length){toast("Nu există valori SEO completate.");return}if(!confirm("Scrii valorile SEO în "+a.length+" fișiere HTML (ramura "+BR+")?"))return;let ok=0,same=0;const bad=[];
  for(const p of a){try{(await seoOne(p))?ok++:same++}catch(e){bad.push(p.path)}}toast(ok+" actualizate, "+same+" neschimbate"+(bad.length?", erori: "+bad.join(", "):"")+".")}
-async function initAdmin(){try{const {data:{session:current},error}=await authClient.auth.getSession();if(error||!current){el("authStatus").textContent="Neautentificat";el("adminIdentity").textContent="Autentifică-te în CRM pentru a continua.";return}session=current;const {data:p,error:pe}=await authClient.from("profiles").select("full_name,role,active").eq("id",session.user.id).maybeSingle();if(pe||!p||!["administrator","admin"].includes(String(p.role||"").toLowerCase())||p.active!==true){el("authStatus").textContent="Acces refuzat";el("adminIdentity").textContent="Este necesar un administrator activ.";return}profile=p;el("authStatus").textContent="Autentificat";el("authStatus").classList.add("on");el("adminIdentity").textContent=(p.full_name||"Administrator")+" · administrator activ"}catch(e){el("authStatus").textContent="Eroare";el("adminIdentity").textContent=e.message}}
-authClient.auth.onAuthStateChange((_event,next)=>{session=next;if(!next){connected=false;el("status").textContent="Sesiune închisă";el("authStatus").textContent="Neautentificat"}});
+async function initAdmin(){try{const {data:{session:current},error}=await authClient.auth.getSession();if(error||!current){el("authStatus").textContent="Neautentificat";el("adminIdentity").textContent="Autentifică-te în CRM pentru a continua.";return}session=current;const {data:p,error:pe}=await authClient.from("profiles").select("full_name,role,active").eq("id",session.user.id).maybeSingle();if(pe||!p||!["administrator","admin"].includes(String(p.role||"").toLowerCase())||p.active!==true){el("authStatus").textContent="Acces refuzat";el("adminIdentity").textContent="Este necesar un administrator activ.";return}profile=p;el("authStatus").textContent="Autentificat";el("authStatus").classList.add("on");el("adminIdentity").textContent=(p.full_name||"Administrator")+" · administrator activ";await connect()}catch(e){el("authStatus").textContent="Eroare";el("adminIdentity").textContent=e.message}}
+authClient.auth.onAuthStateChange((event,next)=>{session=next;if(!next){connected=false;profile=null;el("status").textContent="Sesiune închisă";el("authStatus").textContent="Neautentificat"}else if(event==="SIGNED_IN"){initAdmin()}});
 initAdmin();
 </script></body></html>
