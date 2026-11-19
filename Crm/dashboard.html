@@ -81,7 +81,7 @@ const SUPABASE_KEY="sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
 $("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
-async function countRows(table,id){const {count,error}=await db.from(table).select("*",{count:"exact",head:true});$(id).textContent=error?"—":String(count??0);return !error}
+async function countRows(table,id){let query=db.from(table).select("*",{count:"exact",head:true});if(table==="clients"||table==="projects")query=query.is("deleted_at",null);const {count,error}=await query;$(id).textContent=error?"—":String(count??0);return !error}
 
 async function loadTrash(){
  const section=$("trashSection"),host=$("trashContent");
