@@ -58,8 +58,8 @@ header .brand{margin-right:28px;flex-shrink:0}header nav{margin-left:auto;margin
 /* ===== pagini de servicii ===== */
 .phero{min-height:64svh;padding-top:120px}
 .phero .hero-bg{background:linear-gradient(90deg,rgba(5,5,7,.97) 0%,rgba(5,5,7,.8) 42%,rgba(5,5,7,.18) 100%),linear-gradient(0deg,#09090b 0%,transparent 35%),var(--hero-img) center/cover no-repeat}
-html:not(.dk) .phero .hero-bg{background:linear-gradient(90deg,rgba(255,255,255,.97) 0%,rgba(255,255,255,.84) 40%,rgba(255,255,255,.04) 100%),linear-gradient(0deg,#fff 0%,rgba(255,255,255,0) 42%),var(--hero-img) center/cover no-repeat}
-@media(max-width:900px){html:not(.dk) .phero .hero-bg{background:linear-gradient(180deg,rgba(255,255,255,.3) 0%,rgba(255,255,255,.9) 46%,#fff 76%),var(--hero-img) 62% top/cover no-repeat}}
+html:not(.dk) .phero .hero-bg{background:linear-gradient(90deg,rgba(255,255,255,.86) 0%,rgba(255,255,255,.68) 40%,rgba(255,255,255,.02) 100%),linear-gradient(0deg,#fff 0%,rgba(255,255,255,0) 42%),var(--hero-img) center/cover no-repeat}
+@media(max-width:900px){html:not(.dk) .phero .hero-bg{background:linear-gradient(180deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,.72) 46%,#fff 76%),var(--hero-img) 62% top/cover no-repeat}}
 .crumbs{font-size:12px;letter-spacing:.6px;color:var(--muted);margin-bottom:16px}.crumbs a:hover{color:var(--red)}.crumbs span{color:var(--white);font-weight:700}
 section.alt{background:var(--panel)}
 header nav a[aria-current]{color:var(--red)}
