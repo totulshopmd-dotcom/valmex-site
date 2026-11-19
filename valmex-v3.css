@@ -339,3 +339,8 @@ html:not(.dk) .tabs .ind{transition:none}}
 @media(max-width:600px){html:not(.dk) .tab span{font-size:12px}
 html:not(.dk) .rsay{font-size:15px;padding:14px 16px}}
 
+
+/* HARD HIDE: header CTA removed on desktop, tablet and mobile */
+header a.header-cta,
+#mainHeader a.header-cta,
+a.header-cta.openLeadModal{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;width:0!important;min-width:0!important;padding:0!important;margin:0!important;border:0!important}
