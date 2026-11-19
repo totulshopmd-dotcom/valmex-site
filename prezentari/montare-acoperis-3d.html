@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ro"><head><meta charset="UTF-8">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://valmex.md/blog/etapele-montarii-acoperisului-tigla-metalica.html">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>VALMEX.MD — Montarea acoperișului din țiglă metalică (prezentare 3D)</title>
+<style>
+:root{--r:#e30613;--k:#111318;--g:#5b6470;--l:#e3e7eb}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;background:#f4f5f7;color:var(--k);font:15px/1.5 "Segoe UI",system-ui,Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#svg{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.lb{position:fixed;left:0;top:0;font-size:11px;font-weight:700;letter-spacing:.3px;background:#fff;border:1px solid var(--l);border-left:3px solid var(--r);padding:3px 8px;white-space:nowrap;opacity:0;transition:opacity .6s;pointer-events:none;z-index:3}
+.lb.on{opacity:1}
+#flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:6}
+#flash.f{animation:f 1s ease-out}@keyframes f{from{opacity:.9}to{opacity:0}}
+#brand{position:fixed;top:max(14px,env(safe-area-inset-top));left:18px;font-weight:900;font-size:22px;letter-spacing:-1px;z-index:4}
+#brand b{color:var(--r)}#brand i{font-style:normal;font-size:11px;color:var(--g);letter-spacing:1px;margin-left:3px}
+#panel{position:fixed;left:18px;bottom:max(16px,env(safe-area-inset-bottom));width:min(470px,calc(100% - 36px));background:rgba(255,255,255,.95);border-top:3px solid var(--r);box-shadow:0 10px 40px #10182016;padding:14px 18px 14px;z-index:5;display:none}
+#num{font-size:11px;font-weight:800;letter-spacing:1.6px;color:var(--r)}
+#ttl{font-size:21px;line-height:1.2;letter-spacing:-.5px;margin:3px 0 5px}
+#txt{font-size:13.5px;color:#2c333b;min-height:4.4em}
+.chg #ttl,.chg #txt,.chg #num{animation:c .7s ease-out}@keyframes c{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#seg{display:flex;gap:3px;margin:11px 0 10px}#seg div{flex:1;height:5px;background:#e6e9ed;cursor:pointer;overflow:hidden}#seg i{display:block;height:100%;width:0;background:var(--r)}
+#ctl{display:flex;gap:6px}
+button{font:inherit;font-size:12px;font-weight:800;letter-spacing:.5px;border:1px solid var(--l);background:#fff;color:var(--k);padding:9px 12px;cursor:pointer;text-transform:uppercase}
+button:hover{border-color:var(--k)}#bPl{flex:1;background:var(--k);color:#fff;border-color:var(--k)}
+#intro{position:fixed;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(circle,rgba(255,255,255,.55),rgba(255,255,255,.92))}
+#intro small{font-size:11px;font-weight:800;letter-spacing:2px;color:var(--r)}
+#intro h1{font-size:clamp(28px,6vw,54px);line-height:1.05;letter-spacing:-2px;max-width:760px;margin:10px 0 12px}
+#intro p{color:var(--g);max-width:520px;margin-bottom:24px}
+#go{background:var(--r);border-color:var(--r);color:#fff;font-size:15px;padding:16px 34px;letter-spacing:1.5px}
+#msg{position:fixed;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:30px;background:#fff;z-index:20;font-weight:600}
+#txt b{color:var(--k)}
+@media(min-width:900px){#panel{top:50%;bottom:auto;transform:translateY(-50%);left:28px;width:380px;padding:18px 22px}#ttl{font-size:24px}#txt{font-size:14.5px;line-height:1.55}}
+@media(max-width:760px){#panel{left:10px;width:calc(100% - 20px);padding:12px 14px}#ttl{font-size:18px}#txt{font-size:12.5px;line-height:1.45;min-height:5.8em}#brand{font-size:19px;left:12px}button{padding:9px 10px}}
+
+body{font-family:Inter,Arial,Helvetica,sans-serif}
+#gp{position:fixed;top:0;left:0;height:3px;width:0;background:var(--r);box-shadow:0 0 14px #e30613;z-index:11}
+#hdr{position:fixed;top:3px;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:12px 5.5%;background:rgba(255,255,255,.93);border-bottom:1px solid rgba(13,13,16,.1);backdrop-filter:blur(10px)}
+#brand{position:static;font-weight:950;font-size:26px;letter-spacing:-1.8px;color:#0d0d10;line-height:1}#brand b{color:var(--r)}#brand i{font-style:normal;font-size:13px;color:#5d6068;letter-spacing:0;margin-left:2px;font-weight:800}
+.hc{background:var(--r);color:#fff;font-size:12px;font-weight:850;letter-spacing:1px;text-transform:uppercase;padding:12px 20px;text-decoration:none;transition:.25s}.hc:hover{background:#b9000b;transform:translateY(-2px);box-shadow:0 12px 35px #e3061335}
+#panel{background:#09090b;color:#fff;border:0;border-radius:24px;box-shadow:inset 0 5px 0 var(--r),0 30px 60px -30px rgba(0,0,0,.55);padding-top:20px}
+#num{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:3px}#num:before{content:"";width:34px;height:2px;background:var(--r)}
+#ttl{font-weight:950;letter-spacing:-1.2px;color:#fff}#txt{color:#c9cad0}#txt b{color:#fff}
+#seg div{background:#ffffff24;border-radius:99px}#seg i{border-radius:99px;box-shadow:0 0 10px #e30613}
+.lb{border-radius:99px;border:1px solid rgba(13,13,16,.14);padding:5px 13px;font-weight:900;color:#0d0d10;box-shadow:0 8px 22px -10px #0007}
+#intro{background:radial-gradient(circle,rgba(255,255,255,.55),rgba(244,245,247,.94))}
+#intro small{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:3px}#intro small:before{content:"";width:34px;height:2px;background:var(--r)}
+#intro h1{font-weight:950;letter-spacing:-3px}#intro p{color:#5d6068}
+#go{transition:.25s}#go:hover{background:#b9000b;transform:translateY(-2px);box-shadow:0 12px 35px #e3061335}
+@media(max-width:760px){#brand{font-size:22px}.hc{padding:10px 12px;font-size:11px}#hdr{padding:10px 4.5%}}
+</style></head><body>
+<canvas id="cv"></canvas><svg id="svg"></svg><div id="flash"></div>
+<div id="gp"></div><div id="hdr"><div id="brand">Val<b>mex</b><i>.md</i></div><a class="hc" href="tel:+37378026212">Sună: 078 026 212</a></div>
+<div id="panel"><div id="num"></div><h2 id="ttl"></h2><p id="txt"></p><div id="seg"></div>
+</div>
+<div id="intro"><small>PREZENTARE 3D · 13 ETAPE</small><h1>Cum se montează un acoperiș din țiglă metalică</h1><p>Urmărește, pas cu pas, construcția completă: de la șarpantă până la testul final cu ploaie.</p><button id="go">START PREZENTARE</button></div>
+<div id="msg"></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+function msg(t){var m=$('msg');m.style.display='flex';m.textContent=t}
+if(window.THREE)main();else{var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';s.onload=main;s.onerror=function(){msg('Biblioteca 3D (Three.js) nu a putut fi încărcată. Verificați conexiunea la internet și reîncărcați pagina.')};document.head.appendChild(s)}
+function main(){
+var T=THREE,K=T.REVISION>=155?Math.PI:1,PI=Math.PI,V=function(x,y,z){return new T.Vector3(x,y,z)};
+var mobile=/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent)||innerWidth<700;
+var ren;try{ren=new T.WebGLRenderer({canvas:$('cv'),antialias:!mobile})}catch(e){return msg('Browserul nu suportă WebGL, necesar pentru prezentarea 3D.')}
+ren.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.5:2));
+var sc=new T.Scene();sc.background=new T.Color(0xf4f5f7);sc.fog=new T.Fog(0xf4f5f7,30,70);
+var cam=new T.PerspectiveCamera(42,1,.1,120);
+// mediu reflexii metal
+var ec=document.createElement('canvas');ec.width=512;ec.height=256;var g=ec.getContext('2d');
+var gr=g.createLinearGradient(0,0,0,256);gr.addColorStop(0,'#9fc4e8');gr.addColorStop(.5,'#fff');gr.addColorStop(.52,'#8a949e');gr.addColorStop(1,'#3b434b');g.fillStyle=gr;g.fillRect(0,0,512,256);
+g.fillStyle='#fff';g.fillRect(60,40,90,30);g.fillRect(300,30,120,40);g.fillStyle='#1c2127';g.fillRect(200,70,60,40);
+var et=new T.CanvasTexture(ec);et.mapping=T.EquirectangularReflectionMapping;
+var env=new T.PMREMGenerator(ren).fromEquirectangular(et).texture;
+function M(c,o){var m=new T.MeshStandardMaterial(Object.assign({color:c,roughness:.8},o||{}));m.emissive.set(0xe30613);m.emissiveIntensity=0;return m}
+var nc=document.createElement('canvas');nc.width=nc.height=128;var ng=nc.getContext('2d'),nd=ng.createImageData(128,128);for(var q=0;q<nd.data.length;q+=4){var rr=120+Math.random()*100;nd.data[q]=nd.data[q+1]=nd.data[q+2]=rr;nd.data[q+3]=255}ng.putImageData(nd,0,0);var bt=new T.CanvasTexture(nc);bt.wrapS=bt.wrapT=T.RepeatWrapping;bt.repeat.set(5,24);var wc=document.createElement('canvas');wc.width=wc.height=64;var wg2=wc.getContext('2d');for(var y=0;y<64;y++){var v2=170+Math.random()*60|0;wg2.fillStyle='rgb('+v2+','+v2+','+v2+')';wg2.fillRect(0,y,64,1)}var wm=new T.CanvasTexture(wc);wm.wrapS=wm.wrapT=T.RepeatWrapping;
+var wood=M(0xd19a5c,{map:wm}),wood2=M(0xc48a4a,{map:wm}),ctrM=M(0xd6a46a,{map:wm}),batM=M(0x8f6238,{map:wm}),
+folM=M(0xb9c9d8,{roughness:.55,side:2,transparent:true,opacity:.95}),
+galv=M(0x4d545b,{metalness:.8,roughness:.35,envMap:env}),
+tileM=M(0x474d54,{metalness:.35,roughness:.55,envMap:env,envMapIntensity:.5,side:2,vertexColors:true,transparent:true,bumpMap:bt,bumpScale:1.5}),
+redM=M(0x3d434a,{transparent:true,envMapIntensity:.5,metalness:.55,roughness:.4,envMap:env,side:2}),
+pipeM=M(0x3d4349,{metalness:.75,roughness:.33,envMap:env,side:2,transparent:true}),
+gutM=M(0x3d4349,{metalness:.6,roughness:.4,envMap:env,side:2}),epdm=M(0x111111,{roughness:.9}),scr=M(0x777f88,{metalness:.9,roughness:.3}),wall=M(0xeceae6),dark=M(0x7fb2d6,{roughness:.15,metalness:.3,envMap:env});
+sc.add(new T.HemisphereLight(0xffffff,0xd7dfe8,.6*K));
+var sun=new T.DirectionalLight(0xfff4e0,1.6*K);sun.position.set(7,11,8);sc.add(sun);
+var fill=new T.DirectionalLight(0xdfe9ff,.5*K);fill.position.set(-8,5,-6);sc.add(fill);
+var spot=new T.PointLight(0xfff0e0,0,6,2);sc.add(spot);var SPI=K>1?9:1.1;
+function bx(w,h,d,m){return new T.Mesh(new T.BoxGeometry(w,h,d),m)}
+function at(o,x,y,z){o.position.set(x,y,z);return o}
+var base=at(new T.Mesh(new T.CylinderGeometry(9,9.3,.2,64),M(0xe3e5e9)),0,-.1,0);sc.add(base);
+sc.add(at(new T.Mesh(new T.RingGeometry(8.7,8.85,64).rotateX(-PI/2),new T.MeshBasicMaterial({color:0xe30613})),0,.005,0));
+// casa
+var W=8,D=6,H=3,PH=2,hd=D/2,L=Math.hypot(hd,PH),fi=Math.atan2(PH,hd),sf=Math.sin(fi),cf=Math.cos(fi);
+sc.add(at(bx(W,H,D,wall),0,H/2,0));sc.add(at(bx(W+.12,.25,D+.12,M(0x3a3f45)),0,.125,0));
+var gs=new T.Shape();gs.moveTo(-hd+.28,0);gs.lineTo(hd-.28,0);gs.lineTo(0,PH-.19);gs.closePath();
+var gg2=new T.ExtrudeGeometry(gs,{depth:.16,bevelEnabled:false}).rotateY(PI/2);
+sc.add(at(new T.Mesh(gg2,wall),-W/2,H,0));sc.add(at(new T.Mesh(gg2,wall),W/2-.16,H,0));
+[1,-1].forEach(function(s){[-2.4,.6].forEach(function(x){sc.add(at(bx(1.15,1.25,.05,M(0x2b3036)),x,1.75,s*3.01));sc.add(at(bx(.95,1.05,.06,dark),x,1.75,s*3.02))})});
+// ape
+var sl=[1,-1].map(function(s){var gp=new T.Group();gp.matrixAutoUpdate=false;
+var z=V(0,sf,-s*cf),y=V(0,cf,s*sf),x=new T.Vector3().crossVectors(y,z);
+gp.matrix.makeBasis(x,y,z).setPosition(0,H,s*hd);sc.add(gp);return gp});
+function wp(s,x,y,z){return V(x,y,z).applyMatrix4(sl[s].matrix)}
+// cadru parti
+function Part(m){return{items:[],last:-1,fn:null,mats:m||[]}}
+function it(pt,o,gp,off,rx){o.userData={b:o.position.clone(),off:off||V(0,0,0),rx:rx||0,grow:0,q:0};gp.add(o);pt.items.push(o);o.visible=false;return o}
+function setP(pt,p){var n=pt.items.length,act=null;
+for(var i=0;i<n;i++){var o=pt.items[i],u=o.userData,q=Math.min(1,Math.max(0,(p-(n>1?i/n*.72:0))/(n>1?.28:1))),e=1-Math.pow(1-q,3);
+u.q=q;o.visible=q>0;
+if(u.grow)o.scale[u.grow]=Math.max(e,.001);else{o.position.copy(u.b).addScaledVector(u.off,1-e);if(u.rx)o.rotation.x=u.rx*(1-e)}
+if(q>0&&q<1)act=o}
+if(pt.fn)pt.fn(p);return act}
+var rx=[];for(var k=0;k<11;k++)rx.push(-3.9+.78*k);
+var P=[];
+// 2 SARPANTA
+var p2=P[2]=Part([wood,wood2]),UP=V(0,2.6,0);
+[-1,1].forEach(function(s){it(p2,at(bx(W-.4,.1,.14,wood2),0,H+.05,s*2.8),sc,UP)});
+[1,3,5,7,9].forEach(function(k){var x=rx[k];
+it(p2,at(bx(.1,.12,5,wood2),x,H+.17,0),sc,UP);it(p2,at(bx(.1,1.5,.1,wood2),x,3.99,0),sc,UP);it(p2,at(bx(.07,.1,2.7,wood2),x,3.95,0),sc,UP)});
+it(p2,at(bx(W-.4,.22,.1,wood2),0,4.86,0),sc,UP);
+rx.forEach(function(x){[0,1].forEach(function(s){it(p2,at(bx(.07,.16,L+.45,wood),x,-.08,(L-.45)/2),sl[s],UP)})});
+// 3 FOLIE
+var p3=P[3]=Part([folM]),rolls=[];
+[0,1].forEach(function(s){var f=at(new T.Mesh(new T.PlaneGeometry(8.6,L+.45).rotateX(-PI/2).translate(0,0,(L+.45)/2),folM),0,.006,-.45);
+it(p3,f,sl[s]);f.userData.grow='z';
+var r=new T.Mesh(new T.CylinderGeometry(.08,.08,8.7,12).rotateZ(PI/2),M(0xf0f4f7));r.visible=false;sl[s].add(r);rolls.push(r)});
+p3.fn=function(){p3.items.forEach(function(f,i){var q=f.userData.q,r=rolls[i];r.visible=q>0&&q<1;r.position.set(0,.09,-.45+(1-Math.pow(1-q,3))*(L+.45))})};
+// 4 CONTRASIPCI
+var p4=P[4]=Part([ctrM]);
+rx.forEach(function(x){[0,1].forEach(function(s){it(p4,at(bx(.05,.04,L+.26,ctrM),x,.03,(L-.34)/2),sl[s],V(0,1.8,0))})});
+// 5 SIPCI
+var p5=P[5]=Part([batM]);
+for(k=0;k<12;k++)[0,1].forEach(function(s){it(p5,at(bx(8.6,.035,.05,batM),0,.0675,-.22+k*.34),sl[s],V((k%2?1:-1)*7,0,0))});
+// 6 TINICHIGERIE
+var p6=P[6]=Part([galv]);
+[0,1].forEach(function(s){var e=new T.Group();e.add(at(bx(8.7,.012,.16,galv),0,.022,-.43),at(bx(8.7,.1,.012,galv),0,-.03,-.51));
+it(p6,e,sl[s],V(0,.8,-1.6));
+[-1,1].forEach(function(d){it(p6,at(bx(.1,.016,L+.4,galv),d*4.3,.095,(L-.4)/2),sl[s],V(d*1.5,.6,0))})});
+// 7 PLUVIAL
+var p7=P[7]=Part([gutM]),gy=2.62,hg=new T.TorusGeometry(.105,.008,6,14,PI).rotateZ(PI).rotateY(PI/2),gt=(function(){var sh=new T.Shape(),r=.1,t=.012,n=14,i,a;sh.moveTo(-r,.03);for(i=0;i<=n;i++){a=PI+PI*i/n;sh.lineTo(r*Math.cos(a),r*Math.sin(a))}sh.lineTo(r,.03);sh.lineTo(r-t,.03);for(i=n;i>=0;i--){a=PI+PI*i/n;sh.lineTo((r-t)*Math.cos(a),(r-t)*Math.sin(a))}sh.lineTo(-r+t,.03);sh.closePath();
+return new T.ExtrudeGeometry(sh,{depth:8.9,bevelEnabled:false}).translate(0,0,-4.45).rotateY(PI/2)})();
+rx.forEach(function(x){[1,-1].forEach(function(s){var hk=new T.Group();hk.add(new T.Mesh(hg,gutM),at(bx(.03,.012,.2,gutM),0,.03,-s*.205));it(p7,at(hk,x,gy,s*3.42),sc,V(0,1,s*1.2))})});
+[1,-1].forEach(function(s){var q=at(new T.Mesh(gt,gutM),0,gy,s*3.42);q.rotation.z=-.012;var cap=new T.CircleGeometry(.1,14,PI,PI).rotateY(PI/2);[-1,1].forEach(function(e){q.add(at(new T.Mesh(cap,gutM),e*4.45,0,0))});it(p7,q,sc,V(0,1.2,s*2))});
+// 8 TIGLA
+var p8=P[8]=Part([tileM]),MZ=.3375,LS=MZ*12,LAM=.2625;
+var tg=new T.PlaneGeometry(1.1,LS,33,120),pp=tg.attributes.position,cl_=new Float32Array(pp.count*3);
+for(var i=0;i<pp.count;i++){var u=pp.getX(i)+.55,t=pp.getY(i)+LS/2,f=(t/MZ)%1,dg=Math.abs(((u+.175)%.35)-.175),h=.05*(f<.12?f/.12:f>.9?(1-f)/.1:1)-.02*Math.max(0,1-dg/.025);
+if(u<.05)h+=.008;else if(u>1.05)h-=.008;pp.setXYZ(i,u-.55,h,t);var sh=(.5+.5*Math.min(1,h/.05))*((f<.12||f>.9)?.72:1);cl_[i*3]=cl_[i*3+1]=cl_[i*3+2]=sh}
+tg.computeVertexNormals();tg.setAttribute('color',new T.BufferAttribute(cl_,3));
+for(var j=0;j<8;j++)[0,1].forEach(function(s){it(p8,at(new T.Mesh(tg,tileM),-3.675+j*1.05,.085,-.4),sl[s],V(0,2.2,1.4),.4)});
+var sg=new T.CylinderGeometry(.011,.011,.045,6),wg=new T.CylinderGeometry(.028,.028,.007,10),scW=[],mt=new T.Matrix4();
+[0,1].forEach(function(s){var n=8*12*3,a=new T.InstancedMesh(sg,scr,n),b=new T.InstancedMesh(wg,epdm,n),c=0;
+for(var j=0;j<8;j++)for(var m=0;m<12;m++)for(var k=0;k<3;k++){if((m+k)%2)continue;var x=-3.675+j*1.05-.375+k*.35,z=-.4+m*MZ+.8*MZ;a.setMatrixAt(c,mt.makeTranslation(x,.159,z));b.setMatrixAt(c,mt.makeTranslation(x,.139,z));c++}
+a.count=b.count=0;a.frustumCulled=b.frustumCulled=false;sl[s].add(a,b);scW.push([a,b])});
+p8.fn=function(){[0,1].forEach(function(s){var c=0;for(var j=0;j<8;j++){if(p8.items[j*2+s].userData.q>=1)c++;else break}scW[s][0].count=scW[s][1].count=c*18})};
+// 9 FINISAJE
+var p9=P[9]=Part([redM]);
+it(p9,at(new T.Mesh(new T.CylinderGeometry(.15,.15,8.9,18,1,true,PI,PI).rotateZ(-PI/2),redM),0,5.04,0),sc,V(0,2.4,0));
+[0,1].forEach(function(s){[-1,1].forEach(function(d){var q=new T.Group();q.add(at(bx(.24,.016,L+.4,redM),0,.17,0),at(bx(.016,.2,L+.4,redM),d*.12,.1,0));
+q.position.set(d*4.28,0,(L-.4)/2);it(p9,q,sl[s],V(d*1.5,.8,0))})});
+// 10 BURLANE
+function pipe(a,b,r){var d=b.clone().sub(a),l=d.length(),o=new T.Mesh(new T.CylinderGeometry(r,r,l,12),pipeM);o.position.copy(a).add(b).multiplyScalar(.5);o.quaternion.setFromUnitVectors(V(0,1,0),d.normalize());return o}
+function sph(x,y,z){return at(new T.Mesh(new T.SphereGeometry(.056,10,8),pipeM),x,y,z)}
+var p10=P[10]=Part([pipeM]),PX=3.7,ringG=new T.TorusGeometry(.058,.014,6,16).rotateX(PI/2);
+var sets=[1,-1].map(function(s){var pz=s*3.12,gz=s*3.42,o=[],q;
+q=new T.Group();q.add(at(new T.Mesh(new T.CylinderGeometry(.09,.05,.14,14,1,true),gutM),PX,gy-.16,gz));o.push([q,V(0,1.2,0)]);
+q=new T.Group();q.add(new T.Mesh(new T.TubeGeometry(new T.CubicBezierCurve3(V(PX,2.4,gz),V(PX,2.2,gz),V(PX,2.28,pz),V(PX,2.08,pz)),24,.05,10),pipeM),at(new T.Mesh(ringG,galv),PX,2.08,pz));o.push([q,V(0,1.5,0)]);
+q=new T.Group();q.add(pipe(V(PX,2.08,pz),V(PX,.5,pz),.05));o.push([q,V(0,3,0)]);
+[1.8,1.1,.5].forEach(function(y){q=new T.Group();q.add(at(new T.Mesh(ringG,galv),PX,y,pz),at(bx(.02,.02,.08,galv),PX,y,s*3.04));o.push([q,V(.8,0,0)])});
+q=new T.Group();q.add(at(new T.Mesh(ringG,galv),PX,.5,pz),new T.Mesh(new T.TubeGeometry(new T.QuadraticBezierCurve3(V(PX,.5,pz),V(PX,.16,pz),V(PX,.16,s*3.4)),16,.05,10),pipeM));o.push([q,V(0,1,0)]);return o});
+for(i=0;i<7;i++)sets.forEach(function(a){it(p10,a[i][0],sc,a[i][1])});
+var wat=[1,-1].map(function(s){var w=at(new T.Mesh(new T.CylinderGeometry(.085,.085,8.7,12,1,false,0,PI).rotateZ(-PI/2),M(0x2f8cff,{transparent:true,opacity:.85})),0,gy,s*3.42);w.rotation.z=-.012;w.visible=false;sc.add(w);return w}),
+pud=[1,-1].map(function(s){var w=at(new T.Mesh(new T.CircleGeometry(.5,24).rotateX(-PI/2),new T.MeshBasicMaterial({color:0x4aa3ff,transparent:true,opacity:.6})),PX,.03,s*3.8);w.visible=false;sc.add(w);return w});
+var pw=[1,-1].map(function(s){var w=at(new T.Mesh(new T.CylinderGeometry(.036,.036,1.8,10).translate(0,-.9,0),new T.MeshBasicMaterial({color:0x2f8cff})),PX,2.08,s*3.12);w.visible=false;sc.add(w);return w});
+// ploaie
+var NR=mobile?260:480,rpos=new Float32Array(NR*6),rxs=[],rzs=[],rys=[],rss=[];
+for(i=0;i<NR;i++){rxs.push(Math.random()*14-7);rzs.push(Math.random()*14-7);rys.push(Math.random()*10);rss.push(13+Math.random()*5)}
+var rain=new T.Points(new T.BufferGeometry().setAttribute('position',new T.BufferAttribute(rpos,3)),new T.PointsMaterial({color:0x5aa0e0,size:.07,transparent:true,opacity:.9,depthWrite:false}));rain.frustumCulled=false;rain.visible=false;sc.add(rain);
+var SPN=48,spp=new Float32Array(SPN*3).fill(-50),spv=new Float32Array(SPN*3),spl=new Float32Array(SPN),spk=0;
+var spl_=new T.Points(new T.BufferGeometry().setAttribute('position',new T.BufferAttribute(spp,3)),new T.PointsMaterial({color:0x9ecbff,size:.07,transparent:true,opacity:.9}));spl_.frustumCulled=false;spl_.visible=false;sc.add(spl_);
+var NS=mobile?170:320,sps=new Float32Array(NS*3).fill(-50),ssd=[],sxw=[],sz0=[],soff=[],sspd=[];
+for(i=0;i<NS;i++){ssd.push(i%2?1:-1);sxw.push(Math.random()*8-4);sz0.push(1+Math.random()*(L-1.3));soff.push(Math.random()*7);sspd.push(2.4+Math.random())}
+var str=new T.Points(new T.BufferGeometry().setAttribute('position',new T.BufferAttribute(sps,3)),new T.PointsMaterial({color:0x1e88ff,size:mobile?.13:.1,transparent:true,opacity:.95,depthWrite:false}));str.frustumCulled=false;str.visible=false;sc.add(str);
+function rh(x,z){var ax=Math.abs(x),az=Math.abs(z);return(ax<4.3&&az<3.5)?H+PH*(1-az/hd)+.14:.05}
+function rainUp(dt,I){for(var i=0;i<NR;i++){var j=i*6;
+if(i>NR*I){rpos[j+1]=rpos[j+4]=-50;continue}
+rys[i]-=rss[i]*dt;var h=rh(rxs[i],rzs[i]);
+if(rys[i]<h){if(h>.2){var k=spk++%SPN;spp[k*3]=rxs[i];spp[k*3+1]=h;spp[k*3+2]=rzs[i];spv[k*3]=Math.random()-.5;spv[k*3+1]=1.3+Math.random();spv[k*3+2]=Math.random()-.5;spl[k]=.3}
+rys[i]=9+Math.random()*3;rxs[i]=Math.random()*14-7;rzs[i]=Math.random()*14-7}
+rpos[j]=rxs[i];rpos[j+1]=rys[i];rpos[j+2]=rzs[i];rpos[j+3]=rxs[i]+.03;rpos[j+4]=rys[i]+.14;rpos[j+5]=rzs[i]}
+for(i=0;i<SPN;i++){if(spl[i]>0){spl[i]-=dt;spp[i*3]+=spv[i*3]*dt;spp[i*3+1]+=spv[i*3+1]*dt;spp[i*3+2]+=spv[i*3+2]*dt;spv[i*3+1]-=9*dt}else spp[i*3+1]=-50}
+rain.geometry.attributes.position.needsUpdate=true;spl_.geometry.attributes.position.needsUpdate=true}
+function sm(a,b,x){x=Math.min(1,Math.max(0,(x-a)/(b-a)));return x*x*(3-2*x)}
+function strUp(sT){for(var i=0;i<NS;i++){var s=ssd[i],A=sz0[i]+.45,F=.33,B=Math.abs(PX-sxw[i]),C=2.3,Dd=.5,tot=A+F+B+C+Dd+1.2,dd=sT*sspd[i]-soff[i],x,y,z;
+if(dd<0){sps[i*3+1]=-50;continue}dd=dd%tot;x=sxw[i];
+if(dd<A){var zz=sz0[i]-dd;y=H+zz*sf+.16*cf;z=s*(hd-zz*cf+.16*sf)}
+else if((dd-=A)<F){y=2.884-dd;z=s*3.44}
+else if((dd-=F)<B){x=sxw[i]+Math.sign(PX-sxw[i])*dd;y=gy-.07;z=s*3.42}
+else if((dd-=B)<C){x=PX;y=2.55-dd;z=s*(3.42-.3*sm(0,1,(2.4-y)/.32))}
+else if((dd-=C)<Dd){x=PX+(i%5-2)*.04*dd;y=.14;z=s*(3.12+.45*dd/Dd)}
+else{sps[i*3+1]=-50;continue}
+sps[i*3]=x;sps[i*3+1]=y;sps[i*3+2]=z}
+str.geometry.attributes.position.needsUpdate=true}
+// scene definitions
+var SEAS=['Vara: razele soarelui încălzesc învelitoarea metalică. Aerul din canalul de ventilare evacuează căldura spre coamă, iar izolația reduce transferul ei spre interior.','Toamna: ploaia curge pe țiglă spre jgheab, iar frunzele se adună pe acoperiș. Jgheaburile se curăță periodic, ca apa să ajungă liber la burlan.','Iarna: izolația termică reține căldura în casă, iar zăpada se așază pe acoperiș, de aceea structura se calculează pentru sarcina de zăpadă. Grosimea izolației se stabilește prin proiect.','Primăvara: ploile și topirea zăpezii sunt preluate de sistemul pluvial, iar folia și ventilarea ajută lemnul să rămână uscat.','Iarna: în stânga, fără izolație, căldura din casă iese prin acoperiș. În dreapta, izolația o oprește și o păstrează în interior.','Vara: în stânga, căldura soarelui pătrunde în casă. În dreapta, izolația o oprește, iar aerul din canalul de ventilare o duce spre coamă. Tipul și grosimea izolației se stabilesc prin proiect. Solicită o ofertă: 078 026 212.'];
+var gtp=function(s,x){return V(x,2.55,s*3.45)};
+var S=[
+{n:'Acoperișul finalizat',d:9,t:'Așa arată un acoperiș din țiglă metalică montat corect: structura, hidroizolația, învelitoarea și sistemul pluvial lucrează împreună. Urmărim acum, pas cu pas, cum se construiește.',
+l:function(){return[['Țiglă metalică',wp(0,1,.17,1.8)],['Coamă metalică',V(-2.5,5.25,0)],['Jgheab',gtp(1,-2.4)],['Burlan',V(PX,1.4,3.12)]]},k:[]},
+{n:'Șarpanta',d:9,t:'Șarpanta din lemn este scheletul acoperișului. Căpriorii preiau greutatea țiglei și a zăpezii, iar coama leagă cele două ape. Dimensiunile și distanțele se stabilesc prin proiect. Solicită o ofertă: 078 026 212.',
+l:function(){return[['Căprior',wp(0,.78,-.08,2.3)],['Coamă (grindă)',V(2,4.9,0)],['Clește',V(-1.56,3.97,0)]]},k:[[[11,8,10],[0,3.8,0]],[[-8,8.5,11],[0,4,0]]]},
+{n:'Folia anticondens',d:8,t:'Se desfășoară peste căpriori, de la streașină spre coamă, cu suprapuneri. Ține umezeala și condensul departe de lemn și de izolație. Modul exact de suprapunere urmează instrucțiunile producătorului foliei.',
+l:function(){return[['Folie anticondens',wp(0,-1,.01,1.8)],['Streașină',wp(0,2,.01,-.3)]]},k:[[[-4,6.2,10.5],[0,3.6,1.5]],[[5,7.6,9.5],[0,3.8,1]]]},
+{n:'Contrașipcile',d:8,t:'Se fixează de-a lungul căpriorilor, peste folie. Între ele rămâne un canal de aer care ventilează acoperișul și elimină umezeala de sub țiglă.',
+l:function(){return[['Contrașipcă',wp(0,0,.05,2)],['Canal de ventilare',wp(0,.39,.03,2.6)]]},k:[[[2,7.8,8.5],[0,4,1.5]],[[-3,6,7.5],[0,4,1.8]]]},
+{n:'Șipcile',d:9,t:'Șipcile se montează transversal, peste contrașipci, și susțin foile metalice. Pasul dintre ele depinde de profilul ales și de recomandările producătorului.',
+l:function(){return[['Șipcă',wp(0,1.2,.08,.8)],['Pasul dintre șipci',wp(0,-1.5,.08,.97)]]},k:[[[-6,7.2,8],[-1,4,1.5]],[[6,7.2,8],[1,4,1.5]]]},
+{n:'Tinichigeria',d:8,t:'Profilul de streașină și bordurile de început protejează marginile și îmbinările acoperișului, acolo unde apa ar putea pătrunde. Se completează cu dolii și racorduri, unde construcția le cere.',
+l:function(){return[['Profil de streașină',wp(0,1.5,.03,-.45)],['Bordură de început',wp(0,4.3,.1,2)]]},k:[[[12,7.5,14],[0,3,0]],[[7.5,3.8,7],[2.5,2.9,3.3]],[[-6.5,4.2,7.5],[-2,3,3.2]]]},
+{n:'Sistemul pluvial',d:10,t:'Se montează cârligele de susținere, apoi jgheaburile, cu o ușoară pantă către pâlnia de evacuare, ca apa să nu stagneze.',
+l:function(){return[['Cârlig de susținere',V(1.56,2.62,3.42)],['Jgheab',gtp(1,-1.6)],['Pantă spre pâlnie',V(3,2.5,3.45)]]},k:[[[12,7.5,14],[0,3,0]],[[8,3,7.5],[2.5,2.7,3.4]],[[-3,3.2,8],[-1,2.7,3.4]]]},
+{n:'Țigla metalică',d:20,t:'Foile metalice se ridică și se așază succesiv pe șipci, cu suprapunere laterală, apoi se fixează cu șuruburi autoforante cu garnitură EPDM. Poziția și numărul șuruburilor depind de profil și de instrucțiunile producătorului.',
+l:function(){return[['Foaie metalică profilată',wp(0,-1.2,.2,2)],['Suprapunere laterală',wp(0,-2.1,.15,2.8)],['Șurub cu garnitură EPDM',wp(0,-1.95,.16,1.895)]]},k:[[[9,7.5,8],[1.5,4.2,1.6]],[[-6.5,8,9],[-1.5,4.2,1.6]]]},
+{n:'Finisajele',d:10,t:'Coama închide acoperișul la vârf, iar bordurile de fronton protejează marginile laterale împotriva vântului și a ploii.',
+l:function(){return[['Coamă',V(1.5,5.2,0)],['Bordură de fronton',wp(0,-4.28,.18,2.2)]]},k:[[[8,7,6.5],[0,4.9,0]],[[-7,8,7],[0,4.9,0]]]},
+{n:'Burlanele',d:12,t:'Pâlnia preia apa din jgheab, coturile o duc spre perete, iar burlanul o coboară la bază. Colierele țin burlanul fixat de fațadă.',
+l:function(){return[['Pâlnie',V(PX,2.5,3.42)],['Cot',V(PX,2.1,3.12)],['Burlan',V(PX,1.5,3.12)],['Colier de fixare',V(PX,1.1,3.12)]]},k:[[[12,7.5,14],[0,3,0]],[[8,3.2,8],[3.6,2,3.2]],[[6.5,1,6.2],[3.7,.9,3.2]]]},
+{n:'Testul final cu ploaie',d:26,t:'Ploaia lovește țigla, apa urmează panta spre streașină, intră în jgheab, ajunge la pâlnie și coboară prin burlan, fiind evacuată la baza casei. Un sistem complet funcțional.',
+l:function(){return[['Țigla — panta de scurgere',wp(0,1,.17,2)],['Jgheab',gtp(1,-1)],['Burlan',V(PX,1.4,3.12)]]},
+k:[[[11,7.5,13],[0,3,0]],[[4.5,7.2,7.5],[0,4.2,2]],[[0,3.4,7.2],[1.5,2.6,3.4]],[[7.5,3.2,7.5],[3.7,1.8,3.2]],[[6.2,1.1,6.8],[3.7,.7,3.3]],[[12,6.5,14],[0,2.6,0]]]},
+{n:'Același acoperiș, în toate anotimpurile',d:28,t:SEAS[0],l:function(){return[['Țiglă',wp(0,1,.17,2.8)],['Jgheab',gtp(1,-2)]]},k:[[[10,7,11],[0,3.8,0]],[[0,10,3],[0,4,1]],[[-10,7,10],[0,3.8,0]]]},
+{n:'Eficiența termică',d:26,t:SEAS[4],l:function(){return[['FĂRĂ izolație',hw(-2,.7,2.3)],['CU izolație',hw(2,.7,2.3)],['Izolație termică',hw(3,-.1,.9)],['Canal de ventilare',hw(3.2,.07,3)]]},k:[[[0,8.5,9.5],[0,4.3,1.2]],[[3,8,9.5],[0,4.3,1.2]]]}];
+var ins=[],snow=[];
+[0,1].forEach(function(s){var a=at(new T.Mesh(new T.PlaneGeometry(4.3,L).rotateX(-PI/2).translate(0,0,L/2),M(0xf0d46a,{side:2})),s?2.15:-2.15,-.1,0);a.visible=false;sl[s].add(a);ins.push(a);
+var bg=new T.BoxGeometry(8.5,.12,L+.15,34,1,14).translate(0,.06,(L+.15)/2-.25),pa=bg.attributes.position;for(var j=0;j<pa.count;j++){if(pa.getY(j)>.1)pa.setY(j,.12+.035*Math.sin(pa.getX(j)*3.1)*Math.cos(pa.getZ(j)*2.3))}bg.computeVertexNormals();var n=at(new T.Mesh(bg,M(0xffffff,{roughness:1})),0,.14,0);n.visible=false;sl[s].add(n);snow.push(n)});
+var sunP=V(-9,10,6),sunM=at(new T.Mesh(new T.SphereGeometry(.7,16,12),new T.MeshBasicMaterial({color:0xffc83a})),-9,10,6),rp_=new Float32Array(36),rf_=new Float32Array(36),nrm=V(0,cf,sf);
+for(i=0;i<6;i++){var tp=wp(0,-3+i*1.2,.17,1+(i%3)*.9),dr=tp.clone().sub(sunP).normalize(),rf=dr.clone().addScaledVector(nrm,-2*dr.dot(nrm)),ee=tp.clone().addScaledVector(rf,2.2);sunP.toArray(rp_,i*6);tp.toArray(rp_,i*6+3);tp.toArray(rf_,i*6);ee.toArray(rf_,i*6+3)}
+function LS_(a,c){var l=new T.LineSegments(new T.BufferGeometry().setAttribute('position',new T.BufferAttribute(a,3)),new T.LineBasicMaterial({color:c}));l.visible=false;sc.add(l);return l}
+var rays=LS_(rp_,0xffb000),refl=LS_(rf_,0xff5a00);sunM.visible=false;sc.add(sunM);
+var FN=mobile?110:220,fxx=[],fxy=[],fxz=[],fxp=new Float32Array(FN*3).fill(-50);for(i=0;i<FN;i++){fxx.push(Math.random()*12-6);fxy.push(Math.random()*9);fxz.push(Math.random()*12-6)}
+var fxM=new T.PointsMaterial({size:.09,transparent:true,opacity:.95}),fxh=FN>>1,fxm2=new T.PointsMaterial({size:.2,transparent:true,opacity:.95}),fa=new T.Points(new T.BufferGeometry().setAttribute('position',new T.BufferAttribute(fxp.subarray(0,fxh*3),3)),fxM),fb=new T.Points(new T.BufferGeometry().setAttribute('position',new T.BufferAttribute(fxp.subarray(fxh*3),3)),fxm2),fx=new T.Group();fa.frustumCulled=fb.frustumCulled=false;fx.add(fa,fb);fx.visible=false;sc.add(fx);
+var HN=mobile?50:90,hph=[],hpx=[],hpz=[],hps=[],hpp=new Float32Array(HN*3).fill(-50);for(i=0;i<HN;i++){hph.push(Math.random());hpx.push(Math.random()*7-3.5);hpz.push(Math.random()*4-2);hps.push(i%2?1:-1)}
+var hpM=new T.PointsMaterial({size:.17,transparent:true,depthTest:false}),hp=new T.Points(new T.BufferGeometry().setAttribute('position',new T.BufferAttribute(hpp,3)),hpM);hp.frustumCulled=false;hp.visible=false;sc.add(hp);
+var cA=[0xe4f1fc,0xf4e6d3,0xe9eff6,0xeef7ea,0xdfe9f5,0xfdebcf],bgc=new T.Color(),cur_=-1,hzz=[],hxw=[];
+var c2=document.createElement('canvas');c2.width=c2.height=32;var g2=c2.getContext('2d'),rg2=g2.createRadialGradient(16,16,0,16,16,16);rg2.addColorStop(0,'#fff');rg2.addColorStop(.6,'#fff');rg2.addColorStop(1,'rgba(255,255,255,0)');g2.fillStyle=rg2;g2.fillRect(0,0,32,32);fxM.map=new T.CanvasTexture(c2);fxM.alphaTest=.02;fxM.needsUpdate=true;fxm2.map=fxM.map;fxm2.alphaTest=.02;rain.material.map=fxM.map;rain.material.alphaTest=.02;str.material.map=fxM.map;str.material.alphaTest=.02;
+var gsn=at(new T.Mesh(new T.CircleGeometry(8.6,48).rotateX(-PI/2),new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0})),0,.012,0);gsn.visible=false;sc.add(gsn);
+function hw(xw,y,zz){return V(xw,H+zz*sf+y*cf,hd-zz*cf+y*sf)}
+for(i=0;i<HN;i++){hzz.push(.4+Math.random()*(L-.8));hxw.push(i%2?.4+Math.random()*3.2:-.4-Math.random()*3.2)}
+function envUp(dt){var s12=idx==11,s13=idx==12,se=s12?Math.min(3,Math.floor(ts/7)):s13?(ts<13?4:5):-1,i;
+bgc.set(se<0?0xf4f5f7:cA[se]);sc.background.lerp(bgc,.05);sc.fog.color.copy(sc.background);
+tileM.emissive.set(se==0?0xff5a00:0xe30613);if(se==0)tileM.emissiveIntensity=.08+.16*Math.min(1,ts/6)*(.8+.2*Math.sin(clock*3));tileM.opacity=redM.opacity=s13?.28:1;scW.forEach(function(a){a[0].visible=a[1].visible=!s13});ins.forEach(function(a){a.visible=s13});
+sunM.visible=rays.visible=refl.visible=se==0||se==5;
+var sv=se==2?Math.min(1,(ts-14)/3):se==3?Math.max(0,1-(ts-21)/3):0;snow.forEach(function(n){n.visible=sv>0;n.scale.y=Math.max(sv,.001)});gsn.visible=sv>0;gsn.material.opacity=sv*.92;
+if(se!=cur_){cur_=se;if(se>=0){setTxt(SEAS[se]);fxM.color.set(se==1?0xd9702a:0xffffff);fxm2.color.copy(fxM.color);fxM.size=se==1?.18:.12;fxm2.size=fxM.size*1.7;hpM.color.set(se==5?0xff8a00:0xff2a2a)}}
+fx.visible=se==1||se==2;hp.visible=s13;
+if(fx.visible){for(i=0;i<FN;i++){fxy[i]-=(se==1?1.2:.9)*dt;fxx[i]+=Math.sin(clock*1.5+i)*.4*dt;if(fxy[i]<rh(fxx[i],fxz[i]))fxy[i]=9;fxp[i*3]=fxx[i];fxp[i*3+1]=fxy[i];fxp[i*3+2]=fxz[i]}fa.geometry.attributes.position.needsUpdate=fb.geometry.attributes.position.needsUpdate=true}
+if(s13){var win=se==4;for(i=0;i<HN;i++){var hh=hph[i]=(hph[i]+dt*.28)%1,zz=hzz[i],y,rt=hxw[i]>0;
+if(win)y=rt?-.55+.42*Math.sin(PI*hh):-.55+1.3*hh;else if(rt){if(hh<.5)y=.7-1.26*hh;else{y=.07;zz+=(hh-.5)*2*(L-zz)}}else y=.7-1.9*hh;
+hpp[i*3]=hxw[i];hpp[i*3+1]=H+zz*sf+y*cf;hpp[i*3+2]=hd-zz*cf+y*sf}hp.geometry.attributes.position.needsUpdate=true}
+var lv=idx==10?Math.min(1,Math.max(0,(ts-6)/10))*.8:(se==1||se==3)?.5:0,pu=idx==10?Math.min(1,Math.max(0,(ts-9)/10)):(se==1||se==3)?.7:0,lvp=idx==10?Math.min(1,Math.max(0,(ts-9)/4)):(se==1||se==3)?1:0;
+wat.forEach(function(w){w.visible=lv>0;w.scale.y=Math.max(lv,.01)});pw.forEach(function(w){w.visible=lvp>0;w.scale.y=Math.max(lvp,.01)});pud.forEach(function(p){p.visible=pu>0;p.scale.setScalar(Math.max(pu,.01))})}
+// UI
+var idx=0,ts=0,playing=false,started=false,ended=false,snd=true,labs=[],cp=V(11,7,11),cl=V(0,3,0),act=null,pn=$('panel'),svg=$('svg'),NS_='http://www.w3.org/2000/svg';
+var CS=[],acc=0,gbar=$('gp');S.forEach(function(x){CS.push(acc);acc+=x.d});var segs=[];for(i=0;i<13;i++){(function(i){var d=document.createElement('div');d.appendChild(document.createElement('i'));$('seg').appendChild(d);segs.push(d)})(i)}
+function setTxt(t){var i=t.indexOf('. '),e=$('txt');e.textContent='';if(i>0){var b=document.createElement('b');b.textContent=t.slice(0,i+1);e.appendChild(b);e.appendChild(document.createTextNode(' '+t.slice(i+2)))}else e.textContent=t}
+function ui(){var s=S[idx];$('num').textContent='ETAPA '+String(idx+1).padStart(2,'0')+' / 13';$('ttl').textContent=s.n;setTxt(s.t);
+pn.classList.remove('chg');void pn.offsetWidth;pn.classList.add('chg');segs.forEach(function(e,i){e.firstChild.style.width=i<idx?'100%':'0'})}
+function mkLabels(){svg.innerHTML='';labs.forEach(function(l){l.el.remove()});labs=S[idx].l().map(function(a,i){
+var el=document.createElement('div');el.className='lb';el.textContent=a[0];document.body.appendChild(el);
+var ln=document.createElementNS(NS_,'line'),ci=document.createElementNS(NS_,'circle');ln.setAttribute('stroke','#e30613');ln.setAttribute('stroke-width','1.5');ci.setAttribute('r','4');ci.setAttribute('fill','#e30613');svg.appendChild(ln);svg.appendChild(ci);
+return{el:el,ln:ln,ci:ci,a:a[1],i:i}})}
+function go(n){idx=Math.max(0,Math.min(12,n));ts=0;ended=false;cp=cam.position.clone();cl=cl.clone();
+var f=$('flash');f.classList.remove('f');void f.offsetWidth;f.classList.add('f');ui();mkLabels();pl();whoosh();aud()}
+function pl(){}
+$('go').onclick=function(){started=true;playing=true;$('intro').style.display='none';pn.style.display='block';ainit();if(ac&&ac.resume)ac.resume();go(0)};
+// sunet
+var ac=null,rg=null,nb=null;
+function ainit(){if(ac)return;try{ac=new(window.AudioContext||window.webkitAudioContext)();nb=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate);var d=nb.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+var s=ac.createBufferSource();s.buffer=nb;s.loop=true;var f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=3200;f.Q.value=.5;rg=ac.createGain();rg.gain.value=0;s.connect(f);f.connect(rg);rg.connect(ac.destination);s.start()}catch(e){ac=null}}
+function aud(){if(rg)rg.gain.setTargetAtTime(snd&&playing&&idx==10?.3:0,ac.currentTime,.4)}
+function whoosh(){if(!ac||!snd||!started)return;var s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nb;f.type='lowpass';f.frequency.setValueAtTime(250,t);f.frequency.exponentialRampToValueAtTime(2200,t+.6);
+g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.13,t+.25);g.gain.linearRampToValueAtTime(0,t+.7);s.connect(f);f.connect(g);g.connect(ac.destination);s.start(t);s.stop(t+.8)}
+function rs(){var w=innerWidth,h=innerHeight;ren.setSize(w,h,false);cam.aspect=w/h;if(w<760)cam.setViewOffset(w,h,0,Math.round(h*.17),w,h);else if(w>=900)cam.setViewOffset(w,h,-Math.round(w*.13),0,w,h);else cam.clearViewOffset();cam.updateProjectionMatrix()}
+addEventListener('resize',rs);rs();
+function camUp(){var s=S[idx],P_,L_;
+if(idx==0){var a=.6+ts/s.d*5.4;P_=V(Math.sin(a)*15.5,7.2-Math.min(ts/s.d,1)*.8,Math.cos(a)*15.5);L_=V(0,2.8,0)}
+else{var u=Math.min(1,ts/s.d),n=s.k.length-1,f=u*n,i=Math.min(n-1,Math.floor(f)),e=f-i,w=e*e*(3-2*e),A=s.k[i],B=s.k[i+1];
+P_=V(A[0][0],A[0][1],A[0][2]).lerp(V(B[0][0],B[0][1],B[0][2]),w);L_=V(A[1][0],A[1][1],A[1][2]).lerp(V(B[1][0],B[1][1],B[1][2]),w)}
+var as=innerWidth/innerHeight,zf=as<.75?1.85:as<1?1.5:1.28;zf*=[5,6,9].indexOf(idx)<0?1.15:1;P_=L_.clone().add(P_.sub(L_).multiplyScalar(zf));
+var bw=sm(0,1.6,ts);cam.position.copy(cp.clone().lerp(P_,bw));var lk=cl.clone().lerp(L_,bw);cam.lookAt(lk);cam.updateMatrixWorld();
+if(bw>=1){cp.copy(cam.position);cl.copy(lk)}}
+// bucla
+var last=performance.now(),clock=0;
+function frame(now){requestAnimationFrame(frame);var dt=Math.min(.05,(now-last)/1000);last=now;clock+=dt;
+if(!started)ts+=dt;
+else if(playing){ts+=dt;if(ts>=S[idx].d){if(idx<12)go(idx+1);else go(0)}}
+var d=S[idx].d,bp=Math.min(1,ts/(d*.82));act=null;
+for(var k=2;k<=10;k++){var pt=P[k],p=(idx==0||idx>=10)?1:(idx+1>k?1:idx+1==k?bp:0);
+if(pt.last!==p){var a=setP(pt,p);pt.last=p;if(idx+1==k)act=a}
+var cur=idx+1==k&&p<1;pt.mats.forEach(function(m){m.emissiveIntensity=0});
+if(cur)pt.mats.forEach(function(m){m.emissiveIntensity=.22*(.5+.5*Math.sin(clock*5))})}
+if(act){act.getWorldPosition(spot.position);spot.position.y+=.9;spot.intensity=SPI}else spot.intensity*=.9;
+camUp();
+var rn=idx==10,s12a=idx==11?Math.floor(ts/7):-1,sp3=s12a==1||s12a==3;rain.visible=spl_.visible=rn||sp3;str.visible=(rn&&ts>3)||sp3;pipeM.opacity=rn?1-.55*sm(7,9,ts):1;
+if(rn){rainUp(dt,Math.min(1,ts/2.5));if(ts>3)strUp(ts-3)}if(sp3){rainUp(dt,s12a==1?.8:.5);strUp(ts-7*s12a+.01)}envUp(dt);
+var show=idx==0?ts>1.5:idx==10?ts>2:bp>.35,hw=innerWidth/2;
+labs.forEach(function(l){var q=l.a.clone().project(cam);var vis=show&&q.z<1;l.el.classList.toggle('on',vis);
+var x=(q.x*.5+.5)*innerWidth,y=(-q.y*.5+.5)*innerHeight,dx=(x<hw?-1:1)*54,dy=l.i%2?-58:-30;
+l.el.style.transform='translate('+(x+dx+(dx<0?-6:6))+'px,'+(y+dy-11)+'px) translateX('+(dx<0?'-100%':'0')+')';
+l.ln.setAttribute('x1',x);l.ln.setAttribute('y1',y);l.ln.setAttribute('x2',x+dx);l.ln.setAttribute('y2',y+dy);l.ci.setAttribute('cx',x);l.ci.setAttribute('cy',y);
+var o=vis?1:0;l.ln.style.opacity=l.ci.style.opacity=o});
+if(started&&segs[idx]){segs[idx].firstChild.style.width=Math.min(100,ts/d*100)+'%';gbar.style.width=((CS[idx]+Math.min(ts,d))/acc*100)+'%'}
+ren.render(sc,cam)}
+cam.position.set(11,7,11);go(0);requestAnimationFrame(frame)}
+})();
+</script></body></html>
