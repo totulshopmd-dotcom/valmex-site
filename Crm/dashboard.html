@@ -73,22 +73,22 @@ button{font:inherit;cursor:pointer}
     <button class="active">▦ &nbsp; Dashboard</button>
 
     <div class="nav-label">Administrare</div>
-    <button onclick="openModule('clienti.html')">♙ &nbsp; Clienți</button>
+    <button data-permission="clients.view" onclick="openModule('clienti.html')">♙ &nbsp; Clienți</button>
     <button id="employeesNav" onclick="openModule('angajati.html')" style="display:none">♙ &nbsp; Angajați</button>
-    <button onclick="openModule('proiecte.html')">⌂ &nbsp; Proiecte</button>
-    <button onclick="openModule('devize.html')">▤ &nbsp; Devize și oferte</button>
-    <button onclick="openModule('calculator-live.html')">▦ &nbsp; Calculator LIVE</button>
-    <button onclick="openModule('contracte.html')">▣ &nbsp; Contracte</button>
+    <button data-permission="projects.view" onclick="openModule('proiecte.html')">⌂ &nbsp; Proiecte</button>
+    <button data-permission="quotes.create" onclick="openModule('devize.html')">▤ &nbsp; Devize și oferte</button>
+    <button data-permission="calculator.access" onclick="openModule('calculator-live.html')">▦ &nbsp; Calculator LIVE</button>
+    <button data-permission="documents.manage" onclick="openModule('contracte.html')">▣ &nbsp; Contracte</button>
 
     <div class="nav-label">Lucrări</div>
-    <button onclick="openModule('materiale.html')">▧ &nbsp; Materiale</button>
-    <button onclick="openModule('pontaj.html')">◷ &nbsp; Pontaj</button>
-    <button onclick="openModule('sarcini.html')">☑ &nbsp; Sarcini</button>
-    <button onclick="openModule('documente.html')">▤ &nbsp; Documente</button>
+    <button data-permission="materials.view" onclick="openModule('materiale.html')">▧ &nbsp; Materiale</button>
+    <button data-permission="tasks.view_all" onclick="openModule('pontaj.html')">◷ &nbsp; Pontaj</button>
+    <button data-permission="tasks.view_all" onclick="openModule('sarcini.html')">☑ &nbsp; Sarcini</button>
+    <button data-permission="documents.view" onclick="openModule('documente.html')">▤ &nbsp; Documente</button>
 
     <div class="nav-label">Service</div>
-    <button onclick="openModule('garantii.html')">◇ &nbsp; Garanții</button>
-    <button onclick="openModule('interventii.html')">⚒ &nbsp; Intervenții</button>
+    <button data-permission="warranty.view" onclick="openModule('garantii.html')">◇ &nbsp; Garanții</button>
+    <button data-permission="interventions.manage" onclick="openModule('interventii.html')">⚒ &nbsp; Intervenții</button>
   </nav>
 
   <button class="logout" id="logout">Deconectare</button>
@@ -140,34 +140,34 @@ button{font:inherit;cursor:pointer}
   <section class="section">
     <h2>Module VALMEX</h2>
     <div class="modules">
-      <button class="module" onclick="openModule('clienti.html')">
+      <button class="module" data-permission="clients.view" onclick="openModule('clienti.html')">
         <strong>Clienți</strong><span>Fișe și date de contact</span>
       </button>
-      <button class="module" onclick="openModule('proiecte.html')">
+      <button class="module" data-permission="projects.view" onclick="openModule('proiecte.html')">
         <strong>Proiecte</strong><span>Lucrări și dosare tehnice</span>
       </button>
-      <button class="module" onclick="openModule('devize.html')">
+      <button class="module" data-permission="quotes.create" onclick="openModule('devize.html')">
         <strong>Devize și oferte</strong><span>Calcul și versiuni de ofertă</span>
       </button>
-      <button class="module" onclick="openModule('calculator-live.html')">
+      <button class="module" data-permission="calculator.access" onclick="openModule('calculator-live.html')">
         <strong>Calculator LIVE</strong><span>Oferte și salvare directă în CRM</span>
       </button>
-      <button class="module" onclick="openModule('contracte.html')">
+      <button class="module" data-permission="documents.manage" onclick="openModule('contracte.html')">
         <strong>Contracte</strong><span>Documente și plăți</span>
       </button>
-      <button class="module" onclick="openModule('pontaj.html')">
+      <button class="module" data-permission="tasks.view_all" onclick="openModule('pontaj.html')">
         <strong>Pontaj</strong><span>Program și ore lucrate</span>
       </button>
-      <button class="module" onclick="openModule('materiale.html')">
+      <button class="module" data-permission="materials.view" onclick="openModule('materiale.html')">
         <strong>Materiale</strong><span>Catalog și consumuri</span>
       </button>
-      <button class="module" onclick="openModule('sarcini.html')">
+      <button class="module" data-permission="tasks.view_all" onclick="openModule('sarcini.html')">
         <strong>Sarcini</strong><span>Activități și responsabilități</span>
       </button>
-      <button class="module" onclick="openModule('garantii.html')">
+      <button class="module" data-permission="warranty.view" onclick="openModule('garantii.html')">
         <strong>Garanții</strong><span>Termene și condiții</span>
       </button>
-      <button class="module" onclick="openModule('interventii.html')">
+      <button class="module" data-permission="interventions.manage" onclick="openModule('interventii.html')">
         <strong>Intervenții</strong><span>Solicitări și remedieri</span>
       </button>
     </div>
@@ -240,6 +240,22 @@ async function initDashboard() {
     String(profile.role || "").toLowerCase() === "administrator"
       ? "block"
       : "none";
+
+  const isAdmin = String(profile.role || "").toLowerCase() === "administrator";
+  let granted = new Set();
+  if (!isAdmin) {
+    const { data: permissionRows, error: permissionError } = await db.from("employee_permissions").select("permission_key").eq("employee_id", session.user.id).eq("granted", true);
+    if (permissionError) { document.getElementById("notice").textContent = "Permisiunile nu au putut fi verificate. Accesul la module a fost restricționat."; document.querySelectorAll("[data-permission]").forEach(el=>el.style.display="none"); return; }
+    granted = new Set((permissionRows || []).map(x => x.permission_key));
+  }
+  document.querySelectorAll("[data-permission]").forEach(el => {
+    el.style.display = isAdmin || granted.has(el.dataset.permission) ? "" : "none";
+  });
+  document.querySelectorAll(".card").forEach(card => {
+    const label = card.querySelector(".card-label")?.textContent.trim();
+    const key = label === "Clienți" ? "clients.view" : label === "Proiecte" ? "projects.view" : label === "Sarcini" ? "tasks.view_all" : "documents.manage";
+    card.style.display = isAdmin || granted.has(key) ? "" : "none";
+  });
 
   const results = await Promise.all([
     countRows("clients","clientsCount"),
