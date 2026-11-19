@@ -7,7 +7,7 @@
   var PRODUCT_TOPIC = { 'acoperis-la-cheie': 'acoperisuri', 'tigla-metalica': 'acoperisuri', 'fatada-la-cheie': 'fatade', 'panouri-amk': 'fatade', 'tencuiala-decorativa': 'fatade', 'pavaj': 'pavaje' };
   var SECTION_TOPIC = { amk: 'fatade' };
   var LABEL = { acoperisuri: 'Acoperiș metalic', fatade: 'Fațade decorative', 'rate-0': 'Rate 0%', proiecte: 'Proiecte', produse: 'Produse și materiale' };
-  var KEY = 'valmexSC', CONSENT_KEY = 'valmexCookieConsent', DAY = 864e5, WARMUP = 8000, IDLE = 5000;
+  var KEY = 'valmexSC', CONSENT_KEY = 'valmexCookieConsent', CHAT_KEY = 'valmexChatInvite', DAY = 864e5, WARMUP = 8000, IDLE = 5000;
 
   /* ---------- Store: stare persistentă între pagini (doar cu consimțământ) ---------- */
   var Store = {
@@ -112,6 +112,61 @@
   };
   var T0 = Date.now();
 
+  /* ---------- Chat contextual: folosește aceleași semnale Smart Conversion ---------- */
+  var CHAT_COPY = {
+    acoperisuri: { text: 'Te interesează un acoperiș la cheie?', seed: 'Mă interesează un acoperiș la cheie. Aș dori să aflu ce variante sunt potrivite.' },
+    fatade: { text: 'Te interesează soluțiile pentru fațadă?', seed: 'Mă interesează soluțiile pentru fațada casei. Aș dori mai multe detalii.' },
+    pavaje: { text: 'Planifici amenajarea curții?', seed: 'Mă interesează lucrările de pavaj pentru curte. Aș dori mai multe detalii.' },
+    'rate-0': { text: 'Te interesează plata în rate?', seed: 'Mă interesează condițiile de plată în rate pentru lucrările VALMEX.' },
+    produse: { text: 'Cauți detalii despre materiale?', seed: 'Aș dori detalii despre materialele prezentate pe site.' },
+    proiecte: { text: 'Ai un proiect asemănător?', seed: 'Am consultat proiectele VALMEX și aș dori să discut despre o lucrare asemănătoare.' }
+  };
+  var chatInviteShown = false, chatInviteState = null;
+  function chatTopic() {
+    var order = ['acoperisuri','fatade','pavaje','rate-0','produse','proiecte'];
+    var best = null, score = 0;
+    order.forEach(function (k) {
+      var t = T(k), v = (t.calc ? 5 : 0) + (t.prices ? 4 : 0) + (t.rates ? 4 : 0) + Math.min(t.entries, 3) * 2 + Math.min(t.ms / 10000, 3);
+      if (v > score && CHAT_COPY[k]) { score = v; best = k; }
+    });
+    return best && score >= 5 ? best : null;
+  }
+  function chatInviteCheck() {
+    if (!Consent.ok() || chatInviteShown || !state || !cfg || shownNow || document.hidden) return;
+    if (Date.now() - T0 < WARMUP || Store.sessionCount() >= (cfg.maxPerSession || 1)) return;
+    if (document.querySelector('.modal.active,.cookie-banner.show,.lightbox.active,.product-detail-modal.active,#vm-chat-panel.vm-open,.vsc.on')) return;
+    var active = document.activeElement;
+    if (active && /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) return;
+    var topic = chatTopic(); if (!topic) return;
+    var t = T(topic);
+    if (t.ms < 10000 || !(t.calc || t.prices || t.rates || t.entries >= 2)) return;
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(CHAT_KEY) || '{}') || {}; } catch (e) {}
+    if (saved[topic] && Date.now() - saved[topic] < 30 * DAY) return;
+    chatInviteShown = true; Store.bumpSession();
+    var copy = CHAT_COPY[topic], node = document.createElement('div');
+    node.className = 'vsc-chat-invite';
+    node.setAttribute('role','status'); node.setAttribute('aria-live','polite');
+    node.innerHTML = '<button type="button" class="vsc-chat-close" aria-label="Închide">×</button><button type="button" class="vsc-chat-open"><span></span><b></b></button>';
+    node.querySelector('span').textContent = copy.text;
+    node.querySelector('b').textContent = 'Scrie-ne';
+    document.body.appendChild(node);
+    requestAnimationFrame(function(){node.classList.add('on');});
+    var dismissed = false;
+    function close(mark) {
+      if (dismissed) return; dismissed = true;
+      node.classList.remove('on'); setTimeout(function(){node.remove();},250);
+      if (mark) { var x={}; try{x=JSON.parse(localStorage.getItem(CHAT_KEY)||'{}')||{};}catch(e){} x[topic]=Date.now(); try{localStorage.setItem(CHAT_KEY,JSON.stringify(x));}catch(e){} }
+    }
+    node.querySelector('.vsc-chat-close').onclick=function(){close(true);};
+    node.querySelector('.vsc-chat-open').onclick=function(){
+      close(true);
+      document.dispatchEvent(new CustomEvent('valmex:chat-context',{detail:{topic:topic,message:copy.seed}}));
+      var launch=document.getElementById('vm-chat-launch'); if(launch) launch.click();
+    };
+    setTimeout(function(){close(false);},9000);
+  }
+
   /* ---------- UI: mic, discret, fără overlay, fără furt de focus ---------- */
   var UI = {
     el: null,
@@ -159,11 +214,12 @@
   function start(db) {
     if (started) return; cfg = valid(db); if (!cfg || !cfg.popups.length) return;
     started = true; state = Store.load(); Signals.init();
+    if (!document.getElementById('valmex-chat-invite-css')) { var st=document.createElement('style'); st.id='valmex-chat-invite-css'; st.textContent=".vsc-chat-invite{position:fixed;right:22px;bottom:94px;z-index:99989;width:min(260px,calc(100vw - 38px));opacity:0;transform:translateY(10px) scale(.98);transition:opacity .25s,transform .25s;font-family:Arial,system-ui,sans-serif}.vsc-chat-invite.on{opacity:1;transform:none}.vsc-chat-open{width:100%;display:flex;align-items:center;gap:10px;padding:13px 15px;border:1px solid #f1c4c7;border-radius:14px;background:#fff;color:#20242b;text-align:left;box-shadow:0 10px 30px #0002;cursor:pointer}.vsc-chat-open:before{content:' ';width:10px;height:10px;flex:0 0 10px;border-radius:50%;background:#e30613;box-shadow:0 0 0 5px #e306131c}.vsc-chat-open span{font-size:13px;font-weight:700;line-height:1.35;flex:1}.vsc-chat-open b{font-size:11px;color:#e30613;white-space:nowrap}.vsc-chat-close{position:absolute;right:-5px;top:-9px;width:24px;height:24px;border:0;border-radius:50%;background:#252525;color:#fff;font-size:16px;cursor:pointer;z-index:1}@media(max-width:520px){.vsc-chat-invite{right:16px;bottom:88px;width:min(250px,calc(100vw - 32px))}}@media(prefers-reduced-motion:reduce){.vsc-chat-invite{transition:none}}"; document.head.appendChild(st); }
     var last = Date.now(), saved = 0;
     setInterval(function () {
       if (!Consent.ok()) return;               /* fără consimțământ nu urmărim și nu salvăm nimic */
       var now = Date.now(), dt = now - last; last = now; if (dt > 3000) dt = 1000;
-      Signals.tick(dt); Engine.check();
+      Signals.tick(dt); Engine.check(); chatInviteCheck();
       if (now - saved > 5000) { Store.save(state); saved = now; }
     }, 1000);
     addEventListener('pagehide', function () { if (Consent.ok()) Store.save(state); });
