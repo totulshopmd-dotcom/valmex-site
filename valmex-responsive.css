@@ -64,3 +64,55 @@ h1,h2,h3,p{overflow-wrap:break-word}
 
 /* Header simplificat: eliminam butonul Solicita oferta din bara de navigare */
 #mainHeader .header-cta{display:none!important}
+
+
+/* HEADER NAVIGATION – text clar, lizibil si aliniat pe un singur rand */
+#mainHeader{gap:clamp(12px,1.4vw,24px)}
+#mainHeader nav{
+  display:flex!important;
+  flex:1 1 auto;
+  min-width:0;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-end;
+  gap:clamp(10px,1.05vw,18px)!important;
+  margin-left:auto!important;
+  margin-right:clamp(8px,1vw,16px)!important;
+  white-space:nowrap;
+  font-size:clamp(11px,.88vw,13px)!important;
+  font-weight:700!important;
+  letter-spacing:.75px!important;
+  line-height:1.15!important;
+}
+#mainHeader nav>a,
+#mainHeader nav .dd>.dd-t{
+  display:inline-flex;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap!important;
+  font-size:inherit!important;
+  font-weight:750!important;
+  letter-spacing:inherit!important;
+  line-height:1.15!important;
+  padding:10px 0!important;
+}
+#mainHeader nav .dd{flex:0 0 auto;min-width:max-content}
+#mainHeader nav .dd>.dd-t{gap:7px}
+#mainHeader nav .dd>.dd-t:after{flex:0 0 6px}
+#mainHeader nav>a[aria-current="page"],
+#mainHeader nav .dd>.dd-t[aria-current="page"]{
+  color:#e30613!important;
+  box-shadow:inset 0 -2px 0 #e30613;
+}
+#mainHeader nav a:hover{color:#e30613!important}
+@media(min-width:901px) and (max-width:1250px){
+  #mainHeader .brand{font-size:40px!important;letter-spacing:-.7px!important;transform:scaleX(1.08);margin-right:8px!important}
+  #mainHeader nav{gap:clamp(8px, .9vw, 12px)!important;font-size:11px!important;letter-spacing:.45px!important}
+  #mainHeader{padding-left:3.5%;padding-right:3.5%}
+}
+@media(max-width:900px){
+  #mainHeader nav{display:none!important;flex-wrap:wrap!important;white-space:normal}
+  #mainHeader nav.open{display:flex!important}
+  #mainHeader nav>a,#mainHeader nav .dd>.dd-t{white-space:normal!important}
+}
