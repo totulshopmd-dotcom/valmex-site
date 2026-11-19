@@ -235,7 +235,7 @@ function renderClients() {
 
 function confirmClientDeletion(client, fullName) {
   return new Promise(resolve => {
-    $("deleteConfirmText").textContent = "Confirmați ștergerea clientului " + (client.client_code || "") + " – " + fullName + "? Această operațiune poate fi ireversibilă.";
+    $("deleteConfirmText").textContent = "Confirmați ștergerea clientului " + (client.client_code || "") + " – " + fullName + "? Înregistrarea va fi mutată în Coș și poate fi restaurată ulterior din Dashboard.";
     const overlay = $("deleteConfirmOverlay"), yes = $("deleteYesBtn"), no = $("deleteCancelBtn");
     const finish = value => { overlay.classList.remove("show"); yes.removeEventListener("click", onYes); no.removeEventListener("click", onNo); resolve(value); };
     const onYes = () => finish(true), onNo = () => finish(false);
