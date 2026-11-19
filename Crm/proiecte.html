@@ -151,9 +151,6 @@ ${canDelete?`<button class="action" data-delete="${escapeHtml(p.id)}" style="bor
 async function deleteProject(id){
  if(currentProfile?.role!=="administrator"){feedback("Doar administratorul poate șterge proiecte.");return;}
  const p=projects.find(x=>x.id===id);if(!p)return;
- const typed=prompt("Pentru confirmare, scrie codul proiectului "+p.project_code+":");
- if(typed===null)return;
- if(typed.trim()!==p.project_code){feedback("Codul introdus nu corespunde. Proiectul nu a fost șters.");return;}
  if(!confirm("Confirmi ștergerea proiectului "+p.project_code+" – "+p.title+"? Operațiunea poate fi ireversibilă."))return;
  const btn=[...$("projectRows").querySelectorAll("[data-delete]")].find(x=>x.dataset.delete===id);
  if(btn){btn.disabled=true;btn.textContent="Se șterge...";}
