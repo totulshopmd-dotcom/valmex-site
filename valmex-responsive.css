@@ -38,3 +38,25 @@ h1,h2,h3,p{overflow-wrap:break-word}
 }
 @media(max-width:480px){html:not(.dk) .hero{padding-top:108px;padding-bottom:34px}html:not(.dk) .hero-carousel{height:250px;min-height:250px}html:not(.dk) .hero-slide h1{font-size:clamp(32px,8.8vw,40px)}html:not(.dk) .hero-summary{font-size:13.5px}.modal,.modal-content{max-width:100%;width:100%}.form-input,input,select,textarea{min-width:0}.cookie-banner,.valmex-consent{left:10px;right:10px;max-width:calc(100% - 20px)}}
 @media(prefers-reduced-motion:reduce){.hero-bg,.hero-slide,.hero-dots button{transition:none!important;animation:none!important}}
+
+
+/* VALMEX wordmark – dimensiune mai vizibila in antet, pe toate paginile */
+#mainHeader .brand{
+  display:inline-flex!important;
+  align-items:center;
+  flex:0 0 auto;
+  font-size:38px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  letter-spacing:-.55px!important;
+  transform:scaleX(1.12);
+  transform-origin:left center;
+  margin-right:34px!important;
+}
+#mainHeader .brand span{display:inline-block}
+@media(max-width:900px){
+  #mainHeader .brand{font-size:33px!important;letter-spacing:-.4px!important;transform:scaleX(1.10);margin-right:12px!important}
+}
+@media(max-width:380px){
+  #mainHeader .brand{font-size:30px!important;transform:scaleX(1.06)}
+}
