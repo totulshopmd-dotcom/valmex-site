@@ -166,7 +166,7 @@ async function deleteProject(id){
  const confirmed=await confirmProjectDeletion(p);if(!confirmed)return;
  const btn=[...$("projectRows").querySelectorAll("[data-delete]")].find(x=>x.dataset.delete===id);
  if(btn){btn.disabled=true;btn.textContent="Se șterge...";}
- const {error}=await db.from("projects").delete().eq("id",id);
+ const {data:deleted,error}=await db.from("projects").delete().eq("id",id).select("id").maybeSingle();
  if(error){
   feedback("Proiectul nu a fost șters: "+error.message+". Verifică politica RLS și dacă există înregistrări asociate care împiedică ștergerea.");
   if(btn){btn.disabled=false;btn.textContent="Șterge";}
