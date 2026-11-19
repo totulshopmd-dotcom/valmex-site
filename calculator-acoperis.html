@@ -456,6 +456,81 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
     overflow-y: auto;
   }
 }
+
+/* VALMEX shared identity – calculator roof header aligned with main site */
+.top-bar{display:none!important}
+#mainHeader.header{
+  position:sticky!important;top:0!important;z-index:120!important;
+  width:100%;background:rgba(255,255,255,.97)!important;
+  color:#151515!important;border-bottom:1px solid #e8e9ed!important;
+  box-shadow:0 4px 20px rgba(15,23,42,.06)!important;
+  backdrop-filter:blur(14px);
+}
+#mainHeader .header-wrap{
+  width:100%;max-width:none!important;margin:0!important;
+  padding:12px 5.5%!important;gap:clamp(14px,2vw,28px)!important;
+  min-height:78px;
+}
+#mainHeader .logo{
+  display:inline-flex!important;align-items:center;flex:0 0 auto;
+  color:#151515!important;text-decoration:none!important;
+}
+#mainHeader .logo-word{
+  display:inline-flex;align-items:center;
+  font-family:Inter,Arial,sans-serif!important;
+  font-size:48px!important;line-height:1!important;
+  font-weight:950!important;letter-spacing:-1.1px!important;
+  white-space:nowrap;transform:scaleX(1.08);transform-origin:left center;
+}
+#mainHeader .lw-a{color:#151515!important}
+#mainHeader .lw-b{color:#e30613!important}
+#mainHeader .nav{
+  display:flex!important;flex:1 1 auto;min-width:0;
+  align-items:center;justify-content:flex-end;
+  gap:clamp(10px,1.25vw,20px)!important;margin:0 8px 0 auto!important;
+  white-space:nowrap;
+}
+#mainHeader .nav-link{
+  color:#30343b!important;font-size:clamp(11px,.88vw,13px)!important;
+  font-weight:750!important;letter-spacing:.65px!important;
+  text-transform:uppercase;padding:10px 0!important;
+}
+#mainHeader .nav-link:hover,#mainHeader .nav-link.active{color:#e30613!important}
+#mainHeader .dropdown-menu{
+  background:#fff!important;border:1px solid #e8e9ed!important;
+  box-shadow:0 16px 40px rgba(15,23,42,.14)!important;
+}
+#mainHeader .dropdown-menu a{color:#30343b!important}
+#mainHeader .dropdown-menu a:hover,#mainHeader .dropdown-menu a.active{background:#fff5f5!important;color:#e30613!important}
+#mainHeader .header-cta{display:none!important}
+#mainHeader .mobile-toggle{
+  display:none;flex:0 0 42px;width:42px;height:42px;margin-left:auto;
+  border:1px solid #e2e4e8!important;border-radius:10px!important;
+  background:#fff!important;color:#171717!important;
+}
+#mainHeader .mobile-toggle span{background:#171717!important}
+@media(max-width:1100px){
+ #mainHeader .header-wrap{padding-left:4%!important;padding-right:4%!important}
+ #mainHeader .logo-word{font-size:42px!important}
+ #mainHeader .nav{gap:10px!important}
+ #mainHeader .nav-link{font-size:10.5px!important;letter-spacing:.35px!important}
+}
+@media(max-width:900px){
+ #mainHeader .header-wrap{min-height:76px;padding:10px 5%!important}
+ #mainHeader .logo-word{font-size:43px!important}
+ #mainHeader .nav{display:none!important}
+ #mainHeader .mobile-toggle{display:flex!important}
+ .mobile-menu{background:#fff!important;color:#171717!important}
+ .mobile-menu .logo-word{font-size:40px!important}
+ .mobile-menu .lw-a{color:#151515!important}.mobile-menu .lw-b{color:#e30613!important}
+ .mobile-menu .nav-link{color:#30343b!important;border-bottom:1px solid #edf0f3!important}
+ .mobile-menu .dropdown-menu{background:#fff!important}
+ .mobile-menu .dropdown-menu a{color:#30343b!important}
+ .mobile-menu .mobile-close{color:#171717!important}
+ .mobile-menu .btn{background:#e30613!important;color:#fff!important}
+}
+@media(max-width:380px){#mainHeader .logo-word{font-size:38px!important}}
+
 </style>
 
 <script type="importmap">
@@ -493,7 +568,7 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
 <!-- Header -->
 <header class="header" id="mainHeader">
   <div class="header-wrap">
-    <a class="logo" href="index.html"><span class="logo-word"><span class="lw-a">Val</span><span class="lw-b">mex</span></span></a>
+    <a class="logo" href="/index.html" aria-label="Valmex – pagina principal"><span class="logo-word"><span class="lw-a">Val</span><span class="lw-b">mex</span></span></a>
     <nav class="nav" id="mainNav">
       <a class="nav-link" href="index.html">Acasă</a>
       <a class="nav-link" href="proiecte.html">Proiecte</a>
