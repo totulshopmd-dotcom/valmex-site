@@ -308,6 +308,31 @@ function advance(){history.push(index);index++;while(index<steps.length){const k
 function handleContinue(){const s=steps[index];if(s.key==='extras'){collectExtraItems();for(let i=0;i<state.extraItems.length;i++){const it=state.extraItems[i];const n=it.price===''?0:Number(it.price);if(!Number.isFinite(n)||n<0)return alert('Verifică prețul poziției suplimentare '+(i+1)+'.');if(it.description&&!it.description.trim())return alert('Completează descrierea poziției suplimentare '+(i+1)+'.');if(!it.description&&n>0)return alert('Adaugă descrierea pentru poziția suplimentară '+(i+1)+'.');}state.extraItems=state.extraItems.filter(x=>x.description&&Number(x.price)>0).map(x=>({description:x.description,price:Number(x.price)}));advance();return;}if(s.fields){if(s.key==='masonryData')state.masonryHeightCm=Number($('masonryHeightCm').value);for(const [k,label,type,required=true] of s.fields){const raw=$('f_'+k).value;const v=raw===''?0:Number(raw);if(!Number.isFinite(v)||v<0||(required&&v<=0)||(k==='length'&&v>100)||(k==='width'&&v>100)||(k==='slabThickness'&&v>100)||(k==='openingsArea'&&v>2*(Number(state.length)+Number(state.width))*(Number(state.masonryHeightCm)/100)))return alert('Verifică valoarea: '+label+'.');state[k]=v;}}else if(s.input){const v=$('singleInput').value.trim();if(s.key==='clientName'&&!v)return alert('Introdu numele clientului.');if(s.key==='clientPhone'&&!/^[0-9]{8}$/.test(v))return alert('Introdu exact 8 cifre după +373.');if(s.key==='firstPayment'){const amount=Number(v||0),c=costs();if(!Number.isFinite(amount)||amount<0||amount>c.clientTotal)return alert('Avansul nu poate depăși totalul achitat de client.');state.firstPayment=amount;}else state[s.key]=s.key==='clientPhone'?'+373'+v:v;}advance()}
 $('back').onclick=()=>{if(index>0){do{index--;}while(index>0&&((steps[index].key==='masonryData'&&state.masonry!=='yes')||(steps[index].key==='slabData'&&state.slab!=='yes')||(steps[index].key==='firstPayment'&&state.firstPayment!==-1)||(state.payment==='cash'&&['months','payer','firstPaymentChoice','firstPayment'].includes(steps[index].key))));render()}};
 $('quit').onclick=()=>{if(confirm('Renunți la această ofertare? Datele introduse vor fi resetate.')){location.reload()}};
+let crmAccess={admin:false,calculator:false,internalCosts:false,internalProfit:false,ready:false};
+async function initializeCrmAccess(){
+ if(!crmDb)crmDb=crmClient();
+ if(!crmDb)throw new Error('Sesiunea CRM nu a fost găsită. Autentifică-te pentru a utiliza calculatorul.');
+ const {data:{session},error}=await crmDb.auth.getSession();
+ if(error||!session)throw new Error('Autentificarea CRM este necesară.');
+ const {data:profile,error:profileError}=await crmDb.from('profiles').select('id,role,active').eq('id',session.user.id).maybeSingle();
+ if(profileError||!profile||profile.active!==true)throw new Error('Contul CRM nu este activ.');
+ crmAccess.admin=profile.role==='administrator';
+ if(crmAccess.admin){crmAccess.calculator=true;crmAccess.internalCosts=true;crmAccess.internalProfit=true;}
+ else{
+  const {data:permissions,error:permissionError}=await crmDb.from('employee_permissions').select('permission_key').eq('employee_id',session.user.id).eq('granted',true);
+  if(permissionError)throw new Error('Nu s-au putut verifica permisiunile contului.');
+  const keys=new Set((permissions||[]).map(x=>x.permission_key));
+  crmAccess.calculator=keys.has('calculator.access');
+  crmAccess.internalCosts=keys.has('quotes.internal_costs');
+  crmAccess.internalProfit=keys.has('quotes.internal_profit');
+ }
+ crmAccess.ready=true;
+ const settingsButton=$('settingsBtn');
+ if(settingsButton&&!crmAccess.internalCosts)settingsButton.classList.add('hidden');
+ if(!crmAccess.calculator)throw new Error('Contul nu are permisiunea Calculator LIVE (calculator.access). Solicită acces administratorului.');
+}
+function requireInternalCosts(){if(!crmAccess.ready||!crmAccess.internalCosts){alert('Nu ai permisiunea de a consulta costurile interne VALMEX.');return false;}return true;}
+function requireInternalProfit(){if(!crmAccess.ready||!crmAccess.internalProfit){alert('Nu ai permisiunea de a consulta diferența financiară internă.');return false;}return true;}
 function finalView(){
  if(state.firstPayment<0)state.firstPayment=0;
  const c=costs();
@@ -318,7 +343,7 @@ function finalView(){
  <div class="summary">${row('Suprafață estimată',fmt(c.A)+' m²')}${row('Valoare acoperiș',money(c.roofSale))}${state.beam==='yes'?row('Centură beton armat',fmt(c.beamVol)+' m³ × '+fmt(settings.beamCostPerM3)+' lei = '+money(c.beamCost)):''}${row('Valoare totală ofertă',money(c.sale))}${row('Total achitat de client',money(c.clientTotal))}${state.payment==='installments'&&state.payer==='client'?row('Comision finanțare',money(c.commission)):''}${state.payment==='installments'?row('Avans către VALMEX',money(c.firstPayment))+row('Sold finanțat',money(c.financedBalance))+row(state.months+' rate către compania de finanțare',money(c.monthlyBase)+' / lună · ultima '+money(c.lastMonthly)):''}</div>
  <div class="actions">
   <button onclick="makePdf('client')">Exportă oferta client · PDF</button>
-  <button class="secondary" id="internalToggle">Calcul intern</button>
+  ${crmAccess.internalCosts?'<button class="secondary" id="internalToggle">Calcul intern</button>':''}
  </div>
  <div class="actions" style="margin-top:10px">
   <button class="secondary" id="saveArchive">Salvează în arhivă</button>
@@ -332,9 +357,9 @@ function finalView(){
  </div>
  <div id="internalPanel" class="panel hidden"></div>
  <p class="note">Calculul suprafeței și cantităților de lemn este estimativ. Rata lunară este orientativă; graficul exact se confirmă cu finanțatorul. Arhiva se păstrează în browserul acestui dispozitiv.</p>`;
- $('internalToggle').onclick=()=>{
+ if($('internalToggle'))$('internalToggle').onclick=()=>{
    const panel=$('internalPanel');
-   if(panel.classList.contains('hidden')){panel.innerHTML=internalHtml();panel.classList.remove('hidden');$('internalToggle').textContent='Ascunde calculul intern';$('exportInternalPdf').onclick=()=>makePdf('internal');}
+   if(panel.classList.contains('hidden')){if(!requireInternalCosts())return;panel.innerHTML=internalHtml();panel.classList.remove('hidden');$('internalToggle').textContent='Ascunde calculul intern';$('exportInternalPdf').onclick=()=>makePdf('internal');}
    else{panel.classList.add('hidden');$('internalToggle').textContent='Calcul intern';}
  };
  $('saveArchive').onclick=saveCurrentOffer;
@@ -342,6 +367,7 @@ function finalView(){
  $('newOffer').onclick=()=>{if(confirm('Începi o ofertă nouă?'))location.reload()};
 }
 function internalHtml(){
+ if(!requireInternalCosts())return '<p>Acces restricționat.</p>';
  const c=costs(),w=wood();
  let h='<h2 style="margin:0 0 12px">Calcul intern VALMEX</h2><div class="internal-grid">';
  if(state.type==='turnkey'||state.type==='materials')h+=row('Țiglă metalică – cost intern',money(c.tile));
@@ -351,7 +377,8 @@ function internalHtml(){
   if(state.masonry==='yes')h+=row('Perimetru zidărie',fmt(c.masonryPerimeter)+' m')+row('Înălțime zidărie',fmt(state.masonryHeightCm)+' cm')+row('Suprafață zidită după goluri',fmt(c.masonryArea)+' m²')+row('Volum zidărie',fmt(c.masonryVolume)+' m³')+row('Blocuri '+settings.blockLengthCm+'×'+settings.blockHeightCm+'×'+settings.blockThicknessCm+' cm',c.blockCount+' buc. × '+money(state.blockPrice)+' = '+money(c.blockCost))+row('Manoperă zidărie ('+fmt(state.masonryLaborRate)+' lei/m³)',money(c.masonryLaborCost));
   if(state.slab==='yes')h+=row('Suprafață planșeu',fmt(c.slabArea)+' m²')+row('Grosime planșeu',fmt(state.slabThickness)+' cm')+row('Volum beton geometric',fmt(c.slabVolume)+' m³')+row('Beton',money(c.concreteCost))+row('Pompă și alte cheltuieli',money(c.slabExtras));
  if(state.payment==='installments')h+=row('Comision finanțare ('+commissions()+'%)',money(c.commission));
- h+=row('Cheltuieli cunoscute',money(c.known))+row('Diferență înainte de alte cheltuieli',money(c.remaining));
+ h+=row('Cheltuieli cunoscute',money(c.known));
+ if(crmAccess.internalProfit)h+=row('Diferență înainte de alte cheltuieli',money(c.remaining));
  h+='</div><p class="note">'+(Number(state.slopes)===4?'La 4 ape, lemnul este estimat separat pentru căpriori comuni, căpriori de capăt și 4 căpriori diagonali. Verificarea finală se face după măsurători. ':'')+'Diferența nu este profit net. Include doar costurile introduse în calculator; transportul și eventualele cheltuieli suplimentare trebuie adăugate separat. Cantitățile de lemn sunt estimative.</p><button class="plain-btn" id="exportInternalPdf">Exportă calculul intern · PDF</button>';
  return h;
 }
@@ -591,11 +618,13 @@ function deleteArchived(id){
  localStorage.setItem(ARCHIVE_KEY,JSON.stringify(getArchive().filter(x=>x.id!==id)));saveReminders(getReminders().filter(x=>String(x.recordId)!==String(id)));showArchive();
 }
 function exportArchived(id,kind){
+ if(kind==='internal'&&!requireInternalCosts())return;
  const r=getArchive().find(x=>x.id===id);if(!r)return;
  const old={...state};Object.assign(state,stateDefaults(),r.state||{});makePdf(kind);Object.assign(state,old);
 }
 
 function renderSettings(){
+ if(!requireInternalCosts())return;
  const p=$('settingsPanel');
  const fields=[['tileCost','Cost țiglă metalică (lei/m²)'],['accessoriesPercent','Accesorii (% din costul țiglei)'],['laborCost','Cost manoperă acoperiș (lei/m²)'],['consumables','Consumabile (lei/ofertă)'],['woodCostPerM3','Cost lemn (lei/m³)'],['beamCostPerM3','Cost beton centură (lei/m³)'],['beamWidth','Lățime centură implicită (m)'],['beamHeight','Înălțime centură implicită (m)'],['blockLengthCm','Lungime bloc (cm)'],['blockHeightCm','Înălțime bloc (cm)'],['blockThicknessCm','Grosime bloc (cm)'],['blockWastePercent','Rezervă blocuri (%)'],['masonryLaborPerM3','Manoperă zidărie implicită (lei/m³)']];
  let h='<div style="display:flex;justify-content:space-between;align-items:center"><h2>Setări calculator</h2><button class="plain-btn" id="closeSettings">Închide</button></div><p class="note">Tarifele și costurile se salvează în acest browser. Tarifele standard pentru acoperiș la cheie rămân 1.250, 1.350, 1.450 și 1.600 lei/m² până când le modifici aici.</p><h3>Tarife fixe de vânzare – acoperiș la cheie</h3><div class="fields">';
@@ -699,6 +728,7 @@ $('settingsBtn').onclick=renderSettings;
 
 $('archiveBtn').onclick=showArchive;
 function makePdf(kind,shouldPrint=true){
+ if(kind==='internal'&&!requireInternalCosts())return;
  const c=costs(),w=wood();
  let title=kind==='client'?'OFERTĂ VALMEX – '+(state.type==='turnkey'?'ACOPERIȘ LA CHEIE':state.type==='install'?'MONTARE ACOPERIȘ':'MATERIALE'):'CALCUL INTERN VALMEX – CONFIDENȚIAL';
  let body=`<h1>${title}</h1><p><strong><span style="color:#171717">VAL</span><span style="color:#e30613">MEX</span></strong> · www.valmex.md · +373 780 26212</p><p>Data: ${new Date().toLocaleDateString('ro-RO')}</p><div class="summary">
@@ -730,7 +760,8 @@ function makePdf(kind,shouldPrint=true){
    if(state.masonry==='yes')body+=row('Zidărie: perimetru / înălțime',fmt(c.masonryPerimeter)+' m / '+fmt(state.masonryHeightCm)+' cm')+row('Suprafață zidită după goluri',fmt(c.masonryArea)+' m²')+row('Volum zidărie',fmt(c.masonryVolume)+' m³')+row('Blocuri '+settings.blockLengthCm+'×'+settings.blockHeightCm+'×'+settings.blockThicknessCm+' cm',c.blockCount+' buc. × '+money(state.blockPrice)+' = '+money(c.blockCost))+row('Manoperă zidărie ('+fmt(state.masonryLaborRate)+' lei/m³)',money(c.masonryLaborCost));
    if(state.slab==='yes')body+=row('Planșeu: suprafață / grosime',fmt(c.slabArea)+' m² / '+fmt(state.slabThickness)+' cm')+row('Volum beton geometric',fmt(c.slabVolume)+' m³')+row('Beton',fmt(state.concretePrice)+' lei/m³ · '+money(c.concreteCost))+row('Pompă și alte cheltuieli',money(c.slabExtras));
   if((state.extraItems||[]).length)body+=(state.extraItems||[]).map((it,i)=>row('Suplimentar '+(i+1)+': '+it.description,money(it.price))).join('')+row('Total suplimentare introduse',money(c.extraTotal));
-  body+=row('Comision finanțare ('+commissions()+'%)',money(c.commission))+row('Cheltuieli cunoscute',money(c.known))+row('Diferență înainte de alte cheltuieli',money(c.remaining));
+  body+=row('Comision finanțare ('+commissions()+'%)',money(c.commission))+row('Cheltuieli cunoscute',money(c.known));
+  if(crmAccess.internalProfit)body+=row('Diferență înainte de alte cheltuieli',money(c.remaining));
   body+='</div><p>Notă: diferența nu este profit net. Nu include transportul și eventualele cheltuieli suplimentare. Lemnul este estimativ. Centura este calculată pe perimetrul casei folosind parametrii din Setări.</p>';
  }
  if(kind==='client'&&state.masonry==='yes')body+='<p>Blocuri: dimensiuni '+settings.blockLengthCm+'×'+settings.blockHeightCm+'×'+settings.blockThicknessCm+' cm; rezervă '+settings.blockWastePercent+'%. Volumul și cantitățile sunt estimative.</p>';
@@ -749,7 +780,7 @@ reminderTimer=setInterval(checkReminders,15000);
 // Reia verificarea imediat după revenirea în filă sau redeschiderea browserului.
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});
 window.addEventListener('focus',checkReminders);
-try{checkReminders();render();}
+try{checkReminders();await initializeCrmAccess();render();}
 catch(initError){
  console.error('VALMEX LIVE – eroare la inițializare:',initError);
  const screen=$('screen');
