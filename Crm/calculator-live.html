@@ -780,12 +780,11 @@ reminderTimer=setInterval(checkReminders,15000);
 // Reia verificarea imediat după revenirea în filă sau redeschiderea browserului.
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});
 window.addEventListener('focus',checkReminders);
-try{checkReminders();await initializeCrmAccess();render();}
-catch(initError){
+initializeCrmAccess().then(()=>{checkReminders();render();}).catch(initError=>{
  console.error('VALMEX LIVE – eroare la inițializare:',initError);
  const screen=$('screen');
  if(screen){screen.classList.remove('hidden');$('result').classList.add('hidden');$('archive').classList.add('hidden');$('nav').classList.remove('hidden');screen.innerHTML='<div class="panel"><h2>Calculatorul nu s-a putut încărca</h2><p class="note">Eroare: '+esc(initError&&initError.message?initError.message:String(initError))+'</p><button class="option" onclick="location.reload()">Reîncarcă calculatorul</button></div>';}
-}
+});
 
 // OneSignal Web Push – conectează abonamentul browserului cu utilizatorul CRM.
 window.OneSignalDeferred = window.OneSignalDeferred || [];
