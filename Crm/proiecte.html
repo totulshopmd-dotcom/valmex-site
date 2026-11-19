@@ -151,7 +151,7 @@ ${canDelete?`<button class="action" data-delete="${escapeHtml(p.id)}" style="bor
 
 function confirmProjectDeletion(project){
  return new Promise(resolve=>{
-  $("deleteConfirmText").textContent="Confirmați ștergerea proiectului "+project.project_code+" – "+project.title+"? Această operațiune poate fi ireversibilă.";
+  $("deleteConfirmText").textContent="Confirmați ștergerea proiectului "+project.project_code+" – "+project.title+"? Înregistrarea va fi mutată în Coș și poate fi restaurată ulterior din Dashboard.";
   const overlay=$("deleteConfirmOverlay");
   const yes=$("deleteYesBtn"),no=$("deleteCancelBtn");
   const finish=value=>{overlay.classList.remove("show");yes.removeEventListener("click",onYes);no.removeEventListener("click",onNo);resolve(value);};
