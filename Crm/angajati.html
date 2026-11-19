@@ -14,7 +14,7 @@ h1{font-size:25px;margin:0 0 6px}.muted{color:#777;font-size:13px}
 .panel h2{font-size:17px;margin:0 0 16px}form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
 label{display:block;font-size:12px;color:#555;margin-bottom:6px}input{width:100%;padding:12px;border:1px solid #d7d7d7;border-radius:8px;font:inherit}
 .full{grid-column:1/-1}button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:9px 12px}
-button:disabled{opacity:.55;cursor:wait}.primary{background:#e30613;color:white;font-weight:bold}.secondary{background:#eee;color:#222}
+button:disabled{opacity:.55;cursor:wait}.permission-box{border:1px solid #e5e5e5;border-radius:10px;padding:14px}.permission-group{padding:10px 0;border-bottom:1px solid #eee}.permission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:9px}.permission-option{display:flex;align-items:center;gap:7px;margin:0;font-size:12px}.permission-option input{width:auto}.perm-panel{display:none}.perm-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}.primary{background:#e30613;color:white;font-weight:bold}.secondary{background:#eee;color:#222}
 .action{font-size:12px;margin:2px;white-space:nowrap}.suspend{background:#fff0e6;color:#9a3412}.activate{background:#e7f6ec;color:#18794e}.password{background:#ecebff;color:#4036a8}
 #message,#passwordMessage{font-size:13px;margin-top:12px;white-space:pre-wrap;line-height:1.5}.error{color:#b42318}.ok{color:#18794e}
 .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}
@@ -23,9 +23,9 @@ th{color:#777}.pill{padding:4px 8px;border-radius:20px;background:#eee;font-size
 .empty{padding:18px;color:#777}.notice{background:#fff7df;border:1px solid #f0dfaa;padding:12px;border-radius:8px;margin-top:14px;font-size:13px}
 #passwordPanel{display:none}.password-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 @media(max-width:650px){form{grid-template-columns:1fr}.full{grid-column:auto}.panel{padding:15px}table{min-width:760px}}
-a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;height:38px;border:1px solid #e5e7eb;border-radius:11px;text-decoration:none;font-size:20px;font-weight:700;color:#252a33;background:#fff}a[href="dashboard.html"]:hover{border-color:#e30613;color:#e30613}</style></head>
+</style></head>
 <body>
-<header><div class="logo">VAL<span>MEX</span> CRM</div></header>
+<header><div class="logo">VAL<span>MEX</span> CRM</div><a href="dashboard.html">← Înapoi la Dashboard</a></header>
 <main>
 <div class="top"><div><h1>Angajați</h1><div class="muted">Administrarea conturilor de acces VALMEX</div></div><button class="secondary" id="reload" type="button">Reîncarcă lista</button></div>
 
@@ -37,7 +37,7 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
 <div><label for="phone">Telefon</label><input id="phone" type="tel" autocomplete="tel"></div>
 <div><label for="position">Funcția</label><input id="position" placeholder="Ex.: Montator, responsabil lucrări"></div>
 <div class="full"><label for="password">Parola inițială * (minimum 8 caractere)</label><input id="password" type="password" minlength="8" autocomplete="new-password" required></div>
-<div class="full"><button class="primary" id="createBtn" type="submit">Creează cont angajat</button></div>
+<div class="full permission-box"><b>Permisiuni inițiale</b><div class="muted">Bifează accesul acordat. Îl poți modifica ulterior.</div><div class="permission-group"><b>Clienți</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="clients.view"> Vizualizare</label><label class="permission-option"><input type="checkbox" name="permissions" value="clients.create"> Adăugare</label><label class="permission-option"><input type="checkbox" name="permissions" value="clients.edit"> Editare</label><label class="permission-option"><input type="checkbox" name="permissions" value="clients.delete"> Ștergere</label></div></div><div class="permission-group"><b>Proiecte</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="projects.view"> Vizualizare</label><label class="permission-option"><input type="checkbox" name="permissions" value="projects.create"> Creare</label><label class="permission-option"><input type="checkbox" name="permissions" value="projects.edit"> Editare</label></div></div><div class="permission-group"><b>Finanțe</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="finance.prices"> Prețuri de vânzare</label><label class="permission-option"><input type="checkbox" name="permissions" value="finance.costs"> Costuri interne</label><label class="permission-option"><input type="checkbox" name="permissions" value="finance.revenue"> Încasări și datorii</label><label class="permission-option"><input type="checkbox" name="permissions" value="finance.profit"> Profit și marjă</label><label class="permission-option"><input type="checkbox" name="permissions" value="finance.commissions"> Comisioane</label><label class="permission-option"><input type="checkbox" name="permissions" value="finance.reports"> Rapoarte financiare</label></div></div><div class="permission-group"><b>Calculator și oferte</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="calculator.access"> Acces calculator</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.create"> Creare oferte</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.edit"> Editare oferte</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.internal_costs"> Costuri interne</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.internal_profit"> Profit intern</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.pdf_client"> PDF client</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.pdf_internal"> PDF intern</label></div></div><div class="permission-group"><b>Documente și contracte</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="documents.view"> Vizualizare</label><label class="permission-option"><input type="checkbox" name="permissions" value="documents.manage"> Gestionare documente și contracte</label></div></div><div class="permission-group"><b>Materiale</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="materials.view"> Vizualizare</label><label class="permission-option"><input type="checkbox" name="permissions" value="materials.manage"> Gestionare materiale și stocuri</label></div></div><div class="permission-group"><b>Sarcini și comunicare</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="tasks.view_all"> Toate sarcinile</label><label class="permission-option"><input type="checkbox" name="permissions" value="tasks.manage"> Gestionare sarcini</label><label class="permission-option"><input type="checkbox" name="permissions" value="chat.access"> Chat intern</label><label class="permission-option"><input type="checkbox" name="permissions" value="notifications.manage"> Notificări</label></div></div><div class="permission-group"><b>Garanții și intervenții</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="warranty.view"> Vizualizare garanții</label><label class="permission-option"><input type="checkbox" name="permissions" value="interventions.manage"> Gestionare intervenții</label></div></div></div><div class="full"><button class="primary" id="createBtn" type="submit">Creează cont angajat</button></div>
 </form>
 <div id="message" role="status" aria-live="polite"></div>
 <div class="notice">Conturile noi primesc rolul employee. Suspendarea blochează autentificarea prin Supabase Auth. Resetarea parolei stabilește o parolă temporară comunicată separat angajatului.</div>
@@ -51,6 +51,7 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
 <div id="passwordMessage" role="status" aria-live="polite"></div>
 </section>
 
+<section class="panel perm-panel" id="permissionsPanel"><h2>Permisiuni – <span id="permissionEmployeeName"></span></h2><div class="permission-box" id="permissionEditor"><div class="permission-group"><b>Clienți</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="clients.view"> Vizualizare</label><label class="permission-option"><input type="checkbox" name="permissions" value="clients.create"> Adăugare</label><label class="permission-option"><input type="checkbox" name="permissions" value="clients.edit"> Editare</label><label class="permission-option"><input type="checkbox" name="permissions" value="clients.delete"> Ștergere</label></div></div><div class="permission-group"><b>Proiecte</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="projects.view"> Vizualizare</label><label class="permission-option"><input type="checkbox" name="permissions" value="projects.create"> Creare</label><label class="permission-option"><input type="checkbox" name="permissions" value="projects.edit"> Editare</label></div></div><div class="permission-group"><b>Finanțe</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="finance.prices"> Prețuri de vânzare</label><label class="permission-option"><input type="checkbox" name="permissions" value="finance.costs"> Costuri interne</label><label class="permission-option"><input type="checkbox" name="permissions" value="finance.revenue"> Încasări și datorii</label><label class="permission-option"><input type="checkbox" name="permissions" value="finance.profit"> Profit și marjă</label><label class="permission-option"><input type="checkbox" name="permissions" value="finance.commissions"> Comisioane</label><label class="permission-option"><input type="checkbox" name="permissions" value="finance.reports"> Rapoarte financiare</label></div></div><div class="permission-group"><b>Calculator și oferte</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="calculator.access"> Acces calculator</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.create"> Creare oferte</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.edit"> Editare oferte</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.internal_costs"> Costuri interne</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.internal_profit"> Profit intern</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.pdf_client"> PDF client</label><label class="permission-option"><input type="checkbox" name="permissions" value="quotes.pdf_internal"> PDF intern</label></div></div><div class="permission-group"><b>Documente și contracte</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="documents.view"> Vizualizare</label><label class="permission-option"><input type="checkbox" name="permissions" value="documents.manage"> Gestionare documente și contracte</label></div></div><div class="permission-group"><b>Materiale</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="materials.view"> Vizualizare</label><label class="permission-option"><input type="checkbox" name="permissions" value="materials.manage"> Gestionare materiale și stocuri</label></div></div><div class="permission-group"><b>Sarcini și comunicare</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="tasks.view_all"> Toate sarcinile</label><label class="permission-option"><input type="checkbox" name="permissions" value="tasks.manage"> Gestionare sarcini</label><label class="permission-option"><input type="checkbox" name="permissions" value="chat.access"> Chat intern</label><label class="permission-option"><input type="checkbox" name="permissions" value="notifications.manage"> Notificări</label></div></div><div class="permission-group"><b>Garanții și intervenții</b><div class="permission-grid"><label class="permission-option"><input type="checkbox" name="permissions" value="warranty.view"> Vizualizare garanții</label><label class="permission-option"><input type="checkbox" name="permissions" value="interventions.manage"> Gestionare intervenții</label></div></div></div><div class="perm-actions"><button class="secondary" id="cancelPermissions" type="button">Anulează</button><button class="primary" id="savePermissions" type="button">Salvează permisiunile</button></div><div id="permissionMessage"></div></section>
 <section class="panel">
 <h2>Conturi existente</h2>
 <div class="table-wrap"><table>
@@ -67,6 +68,7 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
   const $ = id => document.getElementById(id);
   const tbody = $("employees");
   let selectedEmployee = null;
+  let permissionEmployee = null;
 
   function showMessage(text, type = "error") {
     $("message").textContent = text;
@@ -156,6 +158,7 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
               data-name="${esc(x.full_name||"angajat")}" data-active="${x.active?"true":"false"}">
               ${x.active?"Suspendă":"Reactivează"}
             </button>
+            <button type="button" class="action" data-action="permissions" data-id="${esc(x.id)}" data-name="${esc(x.full_name||"angajat")}">Permisiuni</button>
             <button type="button" class="action password" data-action="password"
               data-id="${esc(x.id)}" data-name="${esc(x.full_name||"angajat")}">Resetare parolă</button>
           </td>
@@ -166,6 +169,15 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
   }
 
   $("reload").addEventListener("click",loadEmployees);
+  $("cancelPermissions").addEventListener("click",()=>{$("permissionsPanel").style.display="none";permissionEmployee=null;});
+  $("savePermissions").addEventListener("click",async()=>{
+    if(!permissionEmployee)return;
+    const permissions=[...document.querySelectorAll("#permissionEditor input[name=permissions]:checked")].map(x=>x.value);
+    const btn=$("savePermissions");btn.disabled=true;
+    try{const result=await invokeAdmin({action:"set_permissions",user_id:permissionEmployee.id,permissions},"Salvarea permisiunilor");$("permissionMessage").textContent=result.message||"Permisiunile au fost salvate.";$("permissionMessage").className="ok";setTimeout(()=>{$("permissionsPanel").style.display="none";permissionEmployee=null;},1200);}
+    catch(err){$("permissionMessage").textContent="Eroare: "+(err.message||err);$("permissionMessage").className="error";}
+    finally{btn.disabled=false;}
+  });
 
   $("employeeForm").addEventListener("submit",async e=>{
     e.preventDefault();showMessage("");
@@ -175,7 +187,8 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
       email:$("email").value.trim(),
       password:$("password").value,
       phone:$("phone").value.trim(),
-      position:$("position").value.trim()
+      position:$("position").value.trim(),
+      permissions:[...document.querySelectorAll("#employeeForm input[name=permissions]:checked")].map(x=>x.value)
     };
     if(!payload.full_name||!payload.email||payload.password.length<8){
       showMessage("Completează numele, emailul și o parolă de minimum 8 caractere.");return;
@@ -210,6 +223,17 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
       }
     }
 
+    if(action==="permissions"){
+      permissionEmployee={id:userId,name};
+      $("permissionEmployeeName").textContent=name;
+      const {data,error}=await db.from("employee_permissions").select("permission_key").eq("employee_id",userId).eq("granted",true);
+      if(error){showMessage("Permisiunile nu au putut fi încărcate: "+error.message);return;}
+      const granted=new Set((data||[]).map(x=>x.permission_key));
+      document.querySelectorAll("#permissionEditor input[name=permissions]").forEach(x=>x.checked=granted.has(x.value));
+      $("permissionMessage").textContent="";
+      $("permissionsPanel").style.display="block";
+      $("permissionsPanel").scrollIntoView({behavior:"smooth",block:"center"});
+    }
     if(action==="password"){
       selectedEmployee={id:userId,name};
       $("passwordEmployeeName").textContent=name;
@@ -263,5 +287,4 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
   })();
 })();
 </script>
-<script src="components/persistent-nav.js"></script>
 </body></html>

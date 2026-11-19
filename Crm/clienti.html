@@ -218,12 +218,42 @@ function renderClients() {
       <td>${escapeHtml(c.work_type || "—")}</td>
       <td><span class="status ${escapeHtml(c.status)}">${escapeHtml(statusNames[c.status] || c.status)}</span></td>
       <td>${escapeHtml(responsible?.full_name || "—")}</td>
-      <td>${canEdit ? `<button class="action" data-edit="${escapeHtml(c.id)}">Editează</button>` : "—"}</td>
+      <td>
+        ${canEdit ? `<button class="action" data-edit="${escapeHtml(c.id)}">Editează</button>` : ""}
+        ${currentProfile.role === "administrator" ? `<button class="action" data-delete="${escapeHtml(c.id)}" style="border-color:#e30613;color:#b0000b">Șterge</button>` : ""}
+        ${!canEdit && currentProfile.role !== "administrator" ? "—" : ""}
+      </td>
     </tr>`;
   }).join("");
 
   $("clientRows").querySelectorAll("[data-edit]").forEach(btn =>
     btn.addEventListener("click", () => editClient(btn.dataset.edit)));
+  $("clientRows").querySelectorAll("[data-delete]").forEach(btn =>
+    btn.addEventListener("click", () => deleteClient(btn.dataset.delete)));
+}
+
+async function deleteClient(id) {
+  if (currentProfile?.role !== "administrator") {
+    feedback("Doar administratorul poate șterge clienți.");
+    return;
+  }
+  const client = clients.find(x => x.id === id);
+  if (!client) return;
+  const fullName = [client.first_name, client.last_name].filter(Boolean).join(" ");
+  if (!confirm("Confirmi ștergerea clientului " + (client.client_code || "") + " – " + fullName + "? Operațiunea poate fi ireversibilă.")) return;
+
+  const btn = [...$("clientRows").querySelectorAll("[data-delete]")].find(x => x.dataset.delete === id);
+  if (btn) { btn.disabled = true; btn.textContent = "Se șterge..."; }
+
+  const { error } = await db.from("clients").delete().eq("id", id);
+  if (error) {
+    feedback("Clientul nu a fost șters: " + error.message + ". Verifică dacă există proiecte sau înregistrări asociate.");
+    if (btn) { btn.disabled = false; btn.textContent = "Șterge"; }
+    return;
+  }
+
+  feedback("Clientul " + (client.client_code || fullName) + " a fost șters.");
+  await loadClients();
 }
 
 function openModal(client=null) {
