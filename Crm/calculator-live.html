@@ -342,6 +342,7 @@ function finalView(){
  $('newOffer').onclick=()=>{if(confirm('Începi o ofertă nouă?'))location.reload()};
 }
 function internalHtml(){
+ if(!requireInternalCosts())return '<p>Acces restricționat.</p>';
  const c=costs(),w=wood();
  let h='<h2 style="margin:0 0 12px">Calcul intern VALMEX</h2><div class="internal-grid">';
  if(state.type==='turnkey'||state.type==='materials')h+=row('Țiglă metalică – cost intern',money(c.tile));
@@ -351,7 +352,7 @@ function internalHtml(){
   if(state.masonry==='yes')h+=row('Perimetru zidărie',fmt(c.masonryPerimeter)+' m')+row('Înălțime zidărie',fmt(state.masonryHeightCm)+' cm')+row('Suprafață zidită după goluri',fmt(c.masonryArea)+' m²')+row('Volum zidărie',fmt(c.masonryVolume)+' m³')+row('Blocuri '+settings.blockLengthCm+'×'+settings.blockHeightCm+'×'+settings.blockThicknessCm+' cm',c.blockCount+' buc. × '+money(state.blockPrice)+' = '+money(c.blockCost))+row('Manoperă zidărie ('+fmt(state.masonryLaborRate)+' lei/m³)',money(c.masonryLaborCost));
   if(state.slab==='yes')h+=row('Suprafață planșeu',fmt(c.slabArea)+' m²')+row('Grosime planșeu',fmt(state.slabThickness)+' cm')+row('Volum beton geometric',fmt(c.slabVolume)+' m³')+row('Beton',money(c.concreteCost))+row('Pompă și alte cheltuieli',money(c.slabExtras));
  if(state.payment==='installments')h+=row('Comision finanțare ('+commissions()+'%)',money(c.commission));
- h+=row('Cheltuieli cunoscute',money(c.known))+row('Diferență înainte de alte cheltuieli',money(c.remaining));
+ h+=row('Cheltuieli cunoscute',money(c.known));if(crmAccess.internalProfit)h+=row('Diferență înainte de alte cheltuieli',money(c.remaining));
  h+='</div><p class="note">'+(Number(state.slopes)===4?'La 4 ape, lemnul este estimat separat pentru căpriori comuni, căpriori de capăt și 4 căpriori diagonali. Verificarea finală se face după măsurători. ':'')+'Diferența nu este profit net. Include doar costurile introduse în calculator; transportul și eventualele cheltuieli suplimentare trebuie adăugate separat. Cantitățile de lemn sunt estimative.</p><button class="plain-btn" id="exportInternalPdf">Exportă calculul intern · PDF</button>';
  return h;
 }
