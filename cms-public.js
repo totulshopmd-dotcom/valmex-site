@@ -22,6 +22,9 @@
   }
   function decoratePrice(el,db) {
     var key=el.getAttribute('data-cms').slice(7), cfg=(db.priceDisplay||{})[key]||{}, base=Number((db.prices||{})[key]);
+    var prefix=document.querySelectorAll('[data-cms-prefix="prices.'+key+'"]');
+    var showFrom=cfg.showFrom!==false;
+    prefix.forEach(function(node){node.hidden=!showFrom;});
     if(!isFinite(base)||base<=0)return;
     var mode=cfg.mode||'from', amount=Number(cfg.discountValue), final=base, active=mode==='promo';
     var today=new Date(), y=today.getFullYear(), m=String(today.getMonth()+1).padStart(2,'0'), d=String(today.getDate()).padStart(2,'0'), date=y+'-'+m+'-'+d;
@@ -33,14 +36,21 @@
       else final=amount;
       active=cfg.discountValue!==''&&cfg.discountValue!=null&&isFinite(final)&&final>=0&&final<base;
     }
-    var prior=el.parentNode.querySelector('[data-valmex-old-price="'+key+'"]');
-    if(prior)prior.remove();
-    el.textContent=active?new Intl.NumberFormat('ro-MD',{maximumFractionDigits:2}).format(final):String(base);
+    var old=el.parentNode.querySelector('[data-valmex-old-price="'+key+'"]');
+    if(old)old.remove();
+    var tag=el.parentNode.querySelector('[data-valmex-promo-label="'+key+'"]');
+    if(tag)tag.remove();
+    el.textContent=new Intl.NumberFormat('ro-MD',{maximumFractionDigits:2}).format(active?final:base);
     if(active){
-      var old=document.createElement('span');old.setAttribute('data-valmex-old-price',key);
+      old=document.createElement('span');old.setAttribute('data-valmex-old-price',key);
       old.style.cssText='text-decoration:line-through;opacity:.65;margin-left:.5em;font-size:.72em;white-space:nowrap';
       old.textContent=new Intl.NumberFormat('ro-MD',{maximumFractionDigits:2}).format(base);
       el.insertAdjacentElement('afterend',old);
+      if(cfg.label){
+        tag=document.createElement('span');tag.setAttribute('data-valmex-promo-label',key);
+        tag.style.cssText='display:inline-block;margin-left:.5em;font-size:.72em;font-weight:600;white-space:nowrap';
+        tag.textContent=cfg.label;old.insertAdjacentElement('afterend',tag);
+      }
     }
   }
   function apply(db) {
