@@ -110,7 +110,7 @@ async function loadProfiles(){
 }
 async function loadProjects(){
  $("projectRows").innerHTML='<tr><td colspan="9" class="empty">Se încarcă...</td></tr>';
- const {data,error}=await db.from("projects").select("id,project_code,client_id,title,work_type,status,address,estimated_start,estimated_end,manager_id,created_at").order("created_at",{ascending:false});
+ const {data,error}=await db.from("projects").select("id,project_code,client_id,title,work_type,status,address,estimated_start,estimated_end,manager_id,created_at").is("deleted_at",null).order("created_at",{ascending:false});
  if(error){$("projectRows").innerHTML='<tr><td colspan="9" class="empty">Nu s-au putut încărca proiectele.</td></tr>';feedback("Eroare la încărcare: "+error.message);return;}
  projects=data||[];renderProjects();feedback(`${projects.length} proiect(e) înregistrate.`);
 }
@@ -166,13 +166,9 @@ async function deleteProject(id){
  const confirmed=await confirmProjectDeletion(p);if(!confirmed)return;
  const btn=[...$("projectRows").querySelectorAll("[data-delete]")].find(x=>x.dataset.delete===id);
  if(btn){btn.disabled=true;btn.textContent="Se șterge...";}
- const {data:deleted,error}=await db.from("projects").delete().eq("id",id).select("id").maybeSingle();
- if(error){
-  feedback("Proiectul nu a fost șters: "+error.message+". Verifică politica RLS și dacă există înregistrări asociate care împiedică ștergerea.");
-  if(btn){btn.disabled=false;btn.textContent="Șterge";}
-  return;
- }
- feedback("Proiectul "+p.project_code+" a fost șters.");
+ const {error}=await db.rpc("archive_crm_record",{p_type:"project",p_id:id});
+ if(error){feedback("Proiectul nu a putut fi mutat în Coș: "+error.message);if(btn){btn.disabled=false;btn.textContent="Șterge";}return;}
+ feedback("Proiectul "+p.project_code+" a fost mutat în Coș. Îl poți restaura din Dashboard.");
  await loadProjects();
 }
 function openModal(p=null){
