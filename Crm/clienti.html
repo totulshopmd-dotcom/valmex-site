@@ -39,7 +39,7 @@ tr:last-child td{border-bottom:0}
 .empty{padding:35px;text-align:center;color:#777;font-size:14px}
 .overlay{display:none;position:fixed;inset:0;background:#0008;z-index:20;padding:16px;overflow:auto}
 .overlay.show{display:flex;align-items:center;justify-content:center}
-.modal{width:100%;max-width:680px;background:#fff;border-radius:14px;padding:22px;box-shadow:0 20px 60px #0003;margin:auto}
+.modal{width:100%;max-width:680px;background:#fff;border-radius:14px;padding:22px;box-shadow:0 20px 60px #0003;margin:auto}.confirm-modal{max-width:420px}.confirm-modal p{color:#555;line-height:1.5;margin:10px 0 22px}.confirm-actions{display:flex;justify-content:flex-end;gap:9px}.danger{background:#e30613;color:#fff;border:0}
 .modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .modalhead h2{font-size:19px;margin:0}
 .close{border:0;background:#eee;border-radius:50%;width:34px;height:34px;font-size:20px}
@@ -124,6 +124,7 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
     </form>
   </section>
 </div>
+<div class="overlay" id="deleteConfirmOverlay"><section class="modal confirm-modal" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle"><div class="modalhead"><h2 id="deleteConfirmTitle">Confirmare ștergere</h2></div><p id="deleteConfirmText">Doriți să ștergeți acest client?</p><div class="confirm-actions"><button type="button" class="btn secondary" id="deleteCancelBtn">Anulează</button><button type="button" class="btn danger" id="deleteYesBtn">Da, șterge</button></div></section></div>
 
 <script>
 const SUPABASE_URL = "https://qejnbbzhpvfjeqzwotwt.supabase.co";
@@ -232,6 +233,15 @@ function renderClients() {
     btn.addEventListener("click", () => deleteClient(btn.dataset.delete)));
 }
 
+function confirmClientDeletion(client, fullName) {
+  return new Promise(resolve => {
+    $("deleteConfirmText").textContent = "Confirmați ștergerea clientului " + (client.client_code || "") + " – " + fullName + "? Această operațiune poate fi ireversibilă.";
+    const overlay = $("deleteConfirmOverlay"), yes = $("deleteYesBtn"), no = $("deleteCancelBtn");
+    const finish = value => { overlay.classList.remove("show"); yes.removeEventListener("click", onYes); no.removeEventListener("click", onNo); resolve(value); };
+    const onYes = () => finish(true), onNo = () => finish(false);
+    yes.addEventListener("click", onYes); no.addEventListener("click", onNo); overlay.classList.add("show");
+  });
+}
 async function deleteClient(id) {
   if (currentProfile?.role !== "administrator") {
     feedback("Doar administratorul poate șterge clienți.");
@@ -240,14 +250,15 @@ async function deleteClient(id) {
   const client = clients.find(x => x.id === id);
   if (!client) return;
   const fullName = [client.first_name, client.last_name].filter(Boolean).join(" ");
-  if (!confirm("Confirmi ștergerea clientului " + (client.client_code || "") + " – " + fullName + "? Operațiunea poate fi ireversibilă.")) return;
+  const confirmed = await confirmClientDeletion(client, fullName); if (!confirmed) return;
 
   const btn = [...$("clientRows").querySelectorAll("[data-delete]")].find(x => x.dataset.delete === id);
   if (btn) { btn.disabled = true; btn.textContent = "Se șterge..."; }
 
-  const { error } = await db.from("clients").delete().eq("id", id);
-  if (error) {
-    feedback("Clientul nu a fost șters: " + error.message + ". Verifică dacă există proiecte sau înregistrări asociate.");
+  const { data: deleted, error } = await db.from("clients").delete().eq("id", id).select("id").maybeSingle();
+  if (error || !deleted) {
+    const detail = error?.code === "23503" ? "Clientul are proiecte, oferte, contracte sau alte înregistrări asociate. Păstrează istoricul; clientul nu poate fi șters cât timp aceste înregistrări există." : error?.code === "42501" ? "Contul nu are dreptul de ștergere în baza de date. Verifică rolul administratorului și politica RLS." : error?.message || "Clientul nu a fost găsit sau ștergerea nu este permisă.";
+    feedback(detail);
     if (btn) { btn.disabled = false; btn.textContent = "Șterge"; }
     return;
   }
