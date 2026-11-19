@@ -71,6 +71,7 @@ body{background:radial-gradient(ellipse at 82% 0%,#e4e9f2 0,transparent 34%),#ee
 <a class="module" href="angajati.html" id="employeesAdminCard" hidden><span class="module-ico">♧</span><span class="module-copy"><b>Administrare angajați</b><span>Conturi, roluri și stare activă.</span></span></a>
 <a class="module" href="../index.html" target="_blank" rel="noopener"><span class="module-ico">↗</span><span class="module-copy"><b>Website VALMEX</b><span>Deschide noul redesign public.</span></span></a>
 </div></section>
+<section class="section" id="trashSection" hidden><div class="section-head"><div><h2>Coș de recuperare</h2><p>Înregistrările șterse din module sunt păstrate aici și pot fi restaurate.</p></div><button class="btn" id="refreshTrash">Reîncarcă</button></div><div class="panel" style="padding:16px;overflow:auto"><div id="trashContent" class="muted">Se încarcă înregistrările arhivate...</div></div></section>
 <div class="notice"><b>Notă de funcționare:</b> CMS Website este panoul de administrare al conținutului public. Salvările CMS sunt direcționate către ramura izolată <code>cms-staging</code>; nu modifică automat site-ul din producție. Prețurile și formulele Calculatorului LIVE nu se modifică în această etapă. Modulele nou adăugate în navigare au momentan structură de interfață; conectarea lor la date și operațiuni se va face etapizat. Prezența paginii nu înseamnă că funcția este deja activă.</div>
 <div id="notice" role="status"></div>
 </div></main></div>
@@ -81,6 +82,29 @@ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
 $("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
 async function countRows(table,id){const {count,error}=await db.from(table).select("*",{count:"exact",head:true});$(id).textContent=error?"—":String(count??0);return !error}
+
+async function loadTrash(){
+ const section=$("trashSection"),host=$("trashContent");
+ if(!section||!host)return;
+ section.hidden=false;host.textContent="Se încarcă...";
+ const [clients,projects]=await Promise.all([
+  db.from("clients").select("id,client_code,first_name,last_name,deleted_at").not("deleted_at","is",null).order("deleted_at",{ascending:false}),
+  db.from("projects").select("id,project_code,title,deleted_at").not("deleted_at","is",null).order("deleted_at",{ascending:false})
+ ]);
+ if(clients.error||projects.error){host.textContent="Coșul nu a putut fi încărcat: "+(clients.error||projects.error).message;return;}
+ const rows=[...(clients.data||[]).map(x=>({...x,type:"client",label:(x.client_code||"")+" — "+x.first_name+" "+x.last_name})),...(projects.data||[]).map(x=>({...x,type:"project",label:(x.project_code||"")+" — "+x.title}))];
+ if(!rows.length){host.textContent="Coșul este gol.";return;}
+ host.innerHTML='<table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:left;padding:10px">Tip</th><th style="text-align:left;padding:10px">Înregistrare</th><th style="text-align:left;padding:10px">Data ștergerii</th><th style="padding:10px">Acțiune</th></tr></thead><tbody>'+rows.map(x=>'<tr><td style="padding:10px;border-top:1px solid #eee">'+(x.type==="client"?"Client":"Proiect")+'</td><td style="padding:10px;border-top:1px solid #eee">'+escapeTrash(x.label)+'</td><td style="padding:10px;border-top:1px solid #eee">'+new Date(x.deleted_at).toLocaleString("ro-RO")+'</td><td style="padding:10px;border-top:1px solid #eee;text-align:center"><button class="btn" data-restore-type="'+x.type+'" data-restore-id="'+x.id+'">Restaurează</button></td></tr>').join("")+'</tbody></table>';
+ host.querySelectorAll("[data-restore-id]").forEach(btn=>btn.addEventListener("click",async()=>{
+  btn.disabled=true;btn.textContent="Se restaurează...";
+  const {error}=await db.rpc("restore_crm_record",{p_type:btn.dataset.restoreType,p_id:btn.dataset.restoreId});
+  if(error){btn.disabled=false;btn.textContent="Restaurează";$("notice").textContent="Restaurarea a eșuat: "+error.message;return;}
+  $("notice").textContent="Înregistrarea a fost restaurată.";await loadTrash();
+ }));
+}
+function escapeTrash(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+$("refreshTrash").addEventListener("click",loadTrash);
+
 async function init(){
  const {data:{session},error}=await db.auth.getSession();
  if(error||!session){location.replace("index.html");return}
@@ -99,6 +123,7 @@ async function init(){
  }
  document.querySelectorAll("[data-permission]").forEach(el=>{el.hidden=!(isAdmin||granted.has(el.dataset.permission));});
  const results=await Promise.all([countRows("clients","clientsCount"),countRows("projects","projectsCount"),countRows("tasks","tasksCount"),countRows("contracts","contractsCount")]);
+ if(isAdmin) await loadTrash();
  if(results.some(x=>!x))$("notice").textContent="Unele statistici nu sunt disponibile pentru rolul curent. Permisiunile bazei de date rămân decisive.";
 }
 $("logout").addEventListener("click",async()=>{await db.auth.signOut();location.replace("index.html")});
