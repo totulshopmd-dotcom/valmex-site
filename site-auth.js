@@ -28,7 +28,7 @@
       .valmex-account-menu a,.valmex-account-menu button{display:flex;width:100%;align-items:center;box-sizing:border-box;padding:11px 12px;border:0;border-radius:7px;background:transparent;color:#222;text-align:left;text-decoration:none;font:600 13px inherit;cursor:pointer}
       .valmex-account-menu a:hover,.valmex-account-menu button:hover{background:#f5f5f5}
       .valmex-account-menu button{color:#b42318}
-      @media(max-width:600px){.valmex-account{margin-left:6px}.valmex-account-trigger{padding:8px 10px;font-size:12px;min-height:36px}.valmex-account-menu{right:0}}
+      @media(max-width:760px){#nav .valmex-account{display:flex;width:100%;box-sizing:border-box;margin:12px 0 4px;padding:12px 0 4px;border-top:1px solid rgba(0,0,0,.1);z-index:1001}#nav .valmex-account-trigger{width:100%;justify-content:center;min-height:44px;font-size:14px}#nav .valmex-account-menu{position:static;width:100%;box-sizing:border-box;margin-top:8px;box-shadow:none;border-color:#e7e7e7}#nav .valmex-account-menu a,#nav .valmex-account-menu button{min-height:44px} .valmex-account{margin-left:6px}.valmex-account-trigger{padding:8px 10px;font-size:12px;min-height:36px}}
     `;
     document.head.appendChild(style);
   }
@@ -64,9 +64,22 @@
     menu.append(dashboardLink, logoutButton);
     root.append(trigger, menu);
 
+    const nav = header.querySelector('#nav') || header.querySelector('nav');
     const cta = header.querySelector('.header-cta');
-    if (cta && cta.parentNode) cta.parentNode.insertBefore(root, cta);
-    else header.appendChild(root);
+    const mobile = window.matchMedia('(max-width: 760px)');
+    function placeAccountControl() {
+      if (mobile.matches && nav) {
+        // In mobile layout, show account controls as the final item inside the opened hamburger menu.
+        nav.appendChild(root);
+      } else if (cta && cta.parentNode) {
+        cta.parentNode.insertBefore(root, cta);
+      } else {
+        header.appendChild(root);
+      }
+    }
+    placeAccountControl();
+    if (mobile.addEventListener) mobile.addEventListener('change', placeAccountControl);
+    else if (mobile.addListener) mobile.addListener(placeAccountControl);
 
     trigger.addEventListener('click', () => {
       if (trigger.dataset.loggedIn !== 'true') {
