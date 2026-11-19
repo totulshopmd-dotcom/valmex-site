@@ -258,10 +258,10 @@ async function initDashboard() {
   });
 
   const results = await Promise.all([
-    countRows("clients","clientsCount"),
-    countRows("projects","projectsCount"),
-    countRows("tasks","tasksCount"),
-    countRows("contracts","contractsCount")
+    isAdmin || granted.has("clients.view") ? countRows("clients","clientsCount") : Promise.resolve(true),
+    isAdmin || granted.has("projects.view") ? countRows("projects","projectsCount") : Promise.resolve(true),
+    isAdmin || granted.has("tasks.view_all") ? countRows("tasks","tasksCount") : Promise.resolve(true),
+    isAdmin || granted.has("documents.manage") ? countRows("contracts","contractsCount") : Promise.resolve(true)
   ]);
 
   document.getElementById("activityStatus").textContent =
