@@ -45,7 +45,7 @@ main{min-width:0;margin-left:258px}.top{height:68px;background:#ffffffed;border-
 <main>
 <header class="top"><a class="top-brand" href="dashboard.html" aria-label="Revenire la pagina principală VALMEX">VAL<span>MEX</span></a><div class="topright"><button class="top-back" id="backBtn" type="button">← Înapoi</button><span class="pill" id="status">Neconectat</span><button class="top-menu" id="menu" type="button" aria-label="Deschide meniul" aria-expanded="false">☰</button></div></header>
 <div class="wrap">
-<section class="page" id="prices">
+<section class="page active" id="prices">
  <div class="head"><div><div class="eyebrow">SERVICII ȘI COSTURI</div><h1>Administrare prețuri</h1><p class="sub">Schimbă valorile orientative afișate în conținutul website-ului.</p></div></div>
  <div class="notice">Completează numai prețuri confirmate. Salvarea scrie în ramura de lucru, nu direct pe site. Lasă gol un preț nestabilit.</div>
  <div class="card"><div class="cardhead"><div><h2>Acoperișuri</h2><p>Materiale și lucrări</p></div></div><div class="body grid">
@@ -182,7 +182,7 @@ async function gh(p,o={}){const method=(o.method||"GET").toUpperCase(),u=new URL
  }
  throw new Error("Operație GitHub neacceptată: "+method+" "+pathname);
 }
-function go(id){if(!connected){toast("Se restabilește conexiunea cu repository-ul. Încearcă din nou în câteva secunde.");return}document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));el("crumb").textContent=names[id];el("sidebar").classList.remove("open");if(id==="history"&&connected)loadHistory();if(id==="images")renderLib();if(id==="forms")renderForms();if(id==="seo")renderSeo();if(id==="popup")renderPopup();if(id==="projects")renderProjects();window.scrollTo({top:0})}
+function go(id){if(!connected){toast("Se restabilește conexiunea cu repository-ul. Încearcă din nou în câteva secunde.");return}document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));if(el("crumb"))el("crumb").textContent=names[id];el("sidebar").classList.remove("open");if(id==="history"&&connected)loadHistory();if(id==="images")renderLib();if(id==="forms")renderForms();if(id==="seo")renderSeo();if(id==="popup")renderPopup();if(id==="projects")renderProjects();window.scrollTo({top:0})}
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.page));el("menu").onclick=()=>{const open=el("sidebar").classList.toggle("open");el("menu").setAttribute("aria-expanded",String(open))};
 el("backBtn").onclick=()=>{if(history.length>1)history.back();else location.href="dashboard.html"};
 async function load(){try{const f=await gh("/contents/"+FILE+"?ref="+BR);sha=f.sha;db=merge(JSON.parse(ub64(f.content)))}catch(e){if(e.status!==404)throw e;sha=null;db=merge(null)}}
