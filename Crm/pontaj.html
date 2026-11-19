@@ -13,7 +13,7 @@
 .wrap{max-width:1250px;margin:auto;padding:22px 15px}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{font-size:25px;margin:0 0 5px}h2{font-size:18px;margin:0 0 12px}.muted{color:var(--muted);font-size:13px}
 .panel,.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.stat span{font-size:12px;color:#777}.stat b{display:block;font-size:25px;margin-top:7px}
 .btn{border:0;border-radius:8px;padding:11px 15px;font-weight:700}.red{background:var(--red);color:white}.dark{background:#171717;color:white}.light{background:#fff;border:1px solid var(--line)}button:disabled{opacity:.5;cursor:not-allowed}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.timer{font-size:clamp(38px,8vw,64px);font-weight:800;letter-spacing:-2px;font-variant-numeric:tabular-nums;margin:8px 0}.state{display:inline-block;border-radius:30px;padding:6px 10px;background:#eee;font-size:12px;font-weight:bold}.state.work{background:#e6f6ec;color:#16743a}.state.pause{background:#fff2d8;color:#805500}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:12px;color:#666;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #d8d8d8;border-radius:8px;background:#fff}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.daily-chart{display:grid;gap:9px;margin:14px 0}.daybar{display:grid;grid-template-columns:90px 1fr 120px;gap:10px;align-items:center;font-size:12px}.bar-track{height:13px;background:#eee;border-radius:20px;overflow:hidden;display:flex}.bar-work{background:#16a34a}.bar-break{background:#e5a000}.bar-legend{display:flex;gap:14px;font-size:12px;color:#666}.bar-legend span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;background:#16a34a}.bar-legend span:last-child:before{background:#e5a000}@media(max-width:520px){.daybar{grid-template-columns:65px 1fr;gap:6px}.daybar .bar-values{grid-column:2}}.timer{font-size:clamp(38px,8vw,64px);font-weight:800;letter-spacing:-2px;font-variant-numeric:tabular-nums;margin:8px 0}.state{display:inline-block;border-radius:30px;padding:6px 10px;background:#eee;font-size:12px;font-weight:bold}.state.work{background:#e6f6ec;color:#16743a}.state.pause{background:#fff2d8;color:#805500}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:12px;color:#666;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #d8d8d8;border-radius:8px;background:#fff}
 .tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:650px}th,td{text-align:left;padding:11px;border-bottom:1px solid #eee;font-size:13px}th{font-size:11px;color:#777;background:#fafafa;text-transform:uppercase}.empty{text-align:center;color:#888;padding:25px}
 .tabs{display:flex;gap:7px;overflow:auto;margin-top:16px}.tab{white-space:nowrap;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 13px}.tab.active{background:#171717;color:white}.section{display:none}.section.active{display:block}
 .note{padding:11px;background:#fff6df;border-radius:8px;color:#765500;font-size:13px;line-height:1.5;margin-top:12px}.activity-status{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:9px;background:#fafafa;font-size:13px;line-height:1.5}.activity-status b{display:block;margin-bottom:4px}.activity-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.feedback{font-size:13px;min-height:20px;margin-top:10px;color:#555}.activity-status{margin-top:14px;padding:13px;border:1px solid var(--line);border-radius:9px;background:#fafafa;font-size:13px;line-height:1.5}.activity-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
@@ -35,14 +35,8 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
    <div class="stat"><span>Timp efectiv astăzi</span><b id="workedToday">00:00</b></div>
    <div class="stat"><span>Sesiuni astăzi</span><b id="sessionsToday">0</b></div>
   </div>
-  <div class="actions">
-   <button class="btn red" id="startBtn">Începe lucrul</button>
-   <button class="btn light" id="pauseBtn" disabled>Pauză</button>
-   <button class="btn light" id="resumeBtn" disabled>Reia lucrul</button>
-   <button class="btn dark" id="endBtn" disabled>Încheie lucrul</button>
-  </div>
-  <div class="note">Pontajul este general. Pauzele nu se includ în timpul efectiv. Nu închide pagina înainte ca acțiunea să fie confirmată.</div>
-  <div class="activity-status" aria-live="polite"><b>Activity Tracker VALMEX</b><div id="activityStatusText">Trackerul se inițializează...</div><div id="activityPending" hidden><p id="activityPendingText"></p><div class="activity-actions"><button class="btn light" id="classifyPause">Declară pauză</button><button class="btn red" id="classifyOffline">Declară activitate offline</button></div></div></div>
+  <div class="note">Pontaj automat: program luni–vineri 09:00–17:30, sâmbătă 09:00–14:30. După 20 de minute fără interacțiune cu CRM, pauza se înregistrează automat. La revenire, pontajul continuă automat.</div>
+  <div class="bar-legend"><span>Timp lucrat</span><span style="color:#e5a000">Pauză</span></div>
  </section>
  <nav class="tabs" id="tabs" hidden>
   <button class="tab active" data-tab="mine">Istoricul meu</button>
@@ -57,6 +51,7 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
    <div class="stat"><span>Zile pontate</span><b id="monthDays">0</b></div>
    <div class="stat"><span>Sesiuni auto-închise</span><b id="monthAuto">0</b></div>
   </div>
+  <h2 style="margin-top:18px">Diagrama zilnică – activitatea mea</h2><div id="mineDailyChart" class="daily-chart"></div>
   <div class="tablewrap"><table><thead><tr><th>Data</th><th>Început</th><th>Încheiere</th><th>Pauze</th><th>Lucrat</th><th>Status</th></tr></thead><tbody id="mineRows"></tbody></table></div>
  </section>
  <section class="panel section" id="sec-corrections">
@@ -80,6 +75,7 @@ a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;heigh
    <div class="stat"><span>Sesiuni active</span><b id="adminActive">0</b></div>
    <div class="stat"><span>Corectări în așteptare</span><b id="adminPending">0</b></div>
   </div>
+  <h2 style="margin-top:20px">Diagrama zilnică – toți angajații</h2><div id="adminDailyCharts" class="daily-chart"></div>
   <h2 style="margin-top:20px">Angajați și activitatea curentă</h2>
   <div class="tablewrap"><table><thead><tr><th>Angajat</th><th>Cont</th><th>Stare acum</th><th>Început astăzi</th><th>Lucrat astăzi</th><th>Ore în luna selectată</th><th>Detalii</th></tr></thead><tbody id="employeeRows"></tbody></table></div>
   <div id="employeeDetail" class="panel" hidden style="margin-top:14px">
@@ -108,16 +104,17 @@ const store=localStorage.getItem(STORAGE_KEY)?localStorage:(sessionStorage.getIt
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{storage:store||localStorage,storageKey:STORAGE_KEY,persistSession:true,autoRefreshToken:true}});
 const $=id=>document.getElementById(id), esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let me=null,profile=null,isAdmin=false,sessions=[],pauses=[],corrections=[],people={},active=null,tick=null;
-// Activity Tracker – monitorizează doar interacțiunea cu CRM.
+// Pontaj automat bazat pe interacțiunea cu CRM.
 const IDLE_LIMIT_MS=20*60*1000;
-let lastCrmInteraction=Date.now(),idleEvent=null,trackerInterval=null,trackerStarted=false,trackerBusy=false;
-function setActivityText(t){const el=$("activityStatusText");if(el)el.textContent=t}
-function trackerCanRun(){return !!(me&&active&&!active.ended_at&&!currentPause(active))}
-async function loadPendingActivity(){if(!me||!active)return;const {data,error}=await db.from("work_session_activity").select("*").eq("user_id",me.id).eq("work_session_id",active.id).eq("event_type","inactivitate_detectata").eq("employee_classification","neconfirmata").order("started_at",{ascending:false}).limit(1);if(error)throw error;idleEvent=data?.[0]||null;const box=$("activityPending");if(idleEvent){$("activityPendingText").textContent=`Perioadă începută la ${new Date(idleEvent.started_at).toLocaleString("ro-RO")}. Declară dacă a fost pauză sau activitate offline.`;box.hidden=false}else box.hidden=true}
-async function detectIdle(allowVisibleReturn=false){if(trackerBusy||idleEvent||!trackerCanRun()||(document.hidden&&!allowVisibleReturn)||Date.now()-lastCrmInteraction<IDLE_LIMIT_MS)return;trackerBusy=true;try{const {data,error}=await db.from("work_session_activity").insert({work_session_id:active.id,user_id:me.id,event_type:"inactivitate_detectata",started_at:new Date(lastCrmInteraction).toISOString(),employee_classification:"neconfirmata"}).select("*").single();if(error)throw error;idleEvent=data;$("activityPendingText").textContent=`Perioadă începută la ${new Date(data.started_at).toLocaleString("ro-RO")}. Declară dacă a fost pauză sau activitate offline.`;$("activityPending").hidden=false;setActivityText("A fost înregistrată inactivitatea de minimum 20 de minute. Nu se scade automat din pontaj.")}catch(e){console.error(e);setActivityText("Eroare Activity Tracker: "+e.message)}finally{trackerBusy=false}}
-async function classifyPending(kind){if(!idleEvent)return;try{await rpc("classify_activity_event",{p_event_id:idleEvent.id,p_classification:kind});idleEvent=null;$("activityPending").hidden=true;lastCrmInteraction=Date.now();setActivityText(kind==="pauza_declarata"?"Perioada a fost declarată pauză.":"Perioada a fost declarată activitate offline.");if(isAdmin)await loadAdminActivity()}catch(e){alert("Declarația nu a putut fi salvată: "+e.message)}}
-function recordCrmInteraction(){if(!trackerCanRun()||idleEvent)return;lastCrmInteraction=Date.now();setActivityText("Monitorizare activă în CRM. Prag: 20 minute fără interacțiune.")}
-function startActivityTracker(){if(trackerStarted)return;trackerStarted=true;["pointerdown","keydown","touchstart","scroll","click"].forEach(ev=>document.addEventListener(ev,recordCrmInteraction,{passive:true}));document.addEventListener("visibilitychange",()=>{if(!document.hidden){detectIdle(true).catch(console.error);loadPendingActivity().catch(console.error)}});$("classifyPause").onclick=()=>classifyPending("pauza_declarata");$("classifyOffline").onclick=()=>classifyPending("activitate_offline_declarata");trackerInterval=setInterval(()=>detectIdle(false),5000)}
+let lastCrmInteraction=Date.now(),trackerInterval=null,trackerStarted=false,trackerBusy=false;
+const scheduleFor=d=>{const day=new Date(d).getDay();return day===0?null:{start:"09:00",end:day===6?"14:30":"17:30"}};
+function inWorkSchedule(d=new Date()){const s=scheduleFor(d);if(!s)return false;const hhmm=d.toLocaleTimeString("en-GB",{timeZone:tz,hour:"2-digit",minute:"2-digit",hour12:false});return hhmm>=s.start&&hhmm<s.end}
+function trackerCanRun(){return !!(me&&active&&!active.ended_at)}
+async function autoStartIfNeeded(){if(!me||active||!inWorkSchedule()||document.hidden)return;await rpc("start_work_session",{p_project_id:null,p_notes:"Pontaj pornit automat"});lastCrmInteraction=Date.now();await refresh()}
+async function autoPauseIfIdle(){if(trackerBusy||!trackerCanRun()||currentPause(active)||document.hidden||Date.now()-lastCrmInteraction<IDLE_LIMIT_MS||!inWorkSchedule())return;trackerBusy=true;try{await rpc("pause_work_session",{p_session_id:active.id,p_notes:"Pauză detectată automat după 20 minute fără interacțiune"});await refresh()}catch(e){console.error("Auto-pause:",e)}finally{trackerBusy=false}}
+async function autoResume(){if(trackerBusy||!active||!currentPause(active)||!inWorkSchedule())return;trackerBusy=true;try{await rpc("resume_work_session",{p_session_id:active.id});lastCrmInteraction=Date.now();await refresh()}catch(e){console.error("Auto-resume:",e)}finally{trackerBusy=false}}
+async function recordCrmInteraction(){lastCrmInteraction=Date.now();if(!me)return;if(!active){try{await autoStartIfNeeded()}catch(e){console.error("Auto-start:",e)}}else if(currentPause(active)){await autoResume()}}
+function startActivityTracker(){if(trackerStarted)return;trackerStarted=true;["pointerdown","keydown","touchstart","scroll","click"].forEach(ev=>document.addEventListener(ev,recordCrmInteraction,{passive:true}));document.addEventListener("visibilitychange",()=>{if(!document.hidden){recordCrmInteraction();}});trackerInterval=setInterval(()=>{const now=new Date();if(!inWorkSchedule(now)){return}if(!active)autoStartIfNeeded().catch(console.error);else autoPauseIfIdle().catch(console.error)},5000)}
 async function loadAdminActivity(){const {data,error}=await db.from("work_session_activity").select("*").order("started_at",{ascending:false}).limit(500);if(error)throw error;const rows=data||[];$("adminActivityRows").innerHTML=rows.length?rows.map(a=>`<tr><td>${esc(people[a.user_id]||"Angajat")}</td><td>${localDate(a.started_at)} ${localTime(a.started_at)}</td><td>${a.ended_at?localTime(a.ended_at):"În așteptare"}</td><td>${a.duration_seconds==null?"—":shortDuration(a.duration_seconds*1000)}</td><td>${a.employee_classification==="pauza_declarata"?"Pauză":a.employee_classification==="activitate_offline_declarata"?"Activitate offline":"Neconfirmată"}</td></tr>`).join(""):'<tr><td colspan="5" class="empty">Nu există evenimente CRM.</td></tr>'}
 const tz="Europe/Chisinau";
 function say(t){$("feedback").textContent=t}
@@ -167,12 +164,19 @@ async function refresh(){
  say("Pontaj încărcat.");
 }
 function renderMine(){
- const m=$("monthFilter").value||monthKey(),arr=monthSessions(m);
- const total=arr.reduce((n,s)=>n+workedMs(s),0),breaks=arr.reduce((n,s)=>n+pauseMsFor(s.id),0);
- $("monthWorked").textContent=shortDuration(total);$("monthBreaks").textContent=shortDuration(breaks);
- $("monthDays").textContent=new Set(arr.map(s=>dateKey(new Date(s.started_at)))).size;
- $("monthAuto").textContent=arr.filter(s=>s.status==="inchis_automat").length;
- $("mineRows").innerHTML=arr.length?arr.map(s=>`<tr><td>${localDate(s.started_at)}</td><td>${localTime(s.started_at)}</td><td>${localTime(s.ended_at)}</td><td>${shortDuration(pauseMsFor(s.id))}</td><td>${shortDuration(workedMs(s))}</td><td>${s.status==="inchis_automat"?"Închis automat":s.ended_at?"Încheiat":currentPause(s)?"În pauză":"Activ"}</td></tr>`).join(""):'<tr><td colspan="6" class="empty">Nu există pontaj pentru această lună.</td></tr>';
+  const m=$("monthFilter").value||monthKey(),arr=monthSessions(m);
+  const total=arr.reduce((n,s)=>n+workedMs(s),0),breaks=arr.reduce((n,s)=>n+pauseMsFor(s.id),0);
+  $("monthWorked").textContent=shortDuration(total);$("monthBreaks").textContent=shortDuration(breaks);
+  $("monthDays").textContent=new Set(arr.map(s=>dateKey(new Date(s.started_at)))).size;
+  $("monthAuto").textContent=arr.filter(s=>s.status==="inchis_automat").length;
+  renderDailyChart("mineDailyChart",arr,pauses);
+  $("mineRows").innerHTML=arr.length?arr.map(s=>`<tr><td>${localDate(s.started_at)}</td><td>${localTime(s.started_at)}</td><td>${localTime(s.ended_at)}</td><td>${shortDuration(pauseMsFor(s.id))}</td><td>${shortDuration(workedMs(s))}</td><td>${s.status==="inchis_automat"?"Închis automat":s.ended_at?"Încheiat":currentPause(s)?"În pauză":"Activ"}</td></tr>`).join(""):'<tr><td colspan="6" class="empty">Nu există pontaj pentru această lună.</td></tr>';
+}
+function renderDailyChart(targetId,sessionList,pauseList){
+ const days=[...new Set(sessionList.map(s=>dateKey(new Date(s.started_at))))].sort();
+ const summaries=days.map(day=>{const ss=sessionList.filter(s=>dateKey(new Date(s.started_at))===day);let work=0,br=0;ss.forEach(s=>{const end=s.ended_at?new Date(s.ended_at):new Date();const ps=pauseList.filter(p=>p.work_session_id===s.id);const pms=ps.reduce((n,p)=>n+Math.max(0,(p.ended_at?new Date(p.ended_at):new Date())-new Date(p.started_at)),0);br+=pms;work+=Math.max(0,end-new Date(s.started_at)-pms)});return {day,work,br}});
+ const max=Math.max(1,...summaries.map(x=>x.work+x.br));
+ $(targetId).innerHTML=summaries.length?summaries.map(x=>`<div class="daybar"><b>${new Date(x.day+"T12:00:00").toLocaleDateString("ro-RO",{day:"2-digit",month:"2-digit"})}</b><div class="bar-track"><div class="bar-work" style="width:${x.work/max*100}%"></div><div class="bar-break" style="width:${x.br/max*100}%"></div></div><div class="bar-values">${shortDuration(x.work)} / ${shortDuration(x.br)}</div></div>`).join(""):'<div class="empty">Nu există date pentru perioada selectată.</div>';
 }
 function renderCorrections(){
  $("correctionRows").innerHTML=corrections.length?corrections.map(c=>`<tr><td>${localDate(c.created_at)}</td><td>${esc(c.reason)}</td><td>${localTime(c.requested_start)} – ${localTime(c.requested_end)}</td><td>${esc(c.status)}</td><td>${esc(c.review_notes||"—")}</td></tr>`).join(""):'<tr><td colspan="5" class="empty">Nu există solicitări.</td></tr>';
@@ -184,13 +188,6 @@ async function loadCorrectionSelect(){
 async function rpc(name,args={}){
  const {data,error}=await db.rpc(name,args);if(error)throw error;return data;
 }
-async function doAction(name){
- try{let args={};if(name==="start_work_session")args={p_project_id:null,p_notes:null};else{if(!active?.id)throw new Error("Nu există o sesiune activă.");args={p_session_id:active.id};if(name==="pause_work_session"||name==="end_work_session")args.p_notes=null;}await rpc(name,args);say("Acțiunea a fost înregistrată.");await refresh()}catch(e){console.error(e);alert("Acțiunea nu a fost salvată: "+e.message)}
-}
-$("startBtn").onclick=()=>doAction("start_work_session");
-$("pauseBtn").onclick=()=>doAction("pause_work_session");
-$("resumeBtn").onclick=()=>doAction("resume_work_session");
-$("endBtn").onclick=()=>doAction("end_work_session");
 $("sendCorrection").onclick=async()=>{
  const id=$("correctionSession").value,reason=$("correctionReason").value.trim(),start=$("requestedStart").value,end=$("requestedEnd").value;
  if(!id||!reason||!start||!end){alert("Completează sesiunea, motivul și ambele ore.");return}
