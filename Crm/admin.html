@@ -190,7 +190,7 @@ async function connect(){try{const {data:{session:current},error}=await authClie
  const {data:p,error:pe}=await authClient.from("profiles").select("full_name,role,active").eq("id",session.user.id).maybeSingle();
  if(pe||!p||!["administrator","admin"].includes(String(p.role||"").toLowerCase())||p.active!==true)throw new Error("Acces permis doar administratorului activ.");profile=p;
  el("adminIdentity").textContent=(p.full_name||"Administrator")+" · administrator activ";el("authStatus").textContent="Autentificat";el("authStatus").classList.add("on");
- await load();await loadLib();connected=true;el("status").textContent="Repository · main";el("status").classList.add("on");render();go("prices");
+ await load();connected=true;el("status").textContent="Repository · main";el("status").classList.add("on");render();go("prices");loadLib().then(()=>{if(connected)renderLib()}).catch(e=>console.warn("CMS image library:",e));
  }catch(e){connected=false;el("status").textContent="Deconectat";el("authStatus").textContent="Acces indisponibil";toast("Conectare eșuată: "+e.message)}}
 function render(){PM.forEach(([i,k])=>set(i,db.prices[k]));Object.entries(TM).forEach(([i,k])=>set(i,db.pages.home[k]));Object.entries(CM).forEach(([i,k])=>set(i,db.site.contact[k]))}
 async function save(msg){try{db.meta.updated=new Date().toISOString();const b={message:msg,content:b64(JSON.stringify(db,null,2)),branch:BR};if(sha)b.sha=sha;const r=await gh("/contents/"+FILE,{method:"PUT",body:JSON.stringify(b)});sha=r.content.sha;toast("Salvat în ramura "+BR+".");return true}
