@@ -38,7 +38,7 @@ html:not(.dk) .lead{color:#4a4d55}
 html:not(.dk) .btn.ghost{border-color:rgba(13,13,16,.45);color:#0d0d10}
 html:not(.dk) .btn.ghost:hover{background:#0d0d10;color:#fff;border-color:#0d0d10}
 html:not(.dk) .hero{background:#fff}
-html:not(.dk) .hero-bg{background:linear-gradient(90deg,rgba(255,255,255,.97) 0%,rgba(255,255,255,.84) 40%,rgba(255,255,255,.04) 100%),linear-gradient(0deg,#fff 0%,rgba(255,255,255,0) 42%),url('images/acoperisuri/Acoperis-finisat2.png') center/cover no-repeat}
+html:not(.dk) .hero-bg{background:linear-gradient(90deg,rgba(255,255,255,.86) 0%,rgba(255,255,255,.68) 40%,rgba(255,255,255,.02) 100%),linear-gradient(0deg,#fff 0%,rgba(255,255,255,0) 42%),url('images/acoperisuri/Acoperis-finisat2.png') center/cover no-repeat}
 html:not(.dk) .financing{color:#fff}
 html:not(.dk) .fin-link{display:inline-block;margin-top:14px;font-size:12px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;border-bottom:2px solid #fff;padding-bottom:3px}
 html:not(.dk) .photo{background:#eceef1}
@@ -155,7 +155,7 @@ html:not(.dk) .rate-panel{padding:30px 20px}
 html:not(.dk) .compare{grid-template-columns:1fr;gap:24px;padding:28px 22px}
 html:not(.dk) .crow{grid-template-columns:1fr auto}
 html:not(.dk) .crow .cbar{grid-column:1/-1;order:3}}
-@media(max-width:600px){html:not(.dk) .hero-bg{background:linear-gradient(180deg,rgba(255,255,255,.3) 0%,rgba(255,255,255,.9) 46%,#fff 76%),url('images/acoperisuri/Acoperis-finisat2.png') 62% top/cover no-repeat}
+@media(max-width:600px){html:not(.dk) .hero-bg{background:linear-gradient(180deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,.72) 46%,#fff 76%),url('images/acoperisuri/Acoperis-finisat2.png') 62% top/cover no-repeat}
 html:not(.dk) .rout{grid-template-columns:1fr 1fr}
 html:not(.dk) .rout div:first-child{grid-column:span 2}
 html:not(.dk) .tab{flex:1;padding:12px 8px;font-size:10.5px}
