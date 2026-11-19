@@ -28,7 +28,7 @@ h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 14px}.muted{color:
 </style>
 </head>
 <body>
-<header class="top"><div class="brand">VAL<span>MEX</span> CRM</div><a href="proiecte.html">← Înapoi la Proiecte</a></header>
+<header class="top"><div class="brand">VAL<span>MEX</span> CRM</div></header>
 <main class="wrap">
  <div class="heading"><div><h1>Fișa proiectului</h1><div class="muted">Dosar tehnic și administrativ individual</div></div><button class="btn light" id="reload">Reîncarcă datele</button></div>
  <div id="feedback">Se verifică autentificarea...</div>
@@ -230,4 +230,5 @@ $("reload").addEventListener("click",initialize);
 db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)location.replace("index.html")});
 initialize();
 </script>
+<script src="components/persistent-nav.js"></script>
 </body></html>

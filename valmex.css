@@ -420,8 +420,6 @@ textarea.form-input{height:auto;padding:18px 20px;min-height:120px;resize:vertic
 .intro-screen.hide{opacity:0;visibility:hidden}
 .intro-logo{font-size:clamp(52px,9vw,140px);font-weight:900;letter-spacing:8px;color:var(--text);text-shadow:0 0 40px rgba(227,6,19,.3)}
 .intro-sub{color:var(--text-muted);font-size:16px;margin-top:12px;letter-spacing:4px;text-transform:uppercase}
-.intro-loader{width:60px;height:60px;margin-top:40px;border-radius:50%;border:3px solid rgba(255,255,255,.08);border-top-color:var(--primary);animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
 
 /* Map */
 .map-container{border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-md)}

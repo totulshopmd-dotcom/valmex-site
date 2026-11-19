@@ -1,6 +1,7 @@
 (function(){
   'use strict';
   if (typeof PROJECTS === 'undefined') return;
+  let LIST = PROJECTS;
 
   const grid = document.getElementById('projectsGrid');
   const toolbar = document.getElementById('projectsFilter');
@@ -57,7 +58,7 @@
 
   function buildFilters(){
     if(!toolbar) return;
-    const cats = ['Toate', ...Array.from(new Set(PROJECTS.map(p=>p.category)))];
+    const cats = ['Toate', ...Array.from(new Set(LIST.map(p=>p.category)))];
     toolbar.innerHTML = cats.map((c,i)=>
       '<button class="filter-pill' + (i===0?' active':'') + '" data-cat="' + c + '">' + c + '</button>'
     ).join('');
@@ -66,15 +67,38 @@
         toolbar.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
         const cat = btn.dataset.cat;
-        render(cat==='Toate' ? PROJECTS : PROJECTS.filter(p=>p.category===cat));
+        render(cat==='Toate' ? LIST : LIST.filter(p=>p.category===cat));
       });
     });
   }
 
-  buildFilters();
-  if(window.VALMEX_IMAGES_READY){
-    window.VALMEX_IMAGES_READY.then(()=> render(PROJECTS));
-  } else {
-    render(PROJECTS);
+  /* Sursa proiectelor: dacă panoul (cms/content.json) are proiecte publicate, ele înlocuiesc lista din projects-data.js.
+     Dacă fișierul lipsește sau nu are proiecte, rămâne projects-data.js neschimbat. */
+  function fromCms(db){
+    if(!db || !Array.isArray(db.projects)) return null;
+    const out = db.projects.filter(p=>p && p.published && p.title && Array.isArray(p.photos) && p.photos.length)
+      .sort((a,b)=>(a.order||0)-(b.order||0))
+      .map(p=>{
+        const imgs = p.photos.filter(x=>typeof x==='string' && x);
+        if(p.cover && imgs.indexOf(p.cover)>0){ imgs.splice(imgs.indexOf(p.cover),1); imgs.unshift(p.cover); }
+        return { id:String(p.id||''), category:String(p.category||''), location:String(p.place||''), title:String(p.title), description:String(p.desc||''), images:imgs };
+      });
+    return out.length ? out : null;
+  }
+  let started = false;
+  function go(db){
+    if(started) return; started = true;
+    LIST = fromCms(db) || PROJECTS;
+    buildFilters();
+    if(window.VALMEX_IMAGES_READY){
+      window.VALMEX_IMAGES_READY.then(()=> render(LIST));
+    } else {
+      render(LIST);
+    }
+  }
+  if(window.VALMEX_CMS_DONE) go(window.VALMEX_CMS);
+  else {
+    document.addEventListener('valmex:cms-done', e=>go(e.detail));
+    setTimeout(()=>go(null), 2500);
   }
 })();

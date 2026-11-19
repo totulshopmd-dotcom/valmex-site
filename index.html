@@ -16,391 +16,307 @@
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <link rel="canonical" href="https://valmex.md/">
 <meta property="og:title" content="Valmex.md — Acoperișuri & Fațade Premium în Moldova">
-<meta property="og:description" content="Montaj profesional acoperișuri, fațade decorative și panouri AMK. 500+ proiecte, 7+ ani experiență.">
+<meta property="og:description" content="Montaj profesional acoperișuri, fațade decorative și panouri AMK. 500+ proiecte, 5+ ani experiență.">
 <meta property="og:image" content="https://valmex.md/images/acoperisuri/acoperis-finisat2.png">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ro_RO">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Valmex.md — Acoperișuri & Fațade Premium în Moldova">
-<meta name="twitter:description" content="Montaj profesional acoperișuri, fațade decorative și panouri AMK. 500+ proiecte, 7+ ani experiență.">
+<meta name="twitter:description" content="Montaj profesional acoperișuri, fațade decorative și panouri AMK. 500+ proiecte, 5+ ani experiență.">
 <meta name="twitter:image" content="https://valmex.md/images/acoperisuri/acoperis-finisat2.png">
-<link rel="stylesheet" href="valmex.css">
+<link rel="stylesheet" href="valmex-v3.css">
+<link rel="stylesheet" href="valmex-compat.css">
+<link rel="stylesheet" href="valmex-responsive.css">
+
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Valmex.md","url":"https://valmex.md/","potentialAction":{"@type":"SearchAction","target":"https://valmex.md/?s={search_term_string}","query-input":"required name=search_term_string"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Acasă","item":"https://valmex.md/"}]}</script>
 </head>
 <body>
-<div class="intro-screen" id="introScreen">
-<div class="intro-logo">VALMEX</div>
-<div class="intro-sub">Acoperișuri • Fațade • AMK</div>
-<div class="intro-loader"></div>
-</div>
-<div class="top-bar">
-<div class="container top-wrap">
-<div><a href="tel:+37378026212">+373 78 026 212</a> | <a href="mailto:Valmex.md@gmail.com">Valmex.md@gmail.com</a></div>
-<div>L–S 09:00–18:00 | Consultație Gratuită</div>
-</div>
-</div>
-<header class="header" id="mainHeader">
-<div class="container header-wrap">
-<a class="logo" href="index.html"><span class="logo-word"><span class="lw-a">Val</span><span class="lw-b">mex</span></span></a>
-<nav class="nav" id="mainNav">
-<a class="nav-link active" href="index.html">Acasă</a>
-<a class="nav-link" href="proiecte.html">Proiecte</a>
-<a class="nav-link" href="produse.html">Produse</a>
-<a class="nav-link" href="blog.html">Blog</a>
-<a class="nav-link" href="despre.html">Despre</a>
-<a class="nav-link" href="contact.html">Contact</a>
-
-<div class="dropdown">
-<a class="nav-link dropdown-toggle" href="#">Calculatoare <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></a>
-<div class="dropdown-menu">
-<a href="calculator-acoperis.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Calculator Acoperiș</a>
-<a href="calculator-fatada.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>Calculator Fațadă</a>
-<a href="calculator-amk.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Calculator AMK</a>
-</div>
-</div>
-</nav>
-<button class="mobile-toggle" id="mobileToggle" aria-label="Meniu"><span></span><span></span><span></span></button>
-<a href="contact.html" class="header-cta">Solicită Ofertă</a>
-</div>
+<div class="progress"><span id="progressBar"></span></div>
+<header id="mainHeader">
+  <a class="brand" href="#top" aria-label="Valmex"><span>Val</span><span>mex</span></a>
+  <nav id="nav" aria-label="Meniu principal">
+    <div class="dd"><a href="#servicii" class="dd-t">Servicii ▾</a><div class="dd-m"><a href="acoperis.html">Acoperișuri</a><a href="fatade.html">Fațade</a><a href="amk.html">Fațade AMK</a><a href="pavaj.html">Pavaje</a></div></div>
+    <a href="#rate">Rate 0%</a><a href="proiecte.html">Proiecte</a><a href="produse.html">Produse</a><a href="blog.html">Blog</a><a href="despre.html">Despre</a><a href="contact.html">Contact</a>
+    <div class="dd"><a href="#calculatoare" class="dd-t">Calculatoare ▾</a><div class="dd-m"><a href="calculator-acoperis.html">Calculator acoperiș</a><a href="calculator-fatada.html">Calculator fațadă</a><a href="calculator-amk.html">Calculator AMK</a></div></div>
+  </nav>
+  <a class="header-cta openLeadModal" href="contact.html" data-service="Oferta Rapida">Solicită ofertă</a>
+  <button class="menu" id="menu" aria-label="Deschide meniul">☰</button>
 </header>
 
-<div class="mobile-menu" id="mobileMenu">
-<a class="logo" href="index.html"><span class="logo-word"><span class="lw-a">Val</span><span class="lw-b">mex</span></span></a>
-<nav>
-<a class="nav-link" href="index.html">Acasă</a>
-<a class="nav-link" href="proiecte.html">Proiecte</a>
-<a class="nav-link" href="produse.html">Produse</a>
-<a class="nav-link" href="blog.html">Blog</a>
-<a class="nav-link" href="despre.html">Despre</a>
-<a class="nav-link" href="contact.html">Contact</a>
-<div class="dropdown">
-<a class="nav-link dropdown-toggle" href="#">Calculatoare <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></a>
-<div class="dropdown-menu">
-<a href="calculator-acoperis.html">Calculator Acoperiș</a>
-<a href="calculator-fatada.html">Calculator Fațadă</a>
-<a href="calculator-amk.html">Calculator AMK</a>
-</div>
-</div>
-</nav>
-<a href="contact.html" class="btn">Solicită Ofertă</a>
-</div>
-
-<section class="hero">
-<div class="hero-bg" id="heroBg"></div>
-<div class="hero-overlay"></div>
-<div class="container hero-content reveal">
-<div class="urgency-banner"><b>🔥 Ofertă lunii:</b> Fațadă decorativă la cheie de la 850 lei/m² — expiră în <span class="cd" data-countdown>...</span></div>
-<h1 id="heroTitle">Acoperișuri și Fațade <span style="color:var(--primary)">Premium</span> în Moldova</h1>
-<p id="heroSubtitle">Montaj profesional de acoperișuri metalice, fațade decorative siliconate și panouri AMK din marmură naturală. Calitate garantată, finisaj impecabil.</p>
-<div class="hero-buttons">
-<a href="contact.html" class="btn btn-lg"><span>Solicită Ofertă</span></a>
-<a href="tel:+37378026212" class="btn-outline btn-lg">📞 Sună Acum</a>
-</div>
-<div class="hero-badges trust-strip">
-<div class="hero-badge trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Garanție Extinsă</div>
-<div class="hero-badge trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Consultație Gratuită</div>
-<div class="hero-badge trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Montaj Profesional</div>
-<div class="hero-badge trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Livrare în Toată Moldova</div>
-</div>
-</div>
+<main id="top">
+<section class="hero" data-valmex-section="home">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="eyebrow reveal">Valmex.md · Lucrări la cheie</div>
+<div class="hero-carousel reveal delay1" id="heroCarousel" aria-live="polite">
+      <div class="hero-slide is-active" data-slide="0" data-image="images/acoperisuri/Acoperis-finisat2.png"><h1>Acoperișuri <span class="hero-accent">realizate după forma casei tale.</span></h1><p>Materiale, accesorii și montaj pentru un acoperiș complet.</p></div>
+      <div class="hero-slide" data-slide="1" data-image="images/fatade/file-00000000175471f4aad6bcf08160e2a1.png"><h1>Fațade care <span class="hero-accent">schimbă aspectul locuinței.</span></h1><p>Soluții decorative și finisaje exterioare adaptate proiectului.</p></div>
+      <div class="hero-slide" data-slide="2" data-image="images/amk/IMG-20260713-214227-481.jpg"><h1>Panouri AMK <span class="hero-accent">pentru un exterior distinct.</span></h1><p>Descoperă modelele, texturile și posibilitățile de finisare.</p></div>
+      <div class="hero-slide" data-slide="3" data-image="images/fatade/file-00000000a7b471f4a884db13ef465c65.png"><h1>Planifică lucrarea. <span class="hero-accent">Achită în rate la 0%*.</span></h1><p>Solicită condițiile de finanțare pentru lucrările eligibile.</p></div>
+      <div class="hero-dots" role="group" aria-label="Alege mesajul"><button type="button" class="is-active" aria-label="Mesajul 1" data-go="0"></button><button type="button" aria-label="Mesajul 2" data-go="1"></button><button type="button" aria-label="Mesajul 3" data-go="2"></button><button type="button" aria-label="Mesajul 4" data-go="3"></button></div>
+    </div>
+    <p class="lead reveal delay2 hero-summary">Planificăm și executăm lucrări pentru exteriorul casei: acoperișuri, fațade decorative, panouri AMK și pavaje. Vezi serviciile, compară soluțiile și solicită o ofertă adaptată proiectului.</p>
+    <div class="actions reveal delay3">
+      <a class="btn" href="https://wa.me/37378026212?text=Bun%C4%83%20ziua%2C%20doresc%20o%20ofert%C4%83%20Valmex." data-cms-href="wa:site.contact.whats">Discută proiectul</a>
+      <a class="btn ghost" href="#servicii">Descoperă serviciile</a>
+    </div>
+    <div class="hero-foot reveal delay3">
+      <div class="hs"><strong><span data-count="500">500</span>+</strong><span class="lab">proiecte realizate</span></div>
+      <div class="hs"><strong><span data-count="5">5</span>+ ani</strong><span class="lab">experiență în domeniu</span></div>
+      <div class="hs mold"><strong><i class="pin"></i><span id="mold">Toată Moldova</span></strong><span class="lab">consultanță și execuție</span></div>
+    </div>
+  </div>
 </section>
 
-<section style="padding:70px 0 90px;">
-<div class="container">
-<div style="text-align:center;margin-bottom:40px;">
-<span class="section-label reveal">Transformarea Casei Tale</span>
-<h2 class="section-title reveal">Înainte &amp; După</h2>
-<p class="section-subtitle reveal">Trage cursorul pentru a vedea diferența. (Proiect real: Acoperiș Negureni)</p>
-</div>
+<section id="valmex-start-here" class="valmex-start-here" aria-labelledby="valmex-start-title">
+ <div class="wrap">
+  <div class="eyebrow">Ghid de navigare</div><h2 id="valmex-start-title">Cu ce te putem ajuta?</h2>
+  <p class="lead">Alege ce dorești să faci. Te ducem direct la informațiile potrivite.</p>
+  <div class="valmex-start-grid">
+   <a href="acoperis.html"><b>Am nevoie de un acoperiș</b><span>Modele, materiale, montaj și ofertă</span><i>→</i></a>
+   <a href="fatade.html"><b>Vreau să renovez fațada</b><span>Tencuială decorativă și termoizolație</span><i>→</i></a>
+   <a href="amk.html"><b>Mă interesează panourile AMK</b><span>Colecții, culori și modele</span><i>→</i></a>
+   <a href="produse.html"><b>Caut un produs sau material</b><span>Deschide catalogul și filtrează produsele</span><i>→</i></a>
+   <a href="proiecte.html"><b>Vreau să văd lucrări realizate</b><span>Exemple din proiectele VALMEX</span><i>→</i></a>
+   <a href="index.html#calculatoare"><b>Vreau să fac o estimare</b><span>Calculatoare pentru acoperiș, fațadă și AMK</span><i>→</i></a>
+  </div>
+ </div>
+</section>
+
+<section class="financing" data-valmex-section="rate" data-valmex-offer="rate-0">
+  <div class="finance-inner">
+    <div>
+      <div class="finance-tag">Un proiect mai aproape de realitate</div>
+      <h2>Acum poți construi. <span style="color:#160608">Plătești în rate.</span></h2>
+      <p>Finanțare în rate cu 0% dobândă* pentru lucrările eligibile.</p>
+      <a class="fin-link" href="#rate">Vezi cum se achită rată cu rată →</a>
+    </div>
+    <div class="finance-stamp">0%<small>DOBÂNDĂ*</small></div>
+  </div>
+</section>
+
+
+<section class="rates" id="rate" data-valmex-section="rate" data-valmex-offer="rate-0">
+  <div class="wrap">
+    <div class="eyebrow reveal">Calculator · plată în rate 0%*</div>
+    <h2 class="reveal">Calculează lucrarea. <span class="red">Vezi cât plătești pe rată.</span></h2>
+    <p class="lead reveal">Alege lucrarea, suprafața și numărul de rate. Vezi rata lunară orientativă, suma achitată și compară costul total cu un credit obișnuit, într-o simulare simplificată.</p>
+    <div class="rate-intro reveal">
+      <div><b>01</b><strong>Ne scrii</strong><p>Ne spui ce lucrare dorești și unde.</p></div>
+      <div><b>02</b><strong>Primești oferta</strong><p>Oferta arată suma totală, numărul de rate și condițiile.</p></div>
+      <div><b>03</b><strong>Achiți rată cu rată</strong><p>Fără dobândă pentru lucrările eligibile.</p></div>
+    </div>
+
+    <div class="rate-panel reveal" id="ratePanel" data-valmex-product="calculator-rate">
+      <div class="cap"><i>1</i>Ce lucrare te interesează?</div>
+      <div class="tabs" id="tabs"><i class="ind"></i>
+        <button class="tab on" data-mode="roof"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12 12 4l10 8M5 10.5V20h14v-9.5"/></svg><span>Acoperiș<br>la cheie</span></button>
+        <button class="tab" data-mode="facade"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4h14v17M9 8h2M13 8h2M9 12h2M13 12h2M10 21v-4h4v4"/></svg><span>Fațadă<br>decorativă</span></button>
+        <button class="tab" data-mode="custom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M16.5 7.5C15.5 6 14 5.5 12 5.5c-2.2 0-4 1-4 2.8 0 4 8.500 2 8.500 6.200 0 1.800-1.800 3-4.500 3-2 0-3.600-.7-4.500-2"/></svg><span>Altă<br>sumă</span></button>
+      </div>
+
+      <div class="rate-grid">
+        <div class="rc">
+          <div class="blk" id="areaBox">
+            <div class="cap"><i>2</i>Cât de mare este suprafața?</div>
+            <div class="lb"><span>Suprafața lucrării</span><b id="aV"></b></div>
+            <div class="srow"><button class="sb" data-a="-10" aria-label="Scade suprafața">−</button><div class="rw"><input id="areaR" type="range" min="20" max="400" step="5" value="120" aria-label="Suprafața în metri pătrați"><span class="bub" id="bubA"></span></div><button class="sb" data-a="10" aria-label="Crește suprafața">+</button></div>
+            <div class="scale"><span>20 m²</span><span>400 m²</span></div>
+          </div>
+          <div class="blk" id="sumBox" style="display:none">
+            <div class="cap"><i>2</i>Ce sumă ai în minte?</div>
+            <div class="lb"><span>Suma lucrării</span><b id="sumV"></b></div>
+            <div class="srow"><button class="sb" data-s="-5000" aria-label="Scade suma">−</button><div class="rw"><input id="sumR" type="range" min="5000" max="500000" step="1000" value="60000" aria-label="Suma lucrării"><span class="bub" id="bubS"></span></div><button class="sb" data-s="5000" aria-label="Crește suma">+</button></div>
+            <div class="scale"><span>5 000 lei</span><span>500 000 lei</span></div>
+            <div class="chips" id="sumChips"><button class="chip" data-v="25000">25&nbsp;000</button><button class="chip" data-v="50000">50&nbsp;000</button><button class="chip" data-v="100000">100&nbsp;000</button><button class="chip" data-v="250000">250&nbsp;000</button><button class="chip" data-v="500000">500&nbsp;000</button></div>
+            <div class="nin"><label for="sumN">Suma exactă (lei)</label><input id="sumN" type="number" inputmode="numeric" min="5000" max="500000" step="1000" value="60000"></div>
+          </div>
+          <div class="blk">
+            <div class="cap"><i>3</i>În câte rate vrei să plătești?</div>
+            <div class="lb"><span>Numărul de rate</span><b id="nV"></b></div>
+            <div class="srow"><button class="sb" data-n="-1" aria-label="Mai puține rate">−</button><div class="rw"><input id="nR" type="range" min="2" max="12" step="1" value="6" aria-label="Numărul de rate"><span class="bub" id="bubN"></span></div><button class="sb" data-n="1" aria-label="Mai multe rate">+</button></div>
+            <div class="scale"><span>2 rate</span><span>12 rate</span></div>
+            <div class="chips" id="nChips"><button class="chip" data-v="2">2</button><button class="chip" data-v="3">3</button><button class="chip" data-v="4">4</button><button class="chip" data-v="6">6</button><button class="chip" data-v="9">9</button><button class="chip" data-v="12">12</button></div>
+          </div>
+        </div>
+        <div class="res">
+          <div class="cap"><i>4</i>Iată cât ai de plătit</div>
+          <div class="rout">
+            <div class="main"><small>Rata lunară</small><strong id="oRate"></strong><em id="rcnt"></em></div>
+            <div><small>Achitat</small><strong id="oPaid"></strong></div>
+            <div><small>Rămas</small><strong id="oLeft"></strong></div>
+          </div>
+          <div class="est" id="est"></div>
+          <div class="pct"><span>Progres plată</span><b id="pctV">0%</b></div>
+          <div class="pbar"><i id="pbar"></i></div>
+        </div>
+      </div>
+
+      <div class="rtl"><div class="rtr"><div class="rfl" id="rfl"></div><div class="rdt" id="rdt"></div></div><div class="rn-row" id="rnr"></div></div>
+      <div class="rsay" id="rsay" aria-live="polite"></div>
+      <button class="replay2" id="rep" type="button">↻ Vezi din nou</button>
+
+      <div class="cmp">
+        <div class="cmp-h"><strong>Rate fără dobândă sau credit obișnuit? Compară costul total</strong></div>
+        <p class="cmp-lead">Simulare orientativă pentru aceeași sumă și același număr de rate alese mai sus.</p>
+        <div class="cmp-two">
+          <div class="vx2"><em>Valmex.md</em><ul>
+            <li>Finanțare în rate conform ofertei disponibile.</li>
+            <li>Posibilitatea perioadelor promoționale cu 0% dobândă*.</li>
+            <li>Costurile sunt prezentate înainte de acceptarea ofertei.</li>
+            <li>Rata lunară este calculată în funcție de suma lucrării și numărul de rate.</li></ul></div>
+          <div class="bk2"><em>Credit obișnuit</em><ul>
+            <li>Dobândă și eventuale comisioane.</li>
+            <li>Costul depinde de instituția creditoare și profilul clientului.</li>
+            <li>DAE poate ajunge la valori ridicate.</li>
+            <li>Suma totală rambursată poate depăși semnificativ suma inițială.</li></ul></div>
+        </div>
+        <div class="crow bk"><span>Credit obișnuit (simulare)</span><div class="cbar"><i id="bBank"></i></div><span id="tBank"></span></div>
+        <div class="crow vx"><span>Lucrarea, în rate Valmex*</span><div class="cbar"><i id="bVx"></i></div><span id="tVx"></span></div>
+        <div class="mrow"><span>Rata lunară, credit (simulare): <b id="mBank"></b></span><span>Rata lunară, Valmex*: <b id="mVx"></b></span></div>
+        <div class="save" id="save"></div>
+        <div class="dae"><b>Ce este DAE?</b> Un credit obișnuit poate implica dobândă anuală, comisioane și alte costuri. DAE arată costul anual efectiv al finanțării. În funcție de condițiile contractuale, suma totală rambursată poate fi considerabil mai mare decât suma împrumutată. Exemple publice reprezentative din Republica Moldova indică, pentru creditele nebancare, un DAE de aproximativ 38–64%. DAE include dobânda și costurile obligatorii ale creditului și nu este același lucru cu dobânda nominală. Valorile sunt orientative, nu reprezintă o ofertă universală sau o dobândă garantată.</div>
+        <small>Simulare simplificată: dobânda nominală de 41,5% pe an este ipotetică și folosită exclusiv ca exemplu matematic, cu rate lunare egale și fără comisioane suplimentare. Nu reprezintă oferta niciunei instituții. La Valmex.md, eligibilitatea pentru 0% dobândă, numărul de rate și condițiile exacte se confirmă în ofertă, înainte de acceptare.</small>
+      </div>
+
+      <p class="rfine" id="fine">*Calcul orientativ. Rata lunară se calculează în funcție de suma lucrării și numărul de rate. Eligibilitatea pentru 0% dobândă, numărul de rate și condițiile exacte se confirmă în oferta Valmex, înainte de acceptare.</p>
+      <div class="cta-row">
+        <a class="btn wa" id="waCalc" href="https://wa.me/37378026212" data-cms-href="wa:site.contact.whats">Trimite calculul pe WhatsApp</a>
+        <a class="btn gw" href="tel:+37378026212" data-cms-href="tel:site.contact.phone">Sună: <span data-cms="site.contact.phone" data-cms-fmt="phone">078 026 212</span></a>
+      </div>
+    </div>
+
+    <div class="proof reveal">
+      <div><span class="big">de la <span data-cms="prices.roof">950</span> lei/m²</span><strong>Acoperiș la cheie</strong><p>Prețul include țigla, lemnul, sistemul pluvial, accesoriile și manopera.</p></div>
+      <div><span class="big">de la <span data-cms="prices.facade">850</span> lei/m²</span><strong>Fațadă decorativă la cheie</strong><p>Include materialele (tencuială decorativă, polistiren) și manopera.</p></div>
+      <div><span class="big">0%*</span><strong>Dobândă la plata în rate</strong><p>Pentru lucrările eligibile. Condițiile se confirmă în ofertă.</p></div>
+      <div><span class="big">până la 25 ani</span><strong>Garanție</strong><p>Pentru lucrările de acoperiș, conform ofertei.</p></div>
+      <div><span class="big">0,48 mm</span><strong>Țiglă metalică, oțel din Coreea</strong><p>Oțel 0,45 mm și strat de vopsea 0,03 mm.</p></div>
+      <div><span class="big">500+</span><strong>Proiecte realizate</strong><p>Peste 5 ani de experiență în lucrări pentru exteriorul casei.</p></div>
+    </div>
+
+    <div class="compare reveal">
+      <div><h3>Compară corect ofertele.</h3><p>Un preț pe m² fără detalii poate lăsa costuri neprevăzute la final. Cere să vezi aceleași puncte în fiecare ofertă. La Valmex, acoperișul la cheie le include pe toate.</p></div>
+      <ul><li>Țigla metalică</li><li>Lemnul</li><li>Sistemul pluvial</li><li>Accesoriile</li><li>Manopera</li><li>Garanția</li></ul>
+    </div>
+
+    <div class="faq reveal">
+      <h3>Întrebări frecvente</h3>
+      <details><summary>Ce include prețul „la cheie" pentru acoperiș?</summary><p>Prețul de la <span data-cms="prices.roof">950</span> lei/m² include țigla, lemnul, sistemul pluvial, accesoriile și manopera. Suma finală se stabilește în ofertă, după evaluarea lucrării.</p></details>
+      <details><summary>Prețul de <span data-cms="prices.tile">136</span> lei/m² la țiglă include accesoriile?</summary><p>Nu. Prețul de <span data-cms="prices.tile">136</span> lei/m² este doar pentru material, fără accesorii, care se calculează individual. De aceea îți recomandăm oferta la cheie, unde totul este inclus.</p></details>
+      <details><summary>Pot plăti lucrarea în rate?</summary><p>Da. Valmex.md oferă finanțare în rate conform ofertei disponibile, inclusiv posibilitatea perioadelor promoționale cu 0% dobândă* pentru lucrările eligibile. Costurile, numărul de rate și rata lunară ți le prezentăm înainte de acceptarea ofertei.</p></details>
+      <details><summary>Ce este DAE și de ce contează la un credit?</summary><p>DAE arată costul anual efectiv al unui credit: include dobânda și costurile obligatorii. Nu este același lucru cu dobânda nominală. Cu cât DAE este mai mare, cu atât suma totală rambursată este mai mare față de suma împrumutată. Verifică întotdeauna DAE în contractul oricărui credit.</p></details>
+      <details><summary>Ce garanție primesc?</summary><p>Garanția poate ajunge până la 25 de ani. Termenul exact îl găsești în ofertă.</p></details>
+      <details><summary>Din ce material este țigla metalică?</summary><p>Din oțel din Coreea, cu grosimea totală de 0,48 mm: 0,45 mm oțel și 0,03 mm strat de vopsea. Modelele disponibile: Dakia, Melano, Florentia, Karelia și Kvadro.</p></details>
+      <details><summary>Cum primesc o ofertă?</summary><p>Ne scrii pe WhatsApp sau ne suni la <span data-cms="site.contact.phone" data-cms-fmt="phone">078 026 212</span>, de luni până sâmbătă, între 09:00 și 18:00. Îți prezentăm oferta cu suma, ratele și condițiile.</p></details>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap split">
+    <div class="reveal">
+      <div class="eyebrow">Mai mult decât un acoperiș</div>
+      <h2>O casă care arată bine <span class="red">și rezistă în timp.</span></h2>
+      <p class="lead">Valmex realizează lucrări complete pentru exteriorul locuinței: acoperișuri metalice, fațade decorative și AMK, pavaje, garduri și porți. Punem accent pe execuție, detalii și un rezultat care se vede.</p>
+      <div class="actions"><a class="btn" href="tel:+37378026212" data-cms-href="tel:site.contact.phone">Sună: <span data-cms="site.contact.phone" data-cms-fmt="phone">078 026 212</span></a><a class="btn ghost" href="proiecte.html">Vezi proiectele</a></div>
+    </div>
+    <div class="photo reveal delay2"><img data-img-key="acoperisuri-acoperis-finisat2" src="images/acoperisuri/Acoperis-finisat2.png" alt="Acoperiș metalic executat de Valmex" loading="lazy"><div class="photo-label">Acoperișuri metalice · Montaj profesional</div></div>
+  </div>
+</section>
+
+<section id="inainte-dupa" data-valmex-section="proiecte"><div class="wrap"><div class="eyebrow reveal">Transformarea casei tale</div><h2 class="reveal">Înainte <span class="red">&amp; După</span></h2><p class="lead reveal">Trage cursorul pentru a vedea diferența. Proiect real: Acoperiș Negureni.</p>
 <div class="ba-slider reveal" id="baSliderHome">
-<div class="ba-after"><img data-img-key="acoperisuri-acoperis-negureni-dupa-editat" src="images/acoperisuri/acoperis-negureni-dupa-editat.jpg" alt="Acoperiș Negureni după montaj"></div>
-<div class="ba-before"><img data-img-key="acoperisuri-acoperis-negureni-pina-la" src="images/acoperisuri/acoperis-negureni-pina-la.jpg" alt="Acoperiș Negureni înainte de montaj"></div>
+<div class="ba-after"><img data-img-key="acoperisuri-acoperis-negureni-dupa-editat" src="images/acoperisuri/acoperis_dupa.png" alt="Acoperiș Negureni după montaj"></div>
+<div class="ba-before"><img data-img-key="acoperisuri-acoperis-negureni-pina-la" src="images/acoperisuri/acoperis_inainte.png" alt="Acoperiș Negureni înainte de montaj"></div>
 <span class="ba-label ba-label-before">Înainte</span>
 <span class="ba-label ba-label-after">După</span>
 <div class="ba-handle"><div class="ba-handle-line"></div><div class="ba-handle-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6" transform="translate(-3,0)"/><polyline points="9 6 15 12 9 18" transform="translate(3,0)"/></svg></div></div>
 </div>
 <p class="ba-placeholder-note">📸 Proiect real Valmex — Acoperiș Negureni</p>
-</div>
+</div></section>
+<section class="services" id="servicii" data-valmex-section="servicii">
+  <div class="wrap">
+    <div class="eyebrow reveal">Soluții complete pentru exterior</div>
+    <h2 class="reveal">Tot ce are nevoie casa ta.<br><span class="red">Într-un singur loc.</span></h2>
+    <div class="service-grid">
+      <a class="service reveal" href="acoperis.html" data-valmex-section="acoperisuri" data-valmex-product="acoperis-la-cheie"><img data-img-key="acoperisuri-dakia-7024-0" src="images/acoperisuri/Dakia_7024_0.png" alt="Acoperiș din țiglă metalică" loading="lazy"><div class="service-copy"><div class="service-line"></div><h3>Acoperișuri metalice</h3><p>Țiglă metalică și sisteme complete de acoperiș, cu montaj profesionist și atenție la fiecare detaliu.</p></div></a>
+      <a class="service reveal delay1" href="fatade.html" data-valmex-section="fatade" data-valmex-product="fatada-la-cheie"><img data-img-key="fatade-file-00000000175471f4aad6bcf08160e2a1" src="images/fatade/file-00000000175471f4aad6bcf08160e2a1.png" alt="Fațadă decorativă" loading="lazy"><div class="service-copy"><div class="service-line"></div><h3>Fațade decorative</h3><p>Tencuieli decorative siliconate, termoizolație și finisaje moderne pentru un aspect îngrijit.</p></div></a>
+      <a class="service reveal delay2" href="amk.html" data-valmex-section="fatade" data-valmex-product="panouri-amk"><img src="images/amk/fatade-amk-proiect-finisat-5.jpg" alt="Fațadă cu panouri AMK" loading="lazy"><div class="service-copy"><div class="service-line"></div><h3>Fațade AMK</h3><p>Panouri cu aspect de marmură naturală, în variante Mix și Mono, pentru un design distinct.</p></div></a>
+      <a class="service reveal" href="pavaj.html" data-valmex-section="pavaje"><img data-img-key="pavaj-01kkqdka5wyb78shej82eck5pr" src="images/pavaj/01kkqdka5wyb78shej82eck5pr.jpg" alt="Pavaj exterior" loading="lazy"><div class="service-copy"><div class="service-line"></div><h3>Pavaje</h3><p>Amenajarea curților și teraselor cu pavaj montat atent și finisaje curate.</p></div></a>
+      <a class="service reveal delay1 openLeadModal" href="contact.html" data-service="Garduri" data-valmex-section="garduri"><img data-img-key="garduri-proiect-gard-telenesti-dupa" src="images/garduri/proiect-gard-telenesti-dupa.jpg" alt="Gard realizat de Valmex" loading="lazy"><div class="service-copy"><div class="service-line"></div><h3>Garduri</h3><p>Garduri personalizate pentru protecție, intimitate și un aspect unitar al proprietății.</p></div></a>
+      <a class="service reveal delay2 openLeadModal" href="contact.html" data-service="Porți" data-valmex-section="garduri"><img src="images/garduri/porti.jpg" alt="Porți de acces" loading="lazy"><div class="service-copy"><div class="service-line"></div><h3>Porți</h3><p>Porți auto și pietonale, realizate la comandă pentru proiectul și spațiul tău.</p></div></a>
+    </div>
+  </div>
 </section>
 
-<section class="catalog-trigger" style="padding:40px 0;">
-<div class="container" style="text-align:center;">
-<a href="#catalog" class="btn-catalog">📋 CATALOG SERVICII</a>
-</div>
+<section id="lucrari" data-valmex-section="proiecte">
+  <div class="wrap">
+    <div class="eyebrow reveal">Lucrări Valmex</div>
+    <h2 class="reveal">Rezultatele vorbesc <span class="red">de la sine.</span></h2>
+    <p class="lead reveal">Fiecare proiect este diferit. Scopul rămâne același: o lucrare executată corect și un rezultat de care să te bucuri ani la rând.</p>
+    <div class="gallery">
+      <figure class="reveal" data-valmex-project="acoperis"><img data-img-key="acoperisuri-acoperis-negureni-dupa-editat" src="images/acoperisuri/acoperis_dupa.png" alt="Acoperiș finalizat în Negureni" loading="lazy"><figcaption>Proiect acoperiș · Negureni</figcaption></figure>
+      <figure class="reveal delay1" data-valmex-project="fatada"><img src="images/amk/fatade-amk-proiect-finisat-5.jpg" alt="Fațadă AMK finalizată" loading="lazy"><figcaption>Fațadă decorativă AMK</figcaption></figure>
+      <figure class="reveal delay2"><img data-img-key="garduri-proiect-gard-telenesti-dupa" src="images/garduri/proiect-gard-telenesti-dupa.jpg" alt="Gard finalizat în Telenești" loading="lazy"><figcaption>Proiect gard · Telenești</figcaption></figure>
+    </div>
+  </div>
 </section>
 
-<section id="catalog" style="padding-top:60px;">
-<div class="container">
-<div style="text-align:center;margin-bottom:50px;">
-<span class="section-label reveal">Serviciile Noastre</span>
-<h2 class="section-title reveal">Catalog Servicii</h2>
-<p class="section-subtitle reveal">Soluții complete pentru exteriorul casei tale — de la acoperiș până la curte.</p>
-<a href="produse.html" class="btn btn-outline reveal" style="margin-top:22px;color:var(--text);border-color:var(--border)">Vezi Toate Produsele →</a>
-</div>
-<div class="catalog-grid">
-
-<div class="catalog-card reveal reveal-delay-1">
-<div class="catalog-card-img"><span class="catalog-card-price">de la 950 lei/m²</span><img data-img-key="acoperisuri-dakia-7024-0" src="images/acoperisuri/dakia-7024-0.png" alt="Acoperișuri Metalice" loading="lazy"></div>
-<div class="catalog-card-body">
-<h3 class="catalog-card-title" style="color:var(--primary)">Acoperișuri Metalice</h3>
-<p class="catalog-card-text">Țiglă metalică premium Dakia, Melano, Lider, Kvadro, Florenția și Karelia. Montaj profesional cu garanție extinsă.</p>
-<a href="acoperis.html" class="btn"><span>Vezi Detalii</span></a>
-</div>
-</div>
-
-<div class="catalog-card reveal reveal-delay-2">
-<div class="catalog-card-img"><span class="catalog-card-price">de la 850 lei/m²</span><img data-img-key="fatade-file-00000000175471f4aad6bcf08160e2a1" src="images/fatade/file-00000000175471f4aad6bcf08160e2a1.png" alt="Fațade Decorative" loading="lazy"></div>
-<div class="catalog-card-body">
-<h3 class="catalog-card-title" style="color:var(--primary)">Fațade Decorative</h3>
-<p class="catalog-card-text">Tencuială siliconată decorativă, finisaje premium, termoizolație și detalii arhitecturale pentru un exterior modern.</p>
-<a href="fatade.html" class="btn"><span>Vezi Detalii</span></a>
-</div>
-</div>
-
-<div class="catalog-card reveal reveal-delay-3">
-<div class="catalog-card-img"><img data-img-key="amk-fatade-amk-proiect-finisat-5" src="images/amk/fatade-amk-proiect-finisat-5.jpg" alt="Panouri AMK" loading="lazy"></div>
-<div class="catalog-card-body">
-<h3 class="catalog-card-title" style="color:var(--primary)">Fațade AMK</h3>
-<p class="catalog-card-text">Panouri din marmură naturală cu aspect premium. Modele Mix și Mono pentru un exterior sofisticat și durabil.</p>
-<a href="amk.html" class="btn"><span>Vezi Detalii</span></a>
-</div>
-</div>
-
-<div class="catalog-card reveal reveal-delay-1">
-<div class="catalog-card-img"><img data-img-key="pavaj-01kkqdka5wyb78shej82eck5pr" src="images/pavaj/01kkqdka5wyb78shej82eck5pr.png" alt="Pavaje" loading="lazy"></div>
-<div class="catalog-card-body">
-<h3 class="catalog-card-title" style="color:var(--primary)">Pavaje</h3>
-<p class="catalog-card-text">Montaj profesional pavaj pentru curți și terase. Materiale durabile, finisaje impecabile și design modern.</p>
-<a href="pavaj.html" class="btn"><span>Vezi Detalii</span></a>
-</div>
-</div>
-
-<div class="catalog-card reveal reveal-delay-2">
-<div class="catalog-card-img"><img data-img-key="garduri-proiect-gard-telenesti-dupa" src="images/garduri/proiect-gard-telenesti-dupa.jpg" alt="Garduri" loading="lazy"></div>
-<div class="catalog-card-body">
-<h3 class="catalog-card-title" style="color:var(--primary)">Garduri</h3>
-<p class="catalog-card-text">Garduri metalice și din lemn, personalizate conform proiectului tău. Rezistență, securitate și design elegant.</p>
-<a href="contact.html" class="btn openLeadModal" data-service="Garduri"><span>Solicită Ofertă</span></a>
-</div>
-</div>
-
-<div class="catalog-card reveal reveal-delay-3">
-<div class="catalog-card-img"><img data-img-key="garduri-porti" src="images/garduri/porti.jpg" alt="Porți" loading="lazy"></div>
-<div class="catalog-card-body">
-<h3 class="catalog-card-title" style="color:var(--primary)">Porți</h3>
-<p class="catalog-card-text">Porți auto și pietonale, culisante sau batante, cu automatizare opțională. Execuție la comandă.</p>
-<a href="contact.html" class="btn openLeadModal" data-service="Porți"><span>Solicită Ofertă</span></a>
-</div>
-</div>
-
-<div class="catalog-card reveal reveal-delay-1">
-<div class="catalog-card-img"><img data-img-key="renovari-banner-si-prezentare-generala-renovari" src="images/renovari/banner-si-prezentare-generala-renovari.png" alt="Renovări" loading="lazy"></div>
-<div class="catalog-card-body">
-<h3 class="catalog-card-title" style="color:var(--primary)">Renovări</h3>
-<p class="catalog-card-text">Renovări complete acoperișuri și fațade. Diagnosticare, soluții și execuție profesională de la A la Z.</p>
-<a href="contact.html" class="btn openLeadModal" data-service="Renovări"><span>Solicită Ofertă</span></a>
-</div>
-</div>
-
-</div>
-</div>
+<section id="calculatoare"><div class="wrap"><div class="eyebrow reveal">Unelte utile</div><h2 class="reveal">Calculatoare <span class="red">online.</span></h2><p class="lead reveal">Calculează rapid materialele necesare pentru proiectul tău.</p>
+<div class="benefits tools">
+<a class="benefit reveal" href="calculator-acoperis.html" data-valmex-product="acoperis-la-cheie"><i></i><b>Calculator acoperiș</b><p>Estimează suprafața, șuruburile și folia necesare pentru acoperișul tău.</p></a>
+<a class="benefit reveal delay1" href="calculator-fatada.html" data-valmex-product="fatada-la-cheie"><i></i><b>Calculator fațadă</b><p>Calculează materialele pentru tencuială decorativă și termoizolație.</p></a>
+<a class="benefit reveal delay2" href="calculator-amk.html" data-valmex-product="panouri-amk"><i></i><b>Calculator AMK</b><p>Estimează numărul de panouri AMK și materialele de montaj.</p></a>
+</div></div></section>
+<section id="avantaje">
+  <div class="wrap">
+    <div class="eyebrow reveal">Partenerul potrivit pentru proiectul tău</div>
+    <h2 class="reveal">Calitate în fiecare <span class="red">detaliu.</span></h2>
+    <div class="benefits">
+      <div class="benefit reveal"><i></i><b>Consultanță personalizată</b><p>Te ajutăm să alegi soluția potrivită pentru construcția și bugetul tău.</p></div>
+      <div class="benefit reveal delay1"><i></i><b>Execuție profesională</b><p>Lucrări realizate cu atenție la detalii și la cerințele proiectului.</p></div>
+      <div class="benefit reveal delay2"><i></i><b>Soluții complete</b><p>De la acoperiș și fațadă până la gard, poartă și pavaj.</p></div>
+      <div class="benefit reveal delay3"><i></i><b>Acoperire națională</b><p>Consultanță și lucrări în localitățile din Republica Moldova.</p></div>
+    </div>
+  </div>
 </section>
 
-<section style="background:var(--bg-elevated);">
-<div class="container">
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:50px;align-items:center;">
-<div class="reveal">
-<span class="section-label">Despre Valmex</span>
-<h2 class="section-title" style="text-align:left;margin-bottom:20px;">Experiență și Profesionalism de 7+ Ani</h2>
-<p style="color:var(--text-secondary);line-height:1.8;margin-bottom:20px;font-size:16px;">Valmex.md este partenerul tău de încredere pentru orice proiect de exterior. De la acoperișuri metalice premium până la fațade AMK din marmură naturală, oferim soluții complete cu montaj profesional și garanție extinsă.</p>
-<p style="color:var(--text-secondary);line-height:1.8;margin-bottom:30px;font-size:16px;">Lucrăm cu materiale de cea mai înaltă calitate, iar echipa noastră de specialiști garantează execuția impecabilă a fiecărui detaliu.</p>
-<div style="display:flex;gap:30px;flex-wrap:wrap;">
-<div><div style="font-size:36px;font-weight:900;color:var(--primary)">500+</div><div style="color:var(--text-muted);font-size:14px;">Proiecte Finalizate</div></div>
-<div><div style="font-size:36px;font-weight:900;color:var(--primary)">7+</div><div style="color:var(--text-muted);font-size:14px;">Ani Experiență</div></div>
-<div><div style="font-size:36px;font-weight:900;color:var(--primary)">100%</div><div style="color:var(--text-muted);font-size:14px;">Clienți Mulțumiți</div></div>
-</div>
-</div>
-<div class="reveal reveal-delay-2">
-<img data-img-key="acoperisuri-acoperis-finisat2" src="images/acoperisuri/acoperis-finisat2.png" alt="Proiect Valmex" style="width:100%;border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);border:1px solid var(--border);" loading="lazy">
-</div>
-</div>
-</div>
+<section id="recenzii"><div class="wrap"><div class="eyebrow reveal">Testimoniale</div><h2 class="reveal">Ce spun <span class="red">clienții noștri.</span></h2><div class="rvgrid"><figure class="rv reveal"><div class="stars">★★★★★</div><blockquote>"Echipa Valmex a făcut o treabă excelentă la acoperișul casei noastre. Profesionalism, curățenie și respectarea termenelor. Recomand cu încredere!"</blockquote><figcaption><b>Andrei I.</b> · Chișinău</figcaption></figure><figure class="rv reveal"><div class="stars">★★★★★</div><blockquote>"Am ales panouri AMK pentru fațada casei și rezultatul este spectaculos. Aspect de piatră naturală, montaj rapid și preț corect. Mulțumesc, Valmex!"</blockquote><figcaption><b>Maria P.</b> · Orhei</figcaption></figure><figure class="rv reveal"><div class="stars">★★★★★</div><blockquote>"Consultanță gratuită, ofertă transparentă și execuție impecabilă. Fațada siliconată arată extraordinar. O echipă de încredere!"</blockquote><figcaption><b>Vasile C.</b> · Bălți</figcaption></figure></div></div></section>
+<section class="process">
+  <div class="wrap">
+    <div class="eyebrow reveal">Simplu și transparent</div>
+    <h2 class="reveal">De la idee la <span class="red">lucrarea finalizată.</span></h2>
+    <div class="process-row">
+      <div class="process-item reveal"><strong>Discutăm proiectul</strong><p>Ne contactezi și ne spui ce îți dorești să realizezi.</p></div>
+      <div class="process-item reveal delay1"><strong>Evaluăm necesitățile</strong><p>Analizăm lucrarea și stabilim soluția potrivită.</p></div>
+      <div class="process-item reveal delay2"><strong>Primești oferta</strong><p>Prezentăm detaliile și condițiile lucrării.</p></div>
+      <div class="process-item reveal delay3"><strong>Executăm lucrarea</strong><p>Realizăm proiectul și urmărim calitatea finisajului.</p></div>
+    </div>
+  </div>
 </section>
 
-<section>
-<div class="container">
-<div style="text-align:center;margin-bottom:50px;">
-<span class="section-label reveal">De Ce Noi</span>
-<h2 class="section-title reveal">Avantaje Valmex</h2>
-<p class="section-subtitle reveal">Alege calitatea, experiența și profesionalismul pentru proiectul tău.</p>
-</div>
-<div class="features-grid">
-<div class="feature-card reveal reveal-delay-1">
-<div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-<h3 class="feature-title">Garanție Extinsă</h3>
-<p class="feature-text">Oferim garanție pentru toate lucrările executate. Materiale premium și montaj conform standardelor înalte.</p>
-</div>
-<div class="feature-card reveal reveal-delay-2">
-<div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-<h3 class="feature-title">Livrare Rapidă</h3>
-<p class="feature-text">Livrare și montaj în toată Republica Moldova. Respectăm termenele promise și comunicăm transparent.</p>
-</div>
-<div class="feature-card reveal reveal-delay-3">
-<div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-<h3 class="feature-title">Echipă Specializată</h3>
-<p class="feature-text">Muncitori calificați cu experiență vastă în montajul acoperișurilor, fațadelor și panourilor AMK.</p>
-</div>
-<div class="feature-card reveal reveal-delay-1">
-<div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-<h3 class="feature-title">Consultanță Gratuită</h3>
-<p class="feature-text">Te ajutăm să alegi soluția optimă pentru proiectul tău. Măsurare și ofertă personalizată gratuit.</p>
-</div>
-<div class="feature-card reveal reveal-delay-2">
-<div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-<h3 class="feature-title">Tehnologie Modernă</h3>
-<p class="feature-text">Utilizăm cele mai noi tehnici și unelte pentru execuție precisă și rezultate de lungă durată.</p>
-</div>
-<div class="feature-card reveal reveal-delay-3">
-<div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-<h3 class="feature-title">Materiale Premium</h3>
-<p class="feature-text">Colaborăm doar cu producători consacrați. Materiale certificate, rezistente la intemperii și UV.</p>
-</div>
-</div>
-</div>
+<section id="locatie"><div class="wrap"><div class="eyebrow reveal">Locație</div><h2 class="reveal">Livrare și montaj în <span class="red">toată Moldova.</span></h2><p class="lead reveal">Operăm în toate raioanele Republicii Moldova. Contactează-ne pentru o evaluare gratuită.</p><div class="mapbox reveal"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d21752.470448153!2d28.8205!3d47.0105!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c3628b769a1%3A0x37d2d23f3a9f!2sChisinau!5e0!3m2!1sen!2smd!4v1700000000000" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Harta Valmex.md" allowfullscreen></iframe></div></div></section>
+<section class="cta" id="contact">
+  <div class="wrap">
+    <div class="eyebrow reveal">Valmex.md · Republica Moldova</div>
+    <h2 class="reveal">Casa ta merită un exterior <span class="red">pe măsură.</span></h2>
+    <p class="lead reveal">Solicită o consultație și discută direct cu echipa Valmex despre următorul tău proiect.</p>
+    <div class="actions reveal">
+      <a class="btn" href="tel:+37378026212" data-cms-href="tel:site.contact.phone"><span data-cms="site.contact.phone" data-cms-fmt="phone">078 026 212</span></a>
+      <a class="btn ghost" href="https://wa.me/37378026212?text=Bun%C4%83%20ziua%2C%20doresc%20o%20consulta%C8%9Bie%20pentru%20un%20proiect." data-cms-href="wa:site.contact.whats">WhatsApp</a>
+      <a class="btn ghost" href="mailto:Valmex.md@gmail.com" data-cms-href="mailto:site.contact.email">Trimite e-mail</a>
+    </div>
+  </div>
 </section>
+</main>
 
-<section style="background:var(--bg-elevated);">
-<div class="container">
-<div style="text-align:center;margin-bottom:50px;">
-<span class="section-label reveal">Portofoliu</span>
-<h2 class="section-title reveal">Proiecte Recente</h2>
-<p class="section-subtitle reveal">Exemple din portofoliul nostru de lucrări finalizate cu succes.</p>
-</div>
-<div class="projects-grid">
-<div class="project-card reveal reveal-delay-1">
-<div class="project-card-img"><img data-img-key="acoperisuri-acoperis-finisat2" src="images/acoperisuri/acoperis-finisat2.png" alt="Proiect Acoperiș" loading="lazy"></div>
-<div class="project-card-body">
-<h3 class="project-card-title">Acoperiș Premium</h3>
-<p class="project-card-text">Montaj complet acoperiș din țiglă metalică cu finisaj antracit. Rezistență și eleganță pentru o locuință modernă.</p>
-</div>
-</div>
-<div class="project-card reveal reveal-delay-2">
-<div class="project-card-img"><img data-img-key="acoperisuri-roofart-acoperisuri-din-tigla-metalica" src="images/acoperisuri/roofart-acoperisuri-din-tigla-metalica.jpg" alt="Acoperiș Modern" loading="lazy"></div>
-<div class="project-card-body">
-<h3 class="project-card-title">Acoperiș Modern Antracit</h3>
-<p class="project-card-text">Acoperiș din țiglă metalică cu finisaj antracit, linii elegante și aspect modern pentru o casă deosebită.</p>
-</div>
-</div>
-<div class="project-card reveal reveal-delay-3">
-<div class="project-card-img"><img data-img-key="amk-fatade-amk-proiect-finisat-5" src="images/amk/fatade-amk-proiect-finisat-5.jpg" alt="Fațadă AMK" loading="lazy"></div>
-<div class="project-card-body">
-<h3 class="project-card-title">Fațadă AMK</h3>
-<p class="project-card-text">Montaj panouri AMK din marmură naturală. Aspect premium și durabilitate maximă pentru exteriorul casei.</p>
-</div>
-</div>
-</div>
-<div style="text-align:center;margin-top:50px;" class="reveal">
-<a href="proiecte.html" class="btn btn-lg"><span>Vezi Toate Proiectele</span></a>
-</div>
-</div>
-</section>
-
-<section>
-<div class="container">
-<div style="text-align:center;margin-bottom:50px;">
-<span class="section-label reveal">Unelte Utile</span>
-<h2 class="section-title reveal">Calculatoare Online</h2>
-<p class="section-subtitle reveal">Calculează rapid materialele necesare pentru proiectul tău.</p>
-</div>
-<div class="features-grid">
-<div class="feature-card reveal reveal-delay-1" style="text-align:center;">
-<div class="feature-icon" style="margin:0 auto 20px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-<h3 class="feature-title">Calculator Acoperiș</h3>
-<p class="feature-text">Estimează suprafața, șuruburile și folia necesare pentru acoperișul tău.</p>
-<a href="calculator-acoperis.html" class="btn" style="margin-top:16px;"><span>Calculează</span></a>
-</div>
-<div class="feature-card reveal reveal-delay-2" style="text-align:center;">
-<div class="feature-icon" style="margin:0 auto 20px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg></div>
-<h3 class="feature-title">Calculator Fațadă</h3>
-<p class="feature-text">Calculează materialele pentru tencuială decorativă și termoizolație.</p>
-<a href="calculator-fatada.html" class="btn" style="margin-top:16px;"><span>Calculează</span></a>
-</div>
-<div class="feature-card reveal reveal-delay-3" style="text-align:center;">
-<div class="feature-icon" style="margin:0 auto 20px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-<h3 class="feature-title">Calculator AMK</h3>
-<p class="feature-text">Estimează numărul de panouri AMK și materialele de montaj.</p>
-<a href="calculator-amk.html" class="btn" style="margin-top:16px;"><span>Calculează</span></a>
-</div>
-</div>
-</div>
-</section>
-
-<section style="background:var(--bg-elevated);">
-<div class="container">
-<div style="text-align:center;margin-bottom:50px;">
-<span class="section-label reveal">Testimoniale</span>
-<h2 class="section-title reveal">Ce Spun Clienții Noștri</h2>
-<p class="section-subtitle reveal">Feedback real de la clienți mulțumiți de serviciile Valmex.</p>
-</div>
-<div class="reviews-grid">
-<div class="review-card reveal reveal-delay-1">
-<div class="review-stars">★★★★★</div>
-<p class="review-text">"Echipa Valmex a făcut o treabă excelentă la acoperișul casei noastre. Profesionalism, curățenie și respectarea termenelor. Recomand cu încredere!"</p>
-<div class="review-author">
-<div class="review-avatar">AI</div>
-<div><div class="review-name">Andrei I.</div><div class="review-role">Chișinău</div></div>
-</div>
-</div>
-<div class="review-card reveal reveal-delay-2">
-<div class="review-stars">★★★★★</div>
-<p class="review-text">"Am ales panouri AMK pentru fațada casei și rezultatul este spectaculos. Aspect de piatră naturală, montaj rapid și preț corect. Mulțumesc, Valmex!"</p>
-<div class="review-author">
-<div class="review-avatar">MP</div>
-<div><div class="review-name">Maria P.</div><div class="review-role">Orhei</div></div>
-</div>
-</div>
-<div class="review-card reveal reveal-delay-3">
-<div class="review-stars">★★★★★</div>
-<p class="review-text">"Consultanță gratuită, ofertă transparentă și execuție impecabilă. Fațada siliconată arată extraordinar. O echipă de încredere!"</p>
-<div class="review-author">
-<div class="review-avatar">VC</div>
-<div><div class="review-name">Vasile C.</div><div class="review-role">Bălți</div></div>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<section>
-<div class="container">
-<div style="text-align:center;margin-bottom:50px;">
-<span class="section-label reveal">Locație</span>
-<h2 class="section-title reveal">Livrare și Montaj în Toată Moldova</h2>
-<p class="section-subtitle reveal">Operăm în toate raioanele Republicii Moldova. Contactează-ne pentru o evaluare gratuită.</p>
-</div>
-<div class="map-container reveal">
-<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d21752.470448153!2d28.8205!3d47.0105!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c3628b769a1%3A0x37d2d23f3a9f!2sChisinau!5e0!3m2!1sen!2smd!4v1700000000000" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Harta Valmex Moldova"></iframe>
-</div>
-</div>
-</section>
-
-<section style="background:linear-gradient(180deg,var(--bg-elevated),var(--bg));padding:100px 0;">
-<div class="container" style="text-align:center;">
-<h2 class="section-title reveal" style="margin-bottom:20px;">Pregătit să Începi Proiectul?</h2>
-<p class="section-subtitle reveal" style="margin-bottom:40px;">Contactează-ne acum pentru o consultație gratuită și o ofertă personalizată.</p>
-<div class="reveal" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-<a href="contact.html" class="btn btn-lg"><span>Solicită Ofertă Gratuită</span></a>
-<a href="tel:+37378026212" class="btn-outline btn-lg">📞 +373 78 026 212</a>
-</div>
-</div>
-</section>
-
-<footer class="footer">
+<footer class="site-footer">
 <div class="container">
 <div class="footer-grid">
 <div class="footer-brand">
-<a class="logo" href="index.html"><img data-img-key="logo-file-00000000fc0071f49163a60f6883bf9b" src="images/logo/file-00000000fc0071f49163a60f6883bf9b.png" alt="Valmex.md" width="160" loading="lazy"></a>
+<a class="logo" href="index.html"><img data-img-key="logo-file-00000000fc0071f49163a60f6883bf9b" src="images/logo/file_00000000fc0071f49163a60f6883bf9b.png" alt="Valmex.md" width="160" loading="lazy"></a>
 <p>Acoperișuri premium, fațade decorative și panouri AMK executate profesional în Republica Moldova. Calitate, garanție și finisaj impecabil.</p>
 </div>
 <div>
@@ -433,7 +349,7 @@
 <div>
 <h4 class="footer-title">Retele Sociale</h4>
 <div class="footer-links social-footer-links">
-<a href="https://wa.me/37378026212" target="_blank" rel="noopener"><img data-img-key="social-1000057993-removebg-preview-1-1" src="images/social/1000057993-removebg-preview-1-1.png" alt="WhatsApp" width="22" height="22" loading="lazy">WhatsApp</a>
+<a href="https://wa.me/37378026212" target="_blank" rel="noopener" data-cms-href="wa:site.contact.whats"><img data-img-key="social-1000057993-removebg-preview-1-1" src="images/social/1000057993-removebg-preview-1-1.png" alt="WhatsApp" width="22" height="22" loading="lazy">WhatsApp</a>
 <a href="viber://chat?number=%2B37378026212"><img data-img-key="social-1000057992-removebg-preview-1" src="images/social/1000057992-removebg-preview-1.png" alt="Viber" width="22" height="22" loading="lazy">Viber</a>
 <a href="https://www.facebook.com/share/18v4sd1se6/" target="_blank" rel="noopener"><img data-img-key="social-facebook-logo-2023-1" src="images/social/facebook-logo-2023-1.png" alt="Facebook" width="22" height="22" loading="lazy">Facebook</a>
 </div>
@@ -441,8 +357,8 @@
 <div>
 <h4 class="footer-title">Contact</h4>
 <div class="footer-links">
-<a href="tel:+37378026212">+373 78 026 212</a>
-<a href="mailto:Valmex.md@gmail.com">Valmex.md@gmail.com</a>
+<a href="tel:+37378026212" data-cms-href="tel:site.contact.phone"><span data-cms="site.contact.phone" data-cms-fmt="phone-intl">+373 78 026 212</span></a>
+<a href="mailto:Valmex.md@gmail.com" data-cms-href="mailto:site.contact.email"><span data-cms="site.contact.email">Valmex.md@gmail.com</span></a>
 <span>L–S 09:00 – 18:00</span>
 </div>
 </div>
@@ -456,6 +372,10 @@
 </div>
 </div>
 </footer>
+<div class="float-contact" aria-label="Contact rapid">
+  <a href="tel:+37378026212" aria-label="Sună" data-cms-href="tel:site.contact.phone">TEL</a>
+  <a href="https://wa.me/37378026212" aria-label="WhatsApp" data-cms-href="wa:site.contact.whats">WA</a>
+</div>
 <div class="modal" id="leadModal">
 <div class="modal-content">
 <button class="modal-close" id="closeLeadModal" aria-label="Închide">&times;</button>
@@ -469,36 +389,120 @@
 <div class="status-msg" id="leadStatus">Cererea a fost trimisă cu succes!</div>
 </div>
 </div>
-<div class="lightbox" id="lightbox"><img id="lightboxImg" src="" alt=""></div>
-<script src="/chat-widget.js" defer></script>
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "4b147332-d5be-4573-b11e-a4aa8a4c2391",
-    });
-  });
+const menu=document.getElementById('menu'),nav=document.getElementById('nav');
+menu.addEventListener('click',()=>nav.classList.toggle('open'));
+nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',e=>{if(a.classList.contains('dd-t'))return;if(a.closest('.dd-m')||!a.parentElement.classList.contains('dd'))nav.classList.remove('open')}));
+const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+const bar=document.getElementById('progressBar');
+function updateProgress(){const max=document.documentElement.scrollHeight-innerHeight;bar.style.width=(max>0?scrollY/max*100:0)+'%'}
+addEventListener('scroll',updateProgress,{passive:true});updateProgress();
+// Dacă o fotografie nu este disponibilă în repository, ascunde doar imaginea defectă.
+document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',()=>{img.style.opacity='0'});img.addEventListener('load',()=>{img.style.opacity=''})});
+
+/* ===== Calculator rate ===== */
+(function(){
+const PRICE={roof:950,facade:850}, NAME={roof:'Acoperiș la cheie',facade:'Fațadă decorativă la cheie',custom:'Lucrare'};
+const APR=0.415; /* dobândă nominală ipotetică, doar exemplu matematic orientativ */
+const $=id=>document.getElementById(id);
+const fn=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0');
+const st={mode:'roof',area:120,sum:60000,n:6};
+const money=v=>fn(v)+'\u00a0lei';
+const total=()=>st.mode==='custom'?st.sum:st.area*PRICE[st.mode];
+const model=()=>{const S=total(),n=st.n,r=Math.round(S/n);return{S,n,r,last:S-r*(n-1)}};
+const amt=(m,k)=>k===m.n?m.last:m.r;
+const row=$('rnr'),fl=$('rfl'),dt=$('rdt'),say=$('rsay');
+/* număr animat (tween) + efect flash */
+const tween=(el,to,f)=>{ if(!el)return;
+  if(typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion:reduce)').matches){el.textContent=f(to);el._v=to;return}
+  const from=el._v==null?to:el._v;el._v=to;cancelAnimationFrame(el._r);
+  if(from===to){el.textContent=f(to);return}
+  if(el.classList){el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')}
+  const t0=performance.now(),d=700;
+  (function k(t){const p=Math.min(1,(t-t0)/d),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;el.textContent=f(from+(to-from)*e);if(p<1)el._r=requestAnimationFrame(k)})(t0)};
+const fill=el=>{if(!(el&&el.style&&el.style.setProperty))return;const f=(el.value-el.min)/(el.max-el.min);el.style.setProperty('--p',f*100+'%');const pn=el.parentNode;if(pn&&pn.style&&pn.style.setProperty)pn.style.setProperty('--pn',f)};
+say.insertBefore(document.createTextNode(''),say.firstChild);
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;let run=0,vis=false,tp,tp2;
+const type=t=>{clearInterval(tp);clearTimeout(tp2);if(reduce){say.firstChild.nodeValue=t;return}say.firstChild.nodeValue='';say.classList.remove('pop');say.classList.add('typing');tp2=setTimeout(()=>{say.classList.remove('typing');say.firstChild.nodeValue=t;void say.offsetWidth;say.classList.add('pop')},520)};
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+
+function controls(){
+  document.querySelectorAll('#tabs .tab').forEach(b=>b.classList.toggle('on',b.dataset.mode===st.mode));
+  document.querySelectorAll('#nChips .chip').forEach(b=>b.classList.toggle('on',+b.dataset.v===st.n));
+  document.querySelectorAll('#sumChips .chip').forEach(b=>b.classList.toggle('on',+b.dataset.v===st.sum));
+  $('areaBox').style.display=st.mode==='custom'?'none':'';$('sumBox').style.display=st.mode==='custom'?'':'none';
+  $('areaR').value=st.area;tween($('aV'),st.area,v=>Math.round(v)+' m²');
+  $('sumR').value=st.sum;if(document.activeElement!==$('sumN'))$('sumN').value=st.sum;tween($('sumV'),st.sum,money);
+  $('nR').value=st.n;tween($('nV'),st.n,v=>Math.round(v));fill($('areaR'));fill($('sumR'));fill($('nR'));$('rcnt').textContent='× '+st.n+' rate';const tbs=$('tabs');if(tbs.style&&tbs.style.setProperty)tbs.style.setProperty('--i',['roof','facade','custom'].indexOf(st.mode));$('bubA').textContent=st.area+' m²';$('bubS').textContent=money(st.sum);$('bubN').textContent=st.n+' rate';
+  const m=model();
+  $('est').innerHTML=st.mode==='custom'?`Suma lucrării: <b>${money(m.S)}</b>. Rata se calculează egal pe ${m.n} rate.`:`Estimare orientativă <b>de la ${money(m.S)}</b> (${st.area} m² × ${PRICE[st.mode]} lei/m², la cheie). Prețul final se stabilește în ofertă.`;
+  /* comparație credit: simulare simplificată, dobândă nominală ipotetică, fără comisioane */
+  const i=APR/12,pmt=m.S*i/(1-Math.pow(1+i,-m.n)),tb=pmt*m.n,extra=tb-m.S;
+  $('tBank').textContent=money(tb);$('tVx').textContent=money(m.S);
+  $('mBank').textContent=money(pmt);$('mVx').textContent=money(m.r);
+  $('bBank').style.width='100%';$('bVx').style.width=(m.S/tb*100)+'%';
+  $('save').innerHTML=`În această simulare, diferența de cost față de un credit cu dobândă nominală ipotetică de 41,5% pe an este de aproximativ <b>${money(extra)}</b>, dacă lucrarea este eligibilă pentru rate fără dobândă.`;
+  /* WhatsApp */
+  const what=st.mode==='custom'?`suma ${fn(m.S)} lei`:`${NAME[st.mode]}, ${st.area} m², estimare de la ${fn(m.S)} lei`;
+  const msg=`Bună ziua! Am făcut calculul pe valmex.md: ${what}, ${m.n} rate de aproximativ ${fn(m.r)} lei. Doresc o ofertă în rate.`;
+  $('waCalc').href='https://wa.me/37378026212?text='+encodeURIComponent(msg);
+}
+function build(){const m=model();
+  row.innerHTML='<div class="rn"><b>0</b><small>Start</small></div>'+Array.from({length:m.n},(_,i)=>`<div class="rn"><b>${i+1}</b><small>${money(amt(m,i+1))}</small></div>`).join('');return m}
+function step(m,s){
+  [...row.children].forEach((n,i)=>{n.classList.toggle('ok',i>0&&i<=s);n.classList.toggle('on',i===s&&s<m.n)});
+  const p=s/m.n*100;fl.style.width=dt.style.left=p+'%';$('pbar').style.width=p+'%';$('pctV').textContent=Math.round(p)+'%';
+  let paid=0;for(let k=1;k<=s;k++)paid+=amt(m,k);
+  tween($('oRate'),s>0?amt(m,s):m.r,money);tween($('oPaid'),paid,money);tween($('oLeft'),m.S-paid,money);
+  type(s===0?`Perfect! Lucrarea costă ${money(m.S)}. O împărțim în ${m.n} rate, ca să nu simți efortul dintr-o dată.`:s<m.n?`Rata ${s} din ${m.n} e plătită: ${money(amt(m,s))}. Mai ai de achitat ${money(m.S-paid)}.`:`Gata! Ultima rată e plătită. În total ${money(m.S)}, fără dobândă* la lucrările eligibile.`)}
+async function play(){const id=++run;controls();const m=build();
+  if(reduce){step(m,m.n);return}
+  [fl,dt,$('pbar')].forEach(x=>x.style.transition='none');fl.style.width='0';dt.style.left='0';$('pbar').style.width='0';void dt.offsetWidth;[fl,dt,$('pbar')].forEach(x=>x.style.transition='');
+  for(let s=0;s<=m.n;s++){if(id!==run)return;step(m,s);if(s<m.n)await new Promise(r=>setTimeout(r,Math.max(1300,2000-s*70)))}}
+const upd=()=>{clearInterval(tp);clearTimeout(tp2);play()};
+
+document.querySelectorAll('#tabs .tab').forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;upd()});
+$('areaR').oninput=e=>{st.area=+e.target.value;upd()};
+$('sumR').oninput=e=>{st.sum=+e.target.value;upd()};
+$('nR').oninput=e=>{st.n=+e.target.value;upd()};
+$('sumN').oninput=e=>{const v=+e.target.value;if(v>=5000){st.sum=clamp(Math.round(v),5000,500000);upd()}};
+$('sumN').onblur=()=>{$('sumN').value=st.sum};
+document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{st.area=clamp(st.area+ +b.dataset.a,20,400);upd()});
+document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{st.sum=clamp(st.sum+ +b.dataset.s,5000,500000);upd()});
+document.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{st.n=clamp(st.n+ +b.dataset.n,2,12);upd()});
+document.querySelectorAll('#nChips .chip').forEach(b=>b.onclick=()=>{st.n=+b.dataset.v;upd()});
+document.querySelectorAll('#sumChips .chip').forEach(b=>b.onclick=()=>{st.sum=+b.dataset.v;upd()});
+new IntersectionObserver(es=>es.forEach(e=>{const was=vis;vis=e.isIntersecting;if(vis&&!was)play();if(!vis)run++}),{threshold:.3}).observe($('ratePanel'));
+new IntersectionObserver(es=>es.forEach(e=>{const fc=document.querySelector('.float-contact');if(e.isIntersecting)$('ratePanel').classList.add('go');if(fc)fc.classList.toggle('hide',e.isIntersecting)}),{threshold:.08}).observe($('ratePanel'));
+const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}};
+[['areaR','bubA'],['sumR','bubS'],['nR','bubN']].forEach(([r,b])=>{let t;const el=$(r);if(!el.addEventListener)return;el.addEventListener('input',()=>{const x=$(b);x.classList.add('show');clearTimeout(t);t=setTimeout(()=>x.classList.remove('show'),1400);buzz()})});
+document.querySelectorAll('.sb,.chip,.tab').forEach(b=>b.addEventListener('click',buzz));
+$('rep').onclick=()=>{buzz();upd()};
+controls();step(build(),0);
+
+})();
 </script>
-<div class="mobile-cta-bar">
-<a href="tel:+37378026212"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Sună</a>
-<a href="https://wa.me/37378026212" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .9.9-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-1.3-.6-2.1-1.1-3-2.6-.2-.4.2-.3.6-1.1.1-.1 0-.3 0-.4-.1-.1-.5-1.2-.7-1.7-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 3.9 3.4 1.4.5 1.9.6 2.6.5.4-.1 1.2-.5 1.4-1 .2-.5.2-.9.1-1z"/></svg>WhatsApp</a>
-<a href="#" class="cta-main openLeadModal" data-service="Oferta Rapida"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Ofertă</a>
-</div>
-<div class="modal" id="exitModal">
-<div class="modal-content">
-<button class="modal-close" id="closeExitModal" aria-label="Inchide">&times;</button>
-<h2 class="modal-title">Ofertă specială -5%</h2>
-<p class="modal-subtitle">Lasă-ne un telefon acum și primești -5% reducere la prima comandă, valabil doar azi.</p>
-<form id="exitForm" autocomplete="on">
-<input class="form-input" id="exitName" name="name" type="text" placeholder="Nume Prenume" autocomplete="name" required>
-<input class="form-input" id="exitPhone" name="tel" type="tel" inputmode="tel" placeholder="Telefon" autocomplete="tel" required>
-<button id="sendExitBtn" type="submit" class="btn" style="width:100%"><span>Vreau Discountul</span></button>
-</form>
-<div class="status-msg" id="exitStatus">Cererea a fost trimisă cu succes! Te contactăm în curând.</div>
-</div>
-</div>
+
+<script>
+/* statistici animate: numere + "Toată Moldova" literă cu literă */
+(function(){
+  const m=document.getElementById('mold');
+  if(m){const t=m.textContent;m.textContent='';[...t].forEach((c,i)=>{const sp=document.createElement('span');sp.className='ch';sp.textContent=c===' '?'\u00a0':c;sp.style.animationDelay=(0.9+i*0.06)+'s';m.appendChild(sp)})}
+  document.querySelectorAll('[data-count]').forEach(el=>{const to=+el.dataset.count,t0=performance.now()+700;
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches){el.textContent=to;return}
+    el.textContent='0';(function f(t){const p=Math.max(0,Math.min(1,(t-t0)/1600));el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)})(performance.now())});
+})();
+</script>
+<script src="nav-ui.js" defer></script>
+<script src="hero-carousel.js" defer></script>
+<script src="chat-widget.js" defer></script>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>window.OneSignalDeferred=window.OneSignalDeferred||[];OneSignalDeferred.push(async function(OneSignal){await OneSignal.init({appId:"4b147332-d5be-4573-b11e-a4aa8a4c2391"})});</script>
 <script src="images-loader.js" defer></script>
 <script src="valmex.js" defer></script>
+<script src="/cms-public.js" defer></script>
+<script src="/smart-conversion.js" defer></script>
+<script src="/cookie-consent.js" defer></script>
 </body>
 </html>

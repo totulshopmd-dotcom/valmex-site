@@ -1,0 +1,40 @@
+/* VALMEX responsive refinement REV12 — shared public pages */
+*,*::before,*:after{box-sizing:border-box}
+html,body{width:100%;max-width:100%;overflow-x:clip}
+img,video,iframe,svg,canvas{max-width:100%}img{height:auto}
+main,section,article,aside,.wrap,.container,.content{min-width:0;max-width:100%}
+input,select,textarea,button{max-width:100%;font:inherit}
+pre,code{overflow-wrap:anywhere;white-space:pre-wrap}table{max-width:100%}
+/* Homepage hero: typography consistent with the rest of VALMEX and a stable carousel frame */
+html:not(.dk) .hero{min-height:min(900px,100svh);padding:142px 6% 64px;align-items:center;background:#fff;overflow:hidden}
+html:not(.dk) .hero-bg{background-position:center;background-size:cover;transition:background-image .35s ease}
+html:not(.dk) .hero-content{max-width:1240px}
+html:not(.dk) .hero .eyebrow{color:#b80e19;font-weight:850;letter-spacing:.2em}
+html:not(.dk) .hero-carousel{display:grid;grid-template-areas:"slide";align-items:start;position:relative;width:min(100%,900px);height:330px;min-height:330px;margin:22px 0 18px;padding:0 0 40px;overflow:hidden}
+html:not(.dk) .hero-slide{grid-area:slide;display:block;visibility:hidden;opacity:0;pointer-events:none;width:100%;max-width:850px;min-width:0;align-self:start;transition:opacity .28s ease}
+html:not(.dk) .hero-slide.is-active{visibility:visible;opacity:1;pointer-events:auto}
+html:not(.dk) .hero-slide h1{max-width:850px;color:#15171c;font-size:clamp(44px,5.2vw,72px);font-weight:950;line-height:.99;letter-spacing:-.045em;margin:0 0 16px;text-wrap:balance}
+html:not(.dk) .hero-slide .hero-accent{color:#e30613}
+html:not(.dk) .hero-slide p{max-width:640px;color:#4b515b;font-size:clamp(16px,1.5vw,19px);line-height:1.55;margin:0}
+html:not(.dk) .hero-dots{left:0;bottom:4px}
+html:not(.dk) .hero-dots button{background:#aeb3bc}
+html:not(.dk) .hero-dots button.is-active{background:#e30613}
+html:not(.dk) .hero-summary{display:block;max-width:680px;min-height:0;margin:0;padding:14px 18px;border-left:4px solid #e30613;border-radius:0 12px 12px 0;background:rgba(255,255,255,.94);color:#343943!important;font-size:clamp(15px,1.35vw,18px);line-height:1.6;box-shadow:0 8px 28px rgba(20,25,35,.055)}
+html:not(.dk) .hero .actions{margin-top:22px}
+html:not(.dk) .hero-foot{margin-top:30px;padding-top:18px;gap:18px 28px}
+h1,h2,h3,p{overflow-wrap:break-word}
+@media(min-width:761px) and (max-width:1100px){.wrap,.container{width:min(100% - 48px,960px)}.grid,.service-grid,.gallery,.benefits{gap:16px}}
+@media(max-width:760px){
+ html:not(.dk) .hero{min-height:0;padding:118px 6% 42px;align-items:flex-start}
+ html:not(.dk) .hero-bg{background-position:62% center}
+ html:not(.dk) .hero-carousel{height:270px;min-height:270px;margin:18px 0;padding-bottom:36px}
+ html:not(.dk) .hero-slide h1{font-size:clamp(35px,8.8vw,48px);line-height:1.02;letter-spacing:-.04em;margin-bottom:12px}
+ html:not(.dk) .hero-slide p{font-size:15px;line-height:1.5}
+ html:not(.dk) .hero-summary{font-size:14px;line-height:1.55;padding:12px 14px}
+ html:not(.dk) .hero-foot{margin-top:26px;gap:16px}
+ .wrap,.container{width:100%;padding-left:0;padding-right:0}
+ .ba-slider{max-width:100%}iframe{width:100%;max-width:100%}
+ .actions,.hero .actions{gap:10px;flex-wrap:wrap}.actions .btn,.hero .actions .btn{min-height:44px}
+}
+@media(max-width:480px){html:not(.dk) .hero{padding-top:108px;padding-bottom:34px}html:not(.dk) .hero-carousel{height:250px;min-height:250px}html:not(.dk) .hero-slide h1{font-size:clamp(32px,8.8vw,40px)}html:not(.dk) .hero-summary{font-size:13.5px}.modal,.modal-content{max-width:100%;width:100%}.form-input,input,select,textarea{min-width:0}.cookie-banner,.valmex-consent{left:10px;right:10px;max-width:calc(100% - 20px)}}
+@media(prefers-reduced-motion:reduce){.hero-bg,.hero-slide,.hero-dots button{transition:none!important;animation:none!important}}

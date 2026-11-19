@@ -54,12 +54,12 @@ button:disabled{opacity:.55;cursor:wait}
  .head .btn{width:100%}.toolbar{padding:10px}.toolbar input,.toolbar select{min-width:100%;flex-basis:100%}
  .formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.modal{padding:17px}
 }
-</style>
+a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;height:38px;border:1px solid #e5e7eb;border-radius:11px;text-decoration:none;font-size:20px;font-weight:700;color:#252a33;background:#fff}a[href="dashboard.html"]:hover{border-color:#e30613;color:#e30613}</style>
 </head>
 <body>
 <header class="top">
   <div class="brand">VAL<span>MEX</span> CRM</div>
-  <a href="dashboard.html">← Înapoi la Dashboard</a>
+  
 </header>
 
 <main class="wrap">
@@ -343,5 +343,6 @@ db.auth.onAuthStateChange((event,session)=>{
 });
 if (storage) initialize();
 </script>
+<script src="components/persistent-nav.js"></script>
 </body>
 </html>

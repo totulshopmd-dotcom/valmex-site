@@ -19,10 +19,10 @@
 .note{padding:11px;background:#fff6df;border-radius:8px;color:#765500;font-size:13px;line-height:1.5;margin-top:12px}.activity-status{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:9px;background:#fafafa;font-size:13px;line-height:1.5}.activity-status b{display:block;margin-bottom:4px}.activity-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.feedback{font-size:13px;min-height:20px;margin-top:10px;color:#555}.activity-status{margin-top:14px;padding:13px;border:1px solid var(--line);border-radius:9px;background:#fafafa;font-size:13px;line-height:1.5}.activity-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
 @media(max-width:480px){.wrap{padding:14px 10px}.panel,.stat{padding:12px}.top{padding:13px}.btn{padding:11px 12px}}
-</style>
+a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;height:38px;border:1px solid #e5e7eb;border-radius:11px;text-decoration:none;font-size:20px;font-weight:700;color:#252a33;background:#fff}a[href="dashboard.html"]:hover{border-color:#e30613;color:#e30613}</style>
 </head>
 <body>
-<header class="top"><div class="brand">VAL<span>MEX</span> CRM</div><a href="dashboard.html">← Înapoi la Dashboard</a></header>
+<header class="top"><div class="brand">VAL<span>MEX</span> CRM</div></header>
 <main class="wrap">
  <div class="head"><div><h1>Pontaj</h1><div class="muted">Evidența timpului efectiv lucrat</div></div><button class="btn light" id="reload">Reîncarcă</button></div>
  <div class="feedback" id="feedback">Se verifică autentificarea...</div>
@@ -277,4 +277,5 @@ setInterval(()=>{if(active){updateClock();renderMain()}},1000);
 db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)location.replace("index.html")});
 refresh().catch(e=>{console.error(e);say("Eroare la încărcarea pontajului: "+e.message)});
 </script>
+<script src="components/persistent-nav.js"></script>
 </body></html>

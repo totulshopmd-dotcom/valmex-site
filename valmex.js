@@ -2,86 +2,6 @@
 (function(){
   'use strict';
 
-  /* ---- Ofertă lunii — countdown (expiră la sfârșitul lunii curente) ---- */
-  (function(){
-    const els = document.querySelectorAll('[data-countdown]');
-    if(!els.length) return;
-    function endOfMonth(){
-      const now = new Date();
-      return new Date(now.getFullYear(), now.getMonth()+1, 1, 0,0,0);
-    }
-    const target = endOfMonth();
-    function tick(){
-      const diff = target - new Date();
-      if(diff<=0){ els.forEach(el=>el.textContent='—'); return; }
-      const d = Math.floor(diff/86400000);
-      const h = Math.floor((diff%86400000)/3600000);
-      const m = Math.floor((diff%3600000)/60000);
-      els.forEach(el=>{ el.textContent = d+'z '+h+'h '+m+'m'; });
-    }
-    tick();
-    setInterval(tick, 60000);
-  })();
-
-  /* ---- Exit-intent offer modal ---- */
-  (function(){
-    const exitModal = document.getElementById('exitModal');
-    if(!exitModal) return;
-    let shown = false;
-    function showExit(){
-      if(shown) return;
-      try{ if(sessionStorage.getItem('valmexExitShown')) return; }catch(e){}
-      shown = true;
-      try{ sessionStorage.setItem('valmexExitShown','1'); }catch(e){}
-      exitModal.classList.add('active');
-      document.body.style.overflow='hidden';
-    }
-    document.addEventListener('mouseout', e=>{
-      if(!e.relatedTarget && e.clientY <= 0) showExit();
-    });
-    let idleTimer = setTimeout(showExit, 45000);
-    ['scroll','keydown','click'].forEach(ev=>document.addEventListener(ev, ()=>{}, {passive:true}));
-    const exitClose = document.getElementById('closeExitModal');
-    if(exitClose){
-      exitClose.addEventListener('click', ()=>{
-        exitModal.classList.remove('active');
-        document.body.style.overflow='';
-      });
-    }
-    exitModal.addEventListener('click', e=>{
-      if(e.target===exitModal){ exitModal.classList.remove('active'); document.body.style.overflow=''; }
-    });
-    const exitBtn = document.getElementById('sendExitBtn');
-    const exitForm = document.getElementById('exitForm');
-    async function submitExit(){
-        const name = document.getElementById('exitName').value.trim();
-        const phone = document.getElementById('exitPhone').value.trim();
-        if(!name||!phone){ alert('Completează câmpurile.'); return; }
-        exitBtn.disabled = true; exitBtn.textContent='Se trimite...';
-        const query = 'https://script.google.com/macros/s/AKfycbyrmwWAe39mXcZYXrlW-MRnmHne70Ak64iFTB4lNLAKrAZVG8TI_eHQOkH0-cVeqxijbg/exec' + '?name=' + encodeURIComponent(name) + '&phone=' + encodeURIComponent(phone) + '&city=' + encodeURIComponent('-') + '&product=' + encodeURIComponent('VALMEX | Ofertă Exit-Intent -5%') + '&price=' + encodeURIComponent('-') + '&t=' + Date.now();
-        try{
-          await fetch(query,{method:'GET',cache:'no-store'});
-          const status = document.getElementById('exitStatus');
-          if(status) status.style.display='block';
-          document.getElementById('exitName').value='';
-          document.getElementById('exitPhone').value='';
-          setTimeout(()=>{
-            exitModal.classList.remove('active');
-            document.body.style.overflow='';
-            if(status) status.style.display='none';
-          },1800);
-        }catch(e){ alert('Eroare la trimitere.'); }
-        exitBtn.disabled=false; exitBtn.textContent='Vreau Discountul';
-    }
-    if(exitBtn){
-      if(exitForm){
-        exitForm.addEventListener('submit', function(e){ e.preventDefault(); submitExit(); });
-      } else {
-        exitBtn.addEventListener('click', function(e){ e.preventDefault(); submitExit(); });
-      }
-    }
-  })();
-
   /* ---- Before/After sliders ---- */
   document.querySelectorAll('.ba-slider').forEach(slider=>{
     const before = slider.querySelector('.ba-before');
@@ -164,13 +84,7 @@
     banner.querySelector('.cookie-decline').addEventListener('click', ()=> setConsent('declined'));
   })();
 
-  const intro = document.getElementById('introScreen');
-  if(intro && !sessionStorage.getItem('valmexIntroShown')){
-    sessionStorage.setItem('valmexIntroShown','1');
-    setTimeout(()=>{ intro.classList.add('hide'); },2200);
-  } else if(intro){
-    intro.style.display='none';
-  }
+  // REV13: fără ecran introductiv; pagina se afișează imediat.
 
   const header = document.getElementById('mainHeader');
   if(header){

@@ -37,10 +37,10 @@ th{background:#fafafa;color:#666;font-size:11px;text-transform:uppercase;letter-
 .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field label{display:block;font-size:12px;color:#555;margin:0 0 6px}.field.full{grid-column:1/-1}
 .formactions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}button:disabled{opacity:.55;cursor:wait}
 @media(max-width:650px){.top{padding:0 15px}.wrap{padding:19px 12px}.head{align-items:flex-start;flex-direction:column}.head .btn{width:100%}.toolbar{padding:10px}.toolbar input,.toolbar select{min-width:100%;flex-basis:100%}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.modal{padding:17px}}
-</style>
+a[href="dashboard.html"]{display:inline-grid;place-items:center;width:38px;height:38px;border:1px solid #e5e7eb;border-radius:11px;text-decoration:none;font-size:20px;font-weight:700;color:#252a33;background:#fff}a[href="dashboard.html"]:hover{border-color:#e30613;color:#e30613}</style>
 </head>
 <body>
-<header class="top"><div class="brand">VAL<span>MEX</span> CRM</div><a href="dashboard.html">← Înapoi la Dashboard</a></header>
+<header class="top"><div class="brand">VAL<span>MEX</span> CRM</div></header>
 <main class="wrap">
   <div class="head"><div><h1>Proiecte</h1><div class="sub">Dosare individuale de lucrări, asociate clienților VALMEX</div></div><button class="btn primary" id="addBtn">＋ Adaugă proiect</button></div>
   <div class="toolbar">
@@ -215,5 +215,6 @@ $("search").addEventListener("input",renderProjects);$("statusFilter").addEventL
 db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)location.replace("index.html");});
 if(storage)initialize();
 </script>
+<script src="components/persistent-nav.js"></script>
 </body>
 </html>
