@@ -202,13 +202,13 @@ async function connect(){
   ]);
   sha=result.sha;db=merge(result.content?JSON.parse(result.content):null);
   connected=true;el("status").textContent="Repository · main";el("status").classList.add("on");
-  el("authStatus").textContent="Conectat";el("authStatus").classList.add("on");
-  el("adminIdentity").textContent="Administrator autentificat";
+  if(el("authStatus"))el("authStatus").textContent="Conectat";if(el("authStatus"))el("authStatus").classList.add("on");
+  if(el("adminIdentity"))el("adminIdentity").textContent="Administrator autentificat";
   render();go("prices");
   loadLib().then(()=>{if(connected)renderLib()}).catch(e=>console.warn("CMS image library:",e));
  }catch(e){
   connected=false;el("status").textContent="Eroare conexiune";
-  el("authStatus").textContent="Neconectat";el("adminIdentity").textContent=e.message;
+  if(el("authStatus"))el("authStatus").textContent="Neconectat";if(el("adminIdentity"))el("adminIdentity").textContent=e.message;
   toast("CMS: "+e.message);console.error("CMS connect:",e);
  }
 }
@@ -352,11 +352,11 @@ async function initAdmin(){
   el("status").textContent="Se conectează...";
   const {data:{session:current},error}=await authClient.auth.getSession();
   if(error)throw error;
-  if(!current){el("authStatus").textContent="Neautentificat";el("adminIdentity").textContent="Autentifică-te în CRM pentru a continua.";el("status").textContent="Neconectat";return}
+  if(!current){if(el("authStatus"))el("authStatus").textContent="Neautentificat";if(el("adminIdentity"))el("adminIdentity").textContent="Autentifică-te în CRM pentru a continua.";el("status").textContent="Neconectat";return}
   session=current;await connect();
- }catch(e){el("authStatus").textContent="Eroare";el("adminIdentity").textContent=e.message;el("status").textContent="Eroare conexiune";toast("CMS: "+e.message)}
+ }catch(e){if(el("authStatus"))el("authStatus").textContent="Eroare";if(el("adminIdentity"))el("adminIdentity").textContent=e.message;el("status").textContent="Eroare conexiune";toast("CMS: "+e.message)}
  finally{adminInitRunning=false}
 }
-authClient.auth.onAuthStateChange((event,next)=>{session=next;if(!next){connected=false;profile=null;el("status").textContent="Sesiune închisă";el("authStatus").textContent="Neautentificat"}else if(event==="INITIAL_SESSION"||event==="SIGNED_IN"||event==="TOKEN_REFRESHED"){initAdmin()}});
+authClient.auth.onAuthStateChange((event,next)=>{session=next;if(!next){connected=false;profile=null;el("status").textContent="Sesiune închisă";if(el("authStatus"))el("authStatus").textContent="Neautentificat"}else if(event==="INITIAL_SESSION"||event==="SIGNED_IN"||event==="TOKEN_REFRESHED"){initAdmin()}});
 initAdmin();
 </script></body></html>
