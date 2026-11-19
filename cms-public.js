@@ -20,10 +20,33 @@
     }
     return v;
   }
+  function decoratePrice(el,db) {
+    var key=el.getAttribute('data-cms').slice(7), cfg=(db.priceDisplay||{})[key]||{}, base=Number((db.prices||{})[key]);
+    if(!isFinite(base)||base<=0)return;
+    var mode=cfg.mode||'from', amount=Number(cfg.discountValue), final=base, active=mode==='promo';
+    var today=new Date(), y=today.getFullYear(), m=String(today.getMonth()+1).padStart(2,'0'), d=String(today.getDate()).padStart(2,'0'), date=y+'-'+m+'-'+d;
+    if(cfg.start&&date<cfg.start)active=false;
+    if(cfg.end&&date>cfg.end)active=false;
+    if(active){
+      if(cfg.discountType==='percent')final=base*(1-amount/100);
+      else if(cfg.discountType==='amount')final=base-amount;
+      else final=amount;
+      active=cfg.discountValue!==''&&cfg.discountValue!=null&&isFinite(final)&&final>=0&&final<base;
+    }
+    var prior=el.parentNode.querySelector('[data-valmex-old-price="'+key+'"]');
+    if(prior)prior.remove();
+    el.textContent=active?new Intl.NumberFormat('ro-MD',{maximumFractionDigits:2}).format(final):String(base);
+    if(active){
+      var old=document.createElement('span');old.setAttribute('data-valmex-old-price',key);
+      old.style.cssText='text-decoration:line-through;opacity:.65;margin-left:.5em;font-size:.72em;white-space:nowrap';
+      old.textContent=new Intl.NumberFormat('ro-MD',{maximumFractionDigits:2}).format(base);
+      el.insertAdjacentElement('afterend',old);
+    }
+  }
   function apply(db) {
     document.querySelectorAll('[data-cms]').forEach(function (el) {
       var v = value(el.getAttribute('data-cms'), get(db, el.getAttribute('data-cms')));
-      if (v !== null) el.textContent = fmt(v, el.getAttribute('data-cms-fmt'));
+      if (v !== null) { el.textContent = fmt(v, el.getAttribute('data-cms-fmt')); if(el.getAttribute('data-cms').indexOf('prices.')===0) decoratePrice(el,db); }
     });
     document.querySelectorAll('[data-cms-href]').forEach(function (el) {
       var spec = el.getAttribute('data-cms-href'), i = spec.indexOf(':'), kind = spec.slice(0, i), path = spec.slice(i + 1);
