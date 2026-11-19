@@ -186,12 +186,32 @@ function go(id){if(!connected){toast("Se restabilește conexiunea cu repository-
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.page));el("menu").onclick=()=>{const open=el("sidebar").classList.toggle("open");el("menu").setAttribute("aria-expanded",String(open))};
 el("backBtn").onclick=()=>{if(history.length>1)history.back();else location.href="dashboard.html"};
 async function load(){try{const f=await gh("/contents/"+FILE+"?ref="+BR);sha=f.sha;db=merge(JSON.parse(ub64(f.content)))}catch(e){if(e.status!==404)throw e;sha=null;db=merge(null)}}
-async function connect(){try{const {data:{session:current},error}=await authClient.auth.getSession();if(error||!current)throw new Error("Nu există o sesiune CRM activă. Autentifică-te în CRM.");session=current;
- const {data:p,error:pe}=await authClient.from("profiles").select("full_name,role,active").eq("id",session.user.id).maybeSingle();
- if(pe||!p||!["administrator","admin"].includes(String(p.role||"").toLowerCase())||p.active!==true)throw new Error("Acces permis doar administratorului activ.");profile=p;
- el("adminIdentity").textContent=(p.full_name||"Administrator")+" · administrator activ";el("authStatus").textContent="Autentificat";el("authStatus").classList.add("on");
- await load();connected=true;el("status").textContent="Repository · main";el("status").classList.add("on");render();go("prices");loadLib().then(()=>{if(connected)renderLib()}).catch(e=>console.warn("CMS image library:",e));
- }catch(e){connected=false;el("status").textContent="Deconectat";el("authStatus").textContent="Acces indisponibil";toast("Conectare eșuată: "+e.message)}}
+async function connect(){
+ connected=false;el("status").textContent="Verificare sesiune...";
+ try{
+  const {data:{session:current},error}=await Promise.race([
+   authClient.auth.getSession(),
+   new Promise((_,reject)=>setTimeout(()=>reject(new Error("Timeout la verificarea sesiunii Supabase (15 secunde).")),15000))
+  ]);
+  if(error||!current)throw new Error("Nu există o sesiune CRM activă. Ieși și autentifică-te din nou.");
+  session=current;
+  el("status").textContent="Verificare administrator și GitHub...";
+  const result=await Promise.race([
+   bridge("read",{path:FILE}),
+   new Promise((_,reject)=>setTimeout(()=>reject(new Error("Timeout la GitHub Bridge (20 secunde).")),20000))
+  ]);
+  sha=result.sha;db=merge(result.content?JSON.parse(result.content):null);
+  connected=true;el("status").textContent="Repository · main";el("status").classList.add("on");
+  el("authStatus").textContent="Conectat";el("authStatus").classList.add("on");
+  el("adminIdentity").textContent="Administrator autentificat";
+  render();go("prices");
+  loadLib().then(()=>{if(connected)renderLib()}).catch(e=>console.warn("CMS image library:",e));
+ }catch(e){
+  connected=false;el("status").textContent="Eroare conexiune";
+  el("authStatus").textContent="Neconectat";el("adminIdentity").textContent=e.message;
+  toast("CMS: "+e.message);console.error("CMS connect:",e);
+ }
+}
 function render(){PM.forEach(([i,k])=>set(i,db.prices[k]));Object.entries(TM).forEach(([i,k])=>set(i,db.pages.home[k]));Object.entries(CM).forEach(([i,k])=>set(i,db.site.contact[k]))}
 async function save(msg){try{db.meta.updated=new Date().toISOString();const b={message:msg,content:b64(JSON.stringify(db,null,2)),branch:BR};if(sha)b.sha=sha;const r=await gh("/contents/"+FILE,{method:"PUT",body:JSON.stringify(b)});sha=r.content.sha;toast("Salvat în ramura "+BR+".");return true}
  catch(e){if(e.status===409||e.status===422){if(confirm("Conflict de versiune: fișierul a fost modificat în altă parte. Reîncarc versiunea curentă? Modificările nefăcute pe server se pierd din formular.")){try{await load();render();toast("Date reîncărcate. Reia modificarea.")}catch(x){toast("Eroare: "+x.message)}}}else toast("Eroare la salvare: "+e.message);return false}}
@@ -326,7 +346,17 @@ async function applySeo(i){const p=db.seo.pages[i];if(!p.title&&!p.description&&
 async function applySeoAll(){const a=db.seo.pages.filter(p=>p.title||p.description||p.keywords||p.ogTitle||p.ogDescription||p.ogImage);if(!a.length){toast("Nu există valori SEO completate.");return}if(!confirm("Scrii valorile SEO în "+a.length+" fișiere HTML (ramura "+BR+")?"))return;let ok=0,same=0;const bad=[];
  for(const p of a){try{(await seoOne(p))?ok++:same++}catch(e){bad.push(p.path)}}toast(ok+" actualizate, "+same+" neschimbate"+(bad.length?", erori: "+bad.join(", "):"")+".")}
 let adminInitRunning=false;
-async function initAdmin(){if(adminInitRunning)return;adminInitRunning=true;try{el("status").textContent="Se conectează...";const {data:{session:current},error}=await authClient.auth.getSession();if(error||!current){el("authStatus").textContent="Neautentificat";el("adminIdentity").textContent="Autentifică-te în CRM pentru a continua.";el("status").textContent="Neconectat";return}session=current;const {data:p,error:pe}=await authClient.from("profiles").select("full_name,role,active").eq("id",session.user.id).maybeSingle();if(pe||!p||!["administrator","admin"].includes(String(p.role||"").toLowerCase())||p.active!==true){el("authStatus").textContent="Acces refuzat";el("adminIdentity").textContent="Este necesar un administrator activ.";el("status").textContent="Acces refuzat";return}profile=p;el("authStatus").textContent="Autentificat";el("authStatus").classList.add("on");el("adminIdentity").textContent=(p.full_name||"Administrator")+" · administrator activ";await connect()}catch(e){el("authStatus").textContent="Eroare";el("adminIdentity").textContent=e.message;el("status").textContent="Eroare conexiune";toast("CMS: "+e.message)}finally{adminInitRunning=false}}
+async function initAdmin(){
+ if(adminInitRunning)return;adminInitRunning=true;
+ try{
+  el("status").textContent="Se conectează...";
+  const {data:{session:current},error}=await authClient.auth.getSession();
+  if(error)throw error;
+  if(!current){el("authStatus").textContent="Neautentificat";el("adminIdentity").textContent="Autentifică-te în CRM pentru a continua.";el("status").textContent="Neconectat";return}
+  session=current;await connect();
+ }catch(e){el("authStatus").textContent="Eroare";el("adminIdentity").textContent=e.message;el("status").textContent="Eroare conexiune";toast("CMS: "+e.message)}
+ finally{adminInitRunning=false}
+}
 authClient.auth.onAuthStateChange((event,next)=>{session=next;if(!next){connected=false;profile=null;el("status").textContent="Sesiune închisă";el("authStatus").textContent="Neautentificat"}else if(event==="INITIAL_SESSION"||event==="SIGNED_IN"||event==="TOKEN_REFRESHED"){initAdmin()}});
 initAdmin();
 </script></body></html>
