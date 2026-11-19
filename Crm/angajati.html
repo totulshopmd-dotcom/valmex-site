@@ -175,7 +175,8 @@ th{color:#777}.pill{padding:4px 8px;border-radius:20px;background:#eee;font-size
       email:$("email").value.trim(),
       password:$("password").value,
       phone:$("phone").value.trim(),
-      position:$("position").value.trim()
+      position:$("position").value.trim(),
+      permissions:[...document.querySelectorAll("#employeeForm input[name=permissions]:checked")].map(x=>x.value)
     };
     if(!payload.full_name||!payload.email||payload.password.length<8){
       showMessage("Completează numele, emailul și o parolă de minimum 8 caractere.");return;
