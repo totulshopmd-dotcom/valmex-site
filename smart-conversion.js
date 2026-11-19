@@ -133,7 +133,8 @@
   }
   function chatInviteCheck() {
     if (!Consent.ok() || chatInviteShown || !state || !cfg || shownNow || document.hidden) return;
-    if (Date.now() - T0 < WARMUP || Store.sessionCount() >= (cfg.maxPerSession || 1)) return;
+    if (Date.now() - T0 < WARMUP) return;
+    try { if (sessionStorage.getItem(CHAT_KEY + ':shown') === '1') return; } catch (e) {}
     if (document.querySelector('.modal.active,.cookie-banner.show,.lightbox.active,.product-detail-modal.active,#vm-chat-panel.vm-open,.vsc.on')) return;
     var active = document.activeElement;
     if (active && /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) return;
@@ -143,7 +144,7 @@
     var saved = {};
     try { saved = JSON.parse(localStorage.getItem(CHAT_KEY) || '{}') || {}; } catch (e) {}
     if (saved[topic] && Date.now() - saved[topic] < 30 * DAY) return;
-    chatInviteShown = true; Store.bumpSession();
+    chatInviteShown = true; try { sessionStorage.setItem(CHAT_KEY + ':shown','1'); } catch (e) {}
     var copy = CHAT_COPY[topic], node = document.createElement('div');
     node.className = 'vsc-chat-invite';
     node.setAttribute('role','status'); node.setAttribute('aria-live','polite');
@@ -180,7 +181,7 @@
       this.el.querySelector('.vsc-no').onclick = this.el.querySelector('.vsc-x').onclick = function () { self.dismiss(p); };
       document.dispatchEvent(new CustomEvent('valmex:sc-shown', { detail: p.key }));
     },
-    close: function () { var e = this.el; if (e) { e.classList.remove('on'); setTimeout(function () { e.remove(); }, 300); } this.el = null; },
+    close: function () { var e = this.el; if (e) { e.classList.remove('on'); setTimeout(function () { e.remove(); }, 300); } this.el = null; shownNow = null; },
     dismiss: function (p) { state.dismissed[p.key] = Date.now(); Store.save(state); this.close(); document.dispatchEvent(new CustomEvent('valmex:sc-dismissed', { detail: p.key })); },
     yes: function (p) {
       state.done[p.key] = Date.now(); Store.save(state);
