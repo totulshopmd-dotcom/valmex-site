@@ -60,3 +60,7 @@ h1,h2,h3,p{overflow-wrap:break-word}
 @media(max-width:380px){
   #mainHeader .brand{font-size:39px!important;transform:scaleX(1.10)}
 }
+
+
+/* Header simplificat: eliminam butonul Solicita oferta din bara de navigare */
+#mainHeader .header-cta{display:none!important}
