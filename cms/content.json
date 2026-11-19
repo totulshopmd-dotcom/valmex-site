@@ -83,13 +83,51 @@
   },
   "meta": {
     "version": 1,
-    "updated": "2026-11-19T22:16:20.778Z"
+    "updated": "2026-11-19T22:24:49.533Z"
   },
   "prices": {
     "roof": 1150,
     "tile": 135,
     "facade": 850,
     "amk": ""
+  },
+  "priceDisplay": {
+    "roof": {
+      "mode": "from",
+      "showFrom": false,
+      "discountType": "fixed",
+      "discountValue": "",
+      "start": "",
+      "end": "",
+      "label": "Reducere"
+    },
+    "tile": {
+      "mode": "from",
+      "showFrom": true,
+      "discountType": "fixed",
+      "discountValue": "",
+      "start": "",
+      "end": "",
+      "label": "Reducere"
+    },
+    "facade": {
+      "mode": "from",
+      "showFrom": true,
+      "discountType": "fixed",
+      "discountValue": "",
+      "start": "",
+      "end": "",
+      "label": "Reducere"
+    },
+    "amk": {
+      "mode": "from",
+      "showFrom": false,
+      "discountType": "fixed",
+      "discountValue": "",
+      "start": "",
+      "end": "",
+      "label": "Reducere"
+    }
   },
   "site": {
     "contact": {
@@ -110,20 +148,6 @@
       "roof": "",
       "facade": "",
       "button": ""
-    }
-  },
-  "priceDisplay": {
-    "roof": {
-      "mode": "from"
-    },
-    "tile": {
-      "mode": "from"
-    },
-    "facade": {
-      "mode": "from"
-    },
-    "amk": {
-      "mode": "from"
     }
   }
 }
