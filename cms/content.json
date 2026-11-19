@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "version": 1,
+    "updated": ""
+  },
+  "prices": {
+    "roof": 950,
+    "tile": 136,
+    "facade": 850,
+    "amk": ""
+  },
+  "site": {
+    "contact": {
+      "phone": "+37378026212",
+      "whats": "+37378026212",
+      "email": "Valmex.md@gmail.com",
+      "web": "www.valmex.md",
+      "hours": "L–S 09:00–18:00",
+      "area": "Republica Moldova"
+    }
+  },
+  "pages": {
+    "home": {
+      "hero": "",
+      "intro": "",
+      "roofTitle": "",
+      "facadeTitle": "",
+      "roof": "",
+      "facade": "",
+      "button": ""
+    }
+  },
+  "projects": [],
+  "seo": {
+    "siteUrl": "https://valmex.md",
+    "pages": []
+  },
+  "popup": {
+    "enabled": false,
+    "title": "",
+    "message": "",
+    "btn1Text": "",
+    "btn1Link": "",
+    "btn2Text": "",
+    "btn2Link": "",
+    "delay": 5,
+    "pages": "",
+    "categories": "",
+    "maxViews": 1,
+    "pausedUntil": ""
+  },
+  "smart": {
+    "enabled": true,
+    "pausedUntil": "",
+    "maxPerSession": 1,
+    "popups": [
+      {
+        "key": "acoperisuri",
+        "enabled": true,
+        "question": "Doriți să aflați cât ar costa un acoperiș complet pentru casa dumneavoastră?",
+        "yes": "Da",
+        "no": "Nu",
+        "after": "Perfect. Pregătim o ofertă personalizată pentru casa dumneavoastră. Alegeți cum preferați să continuăm.",
+        "cta": "oferta",
+        "ctaLabel": "Cere ofertă",
+        "ctaLink": "",
+        "signals": [
+          "calc",
+          "prices",
+          "return",
+          "time"
+        ],
+        "activeSeconds": 20,
+        "cooldownDays": 30
+      },
+      {
+        "enabled": true,
+        "yes": "Da",
+        "no": "Nu",
+        "cta": "oferta",
+        "ctaLabel": "Cere ofertă",
+        "ctaLink": "",
+        "cooldownDays": 30,
+        "key": "fatade",
+        "question": "Doriți să aflați cât ar costa o fațadă completă pentru casa dumneavoastră?",
+        "after": "Perfect. Pregătim o ofertă personalizată pentru fațada casei dumneavoastră. Alegeți cum preferați să continuăm.",
+        "signals": [
+          "calc",
+          "prices",
+          "return",
+          "time"
+        ],
+        "activeSeconds": 25
+      },
+      {
+        "enabled": true,
+        "yes": "Da",
+        "no": "Nu",
+        "cta": "oferta",
+        "ctaLabel": "Cere ofertă",
+        "ctaLink": "",
+        "cooldownDays": 30,
+        "key": "rate-0",
+        "question": "Doriți să aflați dacă lucrarea dumneavoastră poate fi achitată în rate cu 0% dobândă?",
+        "after": "Perfect. Vă spunem condițiile exacte pentru lucrarea dumneavoastră, înainte de orice decizie. Alegeți cum preferați să continuăm.",
+        "signals": [
+          "rates",
+          "calc",
+          "return"
+        ],
+        "activeSeconds": 25
+      }
+    ]
+  }
+}
