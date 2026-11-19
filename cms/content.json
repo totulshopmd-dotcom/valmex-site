@@ -111,5 +111,19 @@
       "facade": "",
       "button": ""
     }
+  },
+  "priceDisplay": {
+    "roof": {
+      "mode": "from"
+    },
+    "tile": {
+      "mode": "from"
+    },
+    "facade": {
+      "mode": "from"
+    },
+    "amk": {
+      "mode": "from"
+    }
   }
 }
