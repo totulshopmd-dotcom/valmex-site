@@ -1,35 +1,4 @@
 {
-  "meta": {
-    "version": 1,
-    "updated": ""
-  },
-  "prices": {
-    "roof": 950,
-    "tile": 136,
-    "facade": 850,
-    "amk": ""
-  },
-  "site": {
-    "contact": {
-      "phone": "+37378026212",
-      "whats": "+37378026212",
-      "email": "Valmex.md@gmail.com",
-      "web": "www.valmex.md",
-      "hours": "L–S 09:00–18:00",
-      "area": "Republica Moldova"
-    }
-  },
-  "pages": {
-    "home": {
-      "hero": "",
-      "intro": "",
-      "roofTitle": "",
-      "facadeTitle": "",
-      "roof": "",
-      "facade": "",
-      "button": ""
-    }
-  },
   "projects": [],
   "seo": {
     "siteUrl": "https://valmex.md",
@@ -111,5 +80,36 @@
         "activeSeconds": 25
       }
     ]
+  },
+  "meta": {
+    "version": 1,
+    "updated": "2026-11-19T22:04:41.855Z"
+  },
+  "prices": {
+    "roof": 1150,
+    "tile": 135,
+    "facade": 850,
+    "amk": ""
+  },
+  "site": {
+    "contact": {
+      "phone": "+37378026212",
+      "whats": "+37378026212",
+      "email": "Valmex.md@gmail.com",
+      "web": "www.valmex.md",
+      "hours": "L–S 09:00–18:00",
+      "area": "Republica Moldova"
+    }
+  },
+  "pages": {
+    "home": {
+      "hero": "",
+      "intro": "",
+      "roofTitle": "",
+      "facadeTitle": "",
+      "roof": "",
+      "facade": "",
+      "button": ""
+    }
   }
 }
