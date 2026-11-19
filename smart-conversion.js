@@ -135,7 +135,7 @@
     if (!Consent.ok() || chatInviteShown || !state || !cfg || shownNow || document.hidden) return;
     if (Date.now() - T0 < WARMUP) return;
     try { if (sessionStorage.getItem(CHAT_KEY + ':shown') === '1') return; } catch (e) {}
-    if (document.querySelector('.modal.active,.cookie-banner.show,.lightbox.active,.product-detail-modal.active,#vm-chat-panel.vm-open,.vsc.on')) return;
+    if (document.querySelector('.modal.active,.cookie-banner.show,.lightbox.active,.product-detail-modal.active,#vm-chat-panel.vm-open,.vsc.on,#valmex-push-invite')) return;
     var active = document.activeElement;
     if (active && /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) return;
     var topic = chatTopic(); if (!topic) return;
