@@ -45,18 +45,18 @@ h1,h2,h3,p{overflow-wrap:break-word}
   display:inline-flex!important;
   align-items:center;
   flex:0 0 auto;
-  font-size:38px!important;
+  font-size:48px!important;
   line-height:1!important;
   font-weight:950!important;
-  letter-spacing:-.55px!important;
-  transform:scaleX(1.12);
+  letter-spacing:-.7px!important;
+  transform:scaleX(1.16);
   transform-origin:left center;
-  margin-right:34px!important;
+  margin-right:42px!important;
 }
 #mainHeader .brand span{display:inline-block}
 @media(max-width:900px){
-  #mainHeader .brand{font-size:33px!important;letter-spacing:-.4px!important;transform:scaleX(1.10);margin-right:12px!important}
+  #mainHeader .brand{font-size:43px!important;letter-spacing:-.55px!important;transform:scaleX(1.13);margin-right:16px!important}
 }
 @media(max-width:380px){
-  #mainHeader .brand{font-size:30px!important;transform:scaleX(1.06)}
+  #mainHeader .brand{font-size:39px!important;transform:scaleX(1.10)}
 }
