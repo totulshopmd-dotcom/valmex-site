@@ -16,7 +16,7 @@
       '<div class="story-thumbs">' +
       p.images.map((img,i)=>{
         const url = window.resolveImg ? window.resolveImg(img) : img;
-        return '<button class="story-thumb' + (i===0?' active':'') + '" data-src="' + url + '" style="background-image:url(\'' + url + '\')" aria-label="Imagine ' + (i+1) + '"></button>';
+        return '<button type="button" class="story-thumb' + (i===0?' active':'') + '" data-src="' + url + '" aria-label="Imagine ' + (i+1) + '"><img src="' + url + '" alt="' + p.title + ' — imagine ' + (i+1) + '" loading="lazy" decoding="async" onerror="this.closest(\'.story-thumb\').remove()"></button>';
       }).join('') +
       '</div>'
     ) : '';
