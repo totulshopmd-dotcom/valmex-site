@@ -18,6 +18,12 @@ const css=`
 #vm-chat-close{border:0;background:transparent;color:#fff;font-size:24px;cursor:pointer}
 #vm-chat-content{padding:16px;overflow:auto;flex:1;background:#f5f6f8}
 #vm-chat-start p{font-size:13px;color:#59616d;line-height:1.5;margin:0 0 13px}
+#vm-chat-options{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0 0 12px}
+#vm-chat-options button{border:1px solid #dfe2e7;background:#fff;color:#303640;border-radius:9px;padding:11px 9px;text-align:left;font-size:12px;font-weight:700;line-height:1.3;min-height:48px}
+#vm-chat-options button:hover{border-color:#d83232;background:#fffafa}
+#vm-chat-first-message{width:100%;min-height:66px;resize:vertical;border:1px solid #d8dce2;border-radius:8px;padding:10px;font:13px Arial;box-sizing:border-box;margin:0 0 9px}
+#vm-chat-start button#vm-chat-begin{width:100%}
+
 #vm-chat-start input:not([type=checkbox]){width:100%;padding:11px;border:1px solid #d8dce2;border-radius:8px;margin:0 0 9px;font-size:14px;box-sizing:border-box}
 #vm-chat-consent{font-size:11px;color:#68717d;display:flex;gap:7px;align-items:flex-start;margin:4px 0 13px;line-height:1.4}
 #vm-chat-consent input{margin:2px 0 0}
@@ -39,10 +45,16 @@ const root=document.createElement('div');root.id='valmex-chat-root';
 root.innerHTML=`
 <section id="vm-chat-panel" aria-label="Chat VALMEX">
 <header id="vm-chat-head"><div><strong>Discută cu VALMEX</strong><small>Asistent virtual · Consultant VALMEX</small></div><button id="vm-chat-close" aria-label="Închide">×</button></header>
-<div id="vm-chat-content"><div id="vm-chat-start"><p>Scrie întrebarea ta. Poți începe conversația fără să introduci date de contact.</p>
-<input id="vm-chat-name" maxlength="120" placeholder="Nume (opțional)" autocomplete="name">
-<input id="vm-chat-phone" maxlength="40" placeholder="Telefon (opțional)" autocomplete="tel">
-<label id="vm-chat-consent"><input id="vm-chat-accept" type="checkbox"><span>Sunt de acord să transmit numele și/sau telefonul introduse pentru gestionarea solicitării. Datele nu sunt trimise dacă această căsuță rămâne nebifată.</span></label>
+<div id="vm-chat-content"><div id="vm-chat-start"><p>Alegeți serviciul care vă interesează sau scrieți direct întrebarea. Datele de contact le vom solicita doar dacă sunt necesare pentru solicitare.</p>
+<div id="vm-chat-options">
+<button type="button" data-vm-service="Acoperiș la cheie">Acoperiș la cheie</button>
+<button type="button" data-vm-service="Țiglă metalică și materiale">Țiglă metalică și materiale</button>
+<button type="button" data-vm-service="Fațade">Fațade</button>
+<button type="button" data-vm-service="Rate 0%">Rate 0%</button>
+<button type="button" data-vm-service="Consultație">Consultație</button>
+<button type="button" data-vm-service="Alte întrebări">Alte întrebări</button>
+</div>
+<textarea id="vm-chat-first-message" maxlength="4000" placeholder="Sau scrieți întrebarea aici…"></textarea>
 <button id="vm-chat-begin">Începe conversația</button></div><div id="vm-chat-log" hidden></div></div>
 <div id="vm-chat-error" role="status" aria-live="polite"></div><div id="vm-chat-status">VALMEX · Republica Moldova</div>
 <div id="vm-chat-compose" hidden><textarea id="vm-chat-text" maxlength="4000" placeholder="Scrie mesajul…"></textarea><button id="vm-chat-send" aria-label="Trimite mesaj">➤</button></div>
@@ -57,11 +69,11 @@ function showChat(){$('vm-chat-start').hidden=true;$('vm-chat-log').hidden=false
 function escapeHTML(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function senderLabel(t){return t==='visitor'?'Tu':t==='ai'?'Asistent VALMEX':t==='operator'?'Consultant VALMEX':'VALMEX'}
 async function history(){if(!token)return;const result=await api('visitor_history',{session_token:token});showChat();const messages=result.messages||[];if(messages.length===lastCount)return;lastCount=messages.length;$('vm-chat-log').innerHTML=messages.map(m=>`<div class="vm-chat-msg ${m.sender_type==='visitor'?'vm-me':m.sender_type==='ai'?'vm-ai':''}">${escapeHTML(m.body)}<small>${senderLabel(m.sender_type)} · ${new Date(m.created_at).toLocaleTimeString('ro-MD',{hour:'2-digit',minute:'2-digit'})}</small></div>`).join('');$('vm-chat-content').scrollTop=$('vm-chat-content').scrollHeight}
-async function begin(){if(busy)return;const name=$('vm-chat-name').value.trim(),phone=$('vm-chat-phone').value.trim(),consent=$('vm-chat-accept').checked;if((name||phone)&&!consent){showError('Bifează acordul pentru a transmite datele de contact sau șterge câmpurile și continuă fără ele.');return}busy=true;$('vm-chat-begin').disabled=true;clearError();try{const result=await api('start',{name:consent?name:'',phone:consent?phone:'',consent});token=result.session_token;save();if(pendingContext&&pendingContext.message){const first=pendingContext.message;pendingContext=null;await api('visitor_send',{session_token:token,message:first});}await history();startPolling();$('vm-chat-text').focus()}catch(e){showError(e.message)}finally{busy=false;$('vm-chat-begin').disabled=false}}
+async function begin(initialMessage=''){if(busy)return;const first=String(initialMessage||$('vm-chat-first-message').value||'').trim();busy=true;$('vm-chat-begin').disabled=true;clearError();try{const result=await api('start');token=result.session_token;save();if(pendingContext&&pendingContext.message){const contextMessage=pendingContext.message;pendingContext=null;await api('visitor_send',{session_token:token,message:contextMessage});}if(first)await api('visitor_send',{session_token:token,message:first});await history();startPolling();$('vm-chat-text').focus()}catch(e){showError(e.message)}finally{busy=false;$('vm-chat-begin').disabled=false}}
 async function send(){const input=$('vm-chat-text'),message=input.value.trim();if(!message||busy||!token)return;busy=true;$('vm-chat-send').disabled=true;$('vm-chat-status').textContent='Se transmite mesajul…';clearError();try{const result=await api('visitor_send',{session_token:token,message});input.value='';lastCount=-1;await history();$('vm-chat-status').textContent=result.ai_error?'Mesaj trimis. Un consultant VALMEX poate reveni în conversație.':'VALMEX · Asistent virtual activ'}catch(e){showError(e.message);$('vm-chat-status').textContent='VALMEX · Republica Moldova'}finally{busy=false;$('vm-chat-send').disabled=false;input.focus()}}
 function startPolling(){stopPolling();poll=setInterval(async()=>{if(!token||!$('vm-chat-panel').classList.contains('vm-open'))return;try{lastCount=-1;await history()}catch(e){stopPolling();showError('Conexiunea a fost întreruptă. Redeschide chatul.')}},4500)}
 function stopPolling(){if(poll){clearInterval(poll);poll=null}}
 $('vm-chat-launch').onclick=async()=>{$('vm-chat-panel').classList.add('vm-open');$('vm-chat-launch').style.display='none';clearError();if(restore()){try{await history();startPolling()}catch{localStorage.removeItem(STORE);token='';$('vm-chat-start').hidden=false;$('vm-chat-log').hidden=true;$('vm-chat-compose').hidden=true;showError('Sesiunea anterioară a expirat. Începe o conversație nouă.')}}};
 $('vm-chat-close').onclick=()=>{$('vm-chat-panel').classList.remove('vm-open');$('vm-chat-launch').style.display='block';stopPolling()};
-$('vm-chat-begin').onclick=begin;$('vm-chat-send').onclick=send;$('vm-chat-text').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}};
+$('vm-chat-begin').onclick=()=>begin();document.querySelectorAll('[data-vm-service]').forEach(button=>button.onclick=()=>begin(button.getAttribute('data-vm-service')));$('vm-chat-first-message').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();begin()}};$('vm-chat-send').onclick=send;$('vm-chat-text').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}};
 })();
