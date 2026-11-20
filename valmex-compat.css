@@ -216,3 +216,6 @@ html:not(.dk) footer.site-footer .footer-title{color:#ff3340!important}
 html:not(.dk) footer.site-footer .footer-links a:hover,
 html:not(.dk) footer.site-footer .footer-bottom a:hover{color:#fff!important}
 html:not(.dk) footer.site-footer .footer-bottom{border-top:1px solid #343740!important}
+
+/* Project gallery thumbnails: real lazy-loaded images */
+.story-thumb{overflow:hidden;display:block;background:#e9e9e9}.story-thumb img{display:block;width:100%;height:100%;object-fit:cover}
