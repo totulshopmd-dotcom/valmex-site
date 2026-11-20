@@ -38,22 +38,23 @@ button:hover{border-color:var(--k)}#bPl{flex:1;background:var(--k);color:#fff;bo
 
 body{font-family:Inter,Arial,Helvetica,sans-serif}
 #gp{position:fixed;top:0;left:0;height:3px;width:0;background:var(--r);box-shadow:0 0 14px #e30613;z-index:11}
-#hdr{position:fixed;top:3px;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:12px 5.5%;background:rgba(255,255,255,.93);border-bottom:1px solid rgba(13,13,16,.1);backdrop-filter:blur(10px)}
-#brand{position:static;font-weight:950;font-size:26px;letter-spacing:-1.8px;color:#0d0d10;line-height:1}#brand b{color:var(--r)}#brand i{font-style:normal;font-size:13px;color:#5d6068;letter-spacing:0;margin-left:2px;font-weight:800}
-.hc{background:var(--r);color:#fff;font-size:12px;font-weight:850;letter-spacing:1px;text-transform:uppercase;padding:12px 20px;text-decoration:none;transition:.25s}.hc:hover{background:#b9000b;transform:translateY(-2px);box-shadow:0 12px 35px #e3061335}
-#panel{background:#09090b;color:#fff;border:0;border-radius:24px;box-shadow:inset 0 5px 0 var(--r),0 30px 60px -30px rgba(0,0,0,.55);padding-top:20px}
-#num{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:3px}#num:before{content:"";width:34px;height:2px;background:var(--r)}
-#ttl{font-weight:950;letter-spacing:-1.2px;color:#fff}#txt{color:#c9cad0}#txt b{color:#fff}
+#panel{background:#09090b;color:#fff;border:0;border-radius:20px;box-shadow:inset 0 4px 0 var(--r),0 18px 42px -24px rgba(0,0,0,.65);padding:14px 18px 12px}
+#num{display:flex;align-items:center;gap:9px;font-weight:900;letter-spacing:2.4px}#num:before{content:"";width:26px;height:2px;background:var(--r)}
+#ttl{font-weight:950;letter-spacing:-.8px;color:#fff;font-size:20px;margin:3px 0 4px}
+#txt{color:#c9cad0;font-size:13px;line-height:1.35;min-height:0}
+#txt b{color:#fff}
+#seg{margin:9px 0 0}
 #seg div{background:#ffffff24;border-radius:99px}#seg i{border-radius:99px;box-shadow:0 0 10px #e30613}
-.lb{border-radius:99px;border:1px solid rgba(13,13,16,.14);padding:5px 13px;font-weight:900;color:#0d0d10;box-shadow:0 8px 22px -10px #0007}
+.lb{border-radius:99px;border:1px solid rgba(13,13,16,.14);padding:4px 10px;font-weight:850;font-size:10px;color:#0d0d10;box-shadow:0 8px 22px -10px #0007}
 #intro{background:radial-gradient(circle,rgba(255,255,255,.55),rgba(244,245,247,.94))}
 #intro small{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:3px}#intro small:before{content:"";width:34px;height:2px;background:var(--r)}
 #intro h1{font-weight:950;letter-spacing:-3px}#intro p{color:#5d6068}
 #go{transition:.25s}#go:hover{background:#b9000b;transform:translateY(-2px);box-shadow:0 12px 35px #e3061335}
-@media(max-width:760px){#brand{font-size:22px}.hc{padding:10px 12px;font-size:11px}#hdr{padding:10px 4.5%}}
+@media(min-width:900px){#panel{left:24px;width:min(340px,calc(100% - 48px));padding:16px 18px 13px}#ttl{font-size:22px}#txt{font-size:13px}}
+@media(max-width:760px){#panel{left:10px;bottom:max(10px,env(safe-area-inset-bottom));width:calc(100% - 20px);padding:11px 13px 10px;border-radius:17px}#ttl{font-size:17px;margin:2px 0 3px}#txt{font-size:12px;line-height:1.3}#num{font-size:10px;letter-spacing:2px}#seg{margin-top:7px}button{padding:9px 10px}}
 </style></head><body>
 <canvas id="cv"></canvas><svg id="svg"></svg><div id="flash"></div>
-<div id="gp"></div><div id="hdr"><div id="brand">Val<b>mex</b><i>.md</i></div><a class="hc" href="tel:+37378026212">Sună: 078 026 212</a></div>
+<div id="gp"></div>
 <div id="panel"><div id="num"></div><h2 id="ttl"></h2><p id="txt"></p><div id="seg"></div>
 </div>
 <div id="intro"><small>PREZENTARE 3D · 13 ETAPE</small><h1>Cum se montează un acoperiș din țiglă metalică</h1><p>Urmărește, pas cu pas, construcția completă: de la șarpantă până la testul final cu ploaie.</p><button id="go">START PREZENTARE</button></div>
@@ -267,7 +268,21 @@ wat.forEach(function(w){w.visible=lv>0;w.scale.y=Math.max(lv,.01)});pw.forEach(f
 // UI
 var idx=0,ts=0,playing=false,started=false,ended=false,snd=true,labs=[],cp=V(11,7,11),cl=V(0,3,0),act=null,pn=$('panel'),svg=$('svg'),NS_='http://www.w3.org/2000/svg';
 var CS=[],acc=0,gbar=$('gp');S.forEach(function(x){CS.push(acc);acc+=x.d});var segs=[];for(i=0;i<13;i++){(function(i){var d=document.createElement('div');d.appendChild(document.createElement('i'));$('seg').appendChild(d);segs.push(d)})(i)}
-function setTxt(t){var i=t.indexOf('. '),e=$('txt');e.textContent='';if(i>0){var b=document.createElement('b');b.textContent=t.slice(0,i+1);e.appendChild(b);e.appendChild(document.createTextNode(' '+t.slice(i+2)))}else e.textContent=t}
+function setTxt(t){var shortText={
+'Acoperișul finalizat':'Privire de ansamblu asupra acoperișului complet.',
+'Șarpanta':'Structura din lemn susține întregul acoperiș.',
+'Folia anticondens':'Protejează structura și permite evacuarea umezelii.',
+'Contrașipcile':'Creează spațiul de ventilare sub învelitoare.',
+'Șipcile':'Formează suportul pentru fixarea țiglei metalice.',
+'Tinichigeria':'Protejează marginile și punctele de îmbinare.',
+'Sistemul pluvial':'Jgheaburile colectează și conduc apa spre burlane.',
+'Țigla metalică':'Foile se aliniază, se suprapun și se fixează pe șipci.',
+'Finisajele':'Coama și bordurile închid și protejează acoperișul.',
+'Burlanele':'Conduc apa de la jgheab până la evacuare.',
+'Testul final cu ploaie':'Verificăm traseul apei prin întregul sistem pluvial.',
+'Același acoperiș, în toate anotimpurile':'Vezi cum se comportă acoperișul în diferite anotimpuri.',
+'Eficiența termică':'Comparație vizuală: acoperiș cu și fără izolație.'
+};var e=$('txt');e.textContent=shortText[S[idx].n]||t}
 function ui(){var s=S[idx];$('num').textContent='ETAPA '+String(idx+1).padStart(2,'0')+' / 13';$('ttl').textContent=s.n;setTxt(s.t);
 pn.classList.remove('chg');void pn.offsetWidth;pn.classList.add('chg');segs.forEach(function(e,i){e.firstChild.style.width=i<idx?'100%':'0'})}
 function mkLabels(){svg.innerHTML='';labs.forEach(function(l){l.el.remove()});labs=S[idx].l().map(function(a,i){
