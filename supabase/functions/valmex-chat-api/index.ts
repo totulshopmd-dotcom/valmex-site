@@ -560,6 +560,7 @@ ${transcriptText}
     }
 
     if (action === "staff_convert_report_to_client") {
+      if (!["administrator", "vanzari"].includes(String(staff.role || ""))) return reply(403, { error: "Doar administratorul și rolul Vânzări pot înregistra clienți." });
       const reportId = String(body.report_id || "");
       const firstName = String(body.first_name || "").trim().slice(0, 120);
       const lastName = String(body.last_name || "").trim().slice(0, 120);
