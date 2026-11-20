@@ -457,80 +457,90 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
   }
 }
 
-/* VALMEX shared identity – calculator roof header aligned with main site */
-.top-bar{display:none!important}
-#mainHeader.header{
-  position:sticky!important;top:0!important;z-index:120!important;
-  width:100%;background:rgba(255,255,255,.97)!important;
-  color:#151515!important;border-bottom:1px solid #e8e9ed!important;
-  box-shadow:0 4px 20px rgba(15,23,42,.06)!important;
-  backdrop-filter:blur(14px);
+/* Header identical ca structură și proporții cu pagina principală */
+#mainHeader{
+ position:fixed!important;top:3px!important;left:0!important;width:100%!important;z-index:1000!important;
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ padding:17px 5.5%!important;gap:clamp(12px,1.4vw,24px)!important;
+ background:rgba(255,255,255,.97)!important;color:#151515!important;
+ border-bottom:1px solid #e8e9ed!important;box-shadow:0 4px 20px rgba(15,23,42,.06)!important;
+ backdrop-filter:blur(14px);
 }
-#mainHeader .header-wrap{
-  width:100%;max-width:none!important;margin:0!important;
-  padding:12px 5.5%!important;gap:clamp(14px,2vw,28px)!important;
-  min-height:78px;
+#mainHeader .brand{
+ display:inline-flex!important;align-items:center;flex:0 0 auto;
+ font-family:Inter,Arial,sans-serif!important;font-size:48px!important;line-height:1!important;
+ font-weight:950!important;letter-spacing:-.7px!important;white-space:nowrap;
+ transform:scaleX(1.16);transform-origin:left center;margin-right:42px!important;
 }
-#mainHeader .logo{
-  display:inline-flex!important;align-items:center;flex:0 0 auto;
-  color:#151515!important;text-decoration:none!important;
+#mainHeader .brand span:first-child{color:#151515!important}
+#mainHeader .brand span:last-child{color:#e30613!important}
+#mainHeader nav{
+ display:flex!important;flex:1 1 auto;min-width:0;flex-wrap:nowrap!important;
+ align-items:center!important;justify-content:flex-end;
+ gap:clamp(10px,1.05vw,18px)!important;margin-left:auto!important;
+ margin-right:clamp(8px,1vw,16px)!important;white-space:nowrap;
+ font-size:clamp(11px,.88vw,13px)!important;font-weight:700!important;
+ letter-spacing:.75px!important;line-height:1.15!important;text-transform:uppercase;
 }
-#mainHeader .logo-word{
-  display:inline-flex;align-items:center;
-  font-family:Inter,Arial,sans-serif!important;
-  font-size:48px!important;line-height:1!important;
-  font-weight:950!important;letter-spacing:-1.1px!important;
-  white-space:nowrap;transform:scaleX(1.08);transform-origin:left center;
+#mainHeader nav>a,#mainHeader nav .dd>.dd-t{
+ display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;
+ white-space:nowrap!important;font-size:inherit!important;font-weight:750!important;
+ letter-spacing:inherit!important;line-height:1.15!important;padding:10px 0!important;
+ color:#30343b!important;text-decoration:none!important;
 }
-#mainHeader .lw-a{color:#151515!important}
-#mainHeader .lw-b{color:#e30613!important}
-#mainHeader .nav{
-  display:flex!important;flex:1 1 auto;min-width:0;
-  align-items:center;justify-content:flex-end;
-  gap:clamp(10px,1.25vw,20px)!important;margin:0 8px 0 auto!important;
-  white-space:nowrap;
+#mainHeader nav .dd{position:relative;flex:0 0 auto;min-width:max-content}
+#mainHeader nav .dd>.dd-t{gap:8px}
+#mainHeader nav .dd>.dd-t:after{
+ content:"";width:7px;height:7px;border-right:1.7px solid currentColor;
+ border-bottom:1.7px solid currentColor;transform:rotate(45deg) translateY(-2px);
+ transition:transform .18s;flex:0 0 7px;
 }
-#mainHeader .nav-link{
-  color:#30343b!important;font-size:clamp(11px,.88vw,13px)!important;
-  font-weight:750!important;letter-spacing:.65px!important;
-  text-transform:uppercase;padding:10px 0!important;
+#mainHeader nav .dd:hover>.dd-t:after,#mainHeader nav .dd.open>.dd-t:after{transform:rotate(225deg) translate(-1px,-1px)}
+#mainHeader nav .dd-m{
+ display:none;position:absolute;top:calc(100% + 10px);left:-12px;min-width:240px;
+ padding:8px!important;background:#fff!important;border:1px solid #e8e9ed!important;
+ border-top:3px solid #e30613!important;border-radius:12px!important;
+ box-shadow:0 16px 40px rgba(15,23,42,.14)!important;z-index:1200;
 }
-#mainHeader .nav-link:hover,#mainHeader .nav-link.active{color:#e30613!important}
-#mainHeader .dropdown-menu{
-  background:#fff!important;border:1px solid #e8e9ed!important;
-  box-shadow:0 16px 40px rgba(15,23,42,.14)!important;
+#mainHeader nav .dd:hover .dd-m,#mainHeader nav .dd:focus-within .dd-m,#mainHeader nav .dd.open .dd-m{display:block}
+#mainHeader nav .dd-m a{
+ display:flex!important;align-items:center;gap:10px;padding:12px 14px!important;
+ border-radius:8px;color:#30343b!important;font-size:12px!important;
+ font-weight:700;letter-spacing:.6px;text-decoration:none!important;
 }
-#mainHeader .dropdown-menu a{color:#30343b!important}
-#mainHeader .dropdown-menu a:hover,#mainHeader .dropdown-menu a.active{background:#fff5f5!important;color:#e30613!important}
-#mainHeader .header-cta{display:none!important}
-#mainHeader .mobile-toggle{
-  display:none;flex:0 0 42px;width:42px;height:42px;margin-left:auto;
-  border:1px solid #e2e4e8!important;border-radius:10px!important;
-  background:#fff!important;color:#171717!important;
+#mainHeader nav .dd-m a:hover,#mainHeader nav .dd-m a[aria-current="page"]{background:#fff1f2!important;color:#c9000b!important}
+#mainHeader .menu{
+ display:none;background:#fff!important;color:#171717!important;
+ border:1px solid #e2e4e8!important;border-radius:10px!important;
+ width:44px;height:44px;padding:0!important;font-size:21px!important;line-height:1;
 }
-#mainHeader .mobile-toggle span{background:#171717!important}
-@media(max-width:1100px){
- #mainHeader .header-wrap{padding-left:4%!important;padding-right:4%!important}
- #mainHeader .logo-word{font-size:42px!important}
- #mainHeader .nav{gap:10px!important}
- #mainHeader .nav-link{font-size:10.5px!important;letter-spacing:.35px!important}
+#mainHeader nav>a:hover,#mainHeader nav .dd>.dd-t:hover{color:#e30613!important}
+@media(min-width:901px) and (max-width:1250px){
+ #mainHeader .brand{font-size:40px!important;letter-spacing:-.7px!important;transform:scaleX(1.08);margin-right:8px!important}
+ #mainHeader nav{gap:clamp(8px,.9vw,12px)!important;font-size:11px!important;letter-spacing:.45px!important}
+ #mainHeader{padding-left:3.5%!important;padding-right:3.5%!important}
 }
 @media(max-width:900px){
- #mainHeader .header-wrap{min-height:76px;padding:10px 5%!important}
- #mainHeader .logo-word{font-size:43px!important}
- #mainHeader .nav{display:none!important}
- #mainHeader .mobile-toggle{display:flex!important}
- .mobile-menu{background:#fff!important;color:#171717!important}
- .mobile-menu .logo-word{font-size:40px!important}
- .mobile-menu .lw-a{color:#151515!important}.mobile-menu .lw-b{color:#e30613!important}
- .mobile-menu .nav-link{color:#30343b!important;border-bottom:1px solid #edf0f3!important}
- .mobile-menu .dropdown-menu{background:#fff!important}
- .mobile-menu .dropdown-menu a{color:#30343b!important}
- .mobile-menu .mobile-close{color:#171717!important}
- .mobile-menu .btn{background:#e30613!important;color:#fff!important}
+ #mainHeader{padding:13px 5%!important;min-height:76px}
+ #mainHeader .brand{font-size:43px!important;letter-spacing:-.55px!important;transform:scaleX(1.13);margin-right:16px!important}
+ #mainHeader nav{display:none!important;position:absolute;top:100%;left:0;right:0;flex-direction:column!important;align-items:stretch!important;
+  background:#fff!important;border:1px solid #e8e9ed!important;border-top:0!important;
+  box-shadow:0 18px 34px rgba(15,23,42,.12)!important;padding:16px 5%!important;gap:7px!important;
+  max-height:calc(100dvh - 78px);overflow-y:auto;white-space:normal}
+ #mainHeader nav.open{display:flex!important}
+ #mainHeader nav>a,#mainHeader nav .dd>.dd-t{
+  display:flex!important;align-items:center;justify-content:space-between;width:100%;
+  padding:13px 14px!important;border-radius:9px;background:#f7f8fa;
+  color:#242832!important;font-size:12px!important;font-weight:800!important;letter-spacing:1px!important;white-space:normal!important;
+ }
+ #mainHeader nav .dd{width:100%;border-bottom:1px solid #edf0f3;padding-bottom:8px;margin-bottom:4px}
+ #mainHeader nav .dd-m{display:none;position:static!important;min-width:0!important;margin:7px 0 0 10px;padding:7px!important;
+  border:0!important;border-left:2px solid #e30613!important;border-radius:0!important;box-shadow:none!important;background:#fff!important}
+ #mainHeader nav .dd.open .dd-m{display:grid!important;grid-template-columns:1fr 1fr;gap:6px}
+ #mainHeader nav .dd-m a{background:#fff5f5!important;border:1px solid #f4dadd!important;white-space:normal!important;min-height:46px;font-size:10px!important;line-height:1.35}
+ #mainHeader .menu{display:grid!important;place-items:center;flex:0 0 44px;margin-left:auto}
 }
-@media(max-width:380px){#mainHeader .logo-word{font-size:38px!important}}
-
+@media(max-width:380px){#mainHeader .brand{font-size:39px!important;transform:scaleX(1.10)}}
 </style>
 
 <script type="importmap">
@@ -566,56 +576,16 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
 </div>
 
 <!-- Header -->
-<header class="header" id="mainHeader">
-  <div class="header-wrap">
-    <a class="logo" href="/index.html" aria-label="Valmex – pagina principal"><span class="logo-word"><span class="lw-a">Val</span><span class="lw-b">mex</span></span></a>
-    <nav class="nav" id="mainNav">
-      <a class="nav-link" href="index.html">Acasă</a>
-      <a class="nav-link" href="proiecte.html">Proiecte</a>
-<a class="nav-link" href="produse.html">Produse</a>
-      <a class="nav-link" href="blog.html">Blog</a>
-      <a class="nav-link" href="despre.html">Despre</a>
-      <a class="nav-link" href="contact.html">Contact</a>
-      <div class="dropdown">
-        <a class="nav-link dropdown-toggle active" href="#">Calculatoare
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </a>
-        <div class="dropdown-menu">
-          <a href="calculator-acoperis.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Calculator Acoperiș</a>
-          <a href="calculator-fatada.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>Calculator Fațadă</a>
-          <a href="calculator-amk.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Calculator AMK</a>
-        </div>
-      </div>
-    </nav>
-    <a href="contact.html" class="header-cta">Solicită Ofertă</a>
-    <button class="mobile-toggle" id="mobileToggle" aria-label="Meniu"><span></span><span></span><span></span></button>
-  </div>
-</header>
-
-<!-- Mobile Menu -->
-<div class="mobile-menu" id="mobileMenu">
-  <button class="mobile-close" id="mobileClose" aria-label="Închide">&times;</button>
-  <a class="logo" href="/index.html" aria-label="Valmex – pagina principală"><span class="logo-word"><span class="lw-a">Val</span><span class="lw-b">mex</span></span></a>
-  <nav>
-    <a class="nav-link" href="index.html">Acasă</a>
-    <a class="nav-link" href="proiecte.html">Proiecte</a>
-<a class="nav-link" href="produse.html">Produse</a>
-    <a class="nav-link" href="blog.html">Blog</a>
-    <a class="nav-link" href="despre.html">Despre</a>
-    <a class="nav-link" href="contact.html">Contact</a>
-    <div class="dropdown" id="mobileDropdown">
-      <a class="nav-link dropdown-toggle" href="#">Calculatoare
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </a>
-      <div class="dropdown-menu">
-        <a href="calculator-acoperis.html" class="active">Calculator Acoperiș</a>
-        <a href="calculator-fatada.html">Calculator Fațadă</a>
-        <a href="calculator-amk.html">Calculator AMK</a>
-      </div>
-    </div>
+<header id="mainHeader">
+  <a class="brand" href="/index.html" aria-label="Valmex"><span>Val</span><span>mex</span></a>
+  <nav id="nav" aria-label="Meniu principal">
+    <div class="dd"><a href="index.html#servicii" class="dd-t">Servicii</a><div class="dd-m"><a href="acoperis.html">Acoperișuri</a><a href="fatade.html">Fațade</a><a href="amk.html">Fațade AMK</a><a href="pavaj.html">Pavaje</a></div></div>
+    <a href="index.html#rate">Rate 0%</a>
+    <a href="proiecte.html">Proiecte</a><a href="produse.html">Produse</a><a href="blog.html">Blog</a><a href="despre.html">Despre</a><a href="contact.html">Contact</a>
+    <div class="dd"><a href="index.html#calculatoare" class="dd-t">Calculatoare</a><div class="dd-m"><a href="calculator-acoperis.html" aria-current="page">Calculator acoperiș</a><a href="calculator-fatada.html">Calculator fațadă</a><a href="calculator-amk.html">Calculator AMK</a></div></div>
   </nav>
-  <a href="contact.html" class="btn btn-primary">Solicită Ofertă</a>
-</div>
+  <button class="menu" id="menu" type="button" aria-label="Deschide meniul" aria-expanded="false">☰</button>
+</header>
 
 <!-- Social Fixed -->
 
@@ -877,22 +847,20 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
 /* ---- Chrome site: meniu mobil + dropdown ---- */
 (function () {
   "use strict";
-  var toggle = document.getElementById("mobileToggle");
-  var closeBtn = document.getElementById("mobileClose");
-  var menu = document.getElementById("mobileMenu");
-  var mobileDropdown = document.getElementById("mobileDropdown");
-
-  function openMenu(){ menu.classList.add("open"); document.body.style.overflow = "hidden"; }
-  function closeMenu(){ menu.classList.remove("open"); document.body.style.overflow = ""; }
-
-  if (toggle) toggle.addEventListener("click", openMenu);
-  if (closeBtn) closeBtn.addEventListener("click", closeMenu);
-
-  if (mobileDropdown) {
-    var toggleLink = mobileDropdown.querySelector(".dropdown-toggle");
-    toggleLink.addEventListener("click", function (e) {
-      e.preventDefault();
-      mobileDropdown.classList.toggle("open");
+  var toggle = document.getElementById("menu");
+  var nav = document.getElementById("nav");
+  if(toggle && nav){
+    toggle.addEventListener("click",function(){
+      var open=nav.classList.toggle("open");
+      toggle.setAttribute("aria-expanded",open?"true":"false");
+    });
+    nav.querySelectorAll("a").forEach(function(a){
+      a.addEventListener("click",function(){
+        if(a.classList.contains("dd-t")) return;
+        if(a.closest(".dd-m") || !a.parentElement.classList.contains("dd")){
+          nav.classList.remove("open");toggle.setAttribute("aria-expanded","false");
+        }
+      });
     });
   }
 })();
