@@ -140,11 +140,11 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) throw new Error("Secretul GEMINI_API_KEY nu este disponibil în Edge Function.");
   const model = Deno.env.get("GEMINI_MODEL") || "gemini-3.8-flash";
-  const { data: rows, error } = await admin.from("chat_messages").select("sender_type,body,visibility")
+  const { data: rows, error } = await admin.from("chat_messages").select("sender_type,body,visibility,message_type")
     .eq("conversation_id", conversationId).eq("visibility", "public").is("deleted_at", null)
     .order("created_at", { ascending: false }).limit(16);
   if (error) throw error;
-  const contents = (rows || []).reverse().filter((m: any) => ["visitor", "operator", "ai"].includes(m.sender_type) && m.body)
+  const contents = (rows || []).reverse().filter((m: any) => ["visitor", "operator", "ai"].includes(m.sender_type) && m.body && m.message_type !== "attachment")
     .map((m: any) => ({ role: m.sender_type === "visitor" ? "user" : "model", parts: [{ text: String(m.body).slice(0, 4000) }] }));
   if (!contents.length || contents[contents.length - 1].role !== "user") return null;
 
