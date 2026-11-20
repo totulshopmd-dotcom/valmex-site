@@ -179,7 +179,7 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
     "Calculatorul public estimează suprafața geometrică și aplică tariful central pentru acoperiș la cheie. Nu include automat centură, zidărie, planșeu sau lucrări suplimentare.",
     "Telefon VALMEX: +373 780 26212. Website: https://valmex.md."
   ].join("\n");
-  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 24000);
+  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 45000);
   try {
     const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
       method: "POST", signal: controller.signal, headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
