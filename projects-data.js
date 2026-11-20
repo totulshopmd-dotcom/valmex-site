@@ -24,13 +24,13 @@ const PROJECTS = [
     title: "Gard Telenești",
     description: "Transformare completă de gard — de la schița stabilită cu clientul, până la rezultatul final. Un rezultat care merită așteptarea.",
     images: [
-      "garduri-proiect-gard-telenesti-dupa",
-      "garduri-proiect-gard-telenesti-inainte",
-      "garduri-proiect-telenesti-gard-rezultatul-proiectului",
-      "garduri-proiect-telenesti-gard-2",
-      "garduri-proiect-gard-telenesti-3",
-      "garduri-proiect-gard-telenesti-5",
-      "garduri-proiect-gard-telenesti-schita-clientului"
+      "images/garduri/proiect-gard-telenesti-dupa.jpg?v=2",
+      "images/garduri/proiect-gard-telenesti-inainte.jpg?v=2",
+      "images/garduri/proiect-telenesti-gard-galerie-1.jpg?v=2",
+      "images/garduri/proiect-telenesti-gard-2.jpg?v=2",
+      "images/garduri/proiect-gard-telenesti-3.jpg?v=2",
+      "images/garduri/proiect-gard-telenesti-5.jpg?v=2",
+      "images/garduri/proiect-gard-telenesti-schita-clientului.jpg?v=2"
     ]
   },
   {
