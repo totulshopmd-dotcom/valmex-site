@@ -191,7 +191,7 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
           parameters: { type: "OBJECT", properties: {
             length_m: { type: "NUMBER", description: "Lungimea casei în metri" },
             width_m: { type: "NUMBER", description: "Lățimea casei în metri" },
-            slopes: { type: "INTEGER", enum: [2, 4], description: "Numărul de ape" },
+            slopes: { type: "STRING", enum: ["2", "4"], description: "Numărul de ape" },
             pitch_degrees: { type: "NUMBER", description: "Înclinația în grade" },
             eave_m: { type: "NUMBER", description: "Șandrama în metri" },
             client_name: { type: "STRING" }, locality: { type: "STRING" }
