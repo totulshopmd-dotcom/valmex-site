@@ -472,6 +472,8 @@ Deno.serve(async (req) => {
 
     if (action === "staff_generate_report") {
       const id = String(body.conversation_id || "");
+      const { data: existingReport } = await admin.from("chat_ai_reports").select("*").eq("conversation_id", id).order("generated_at", { ascending: false }).limit(1).maybeSingle();
+      if (existingReport) return reply(200, { success: true, report: existingReport, reused: true });
       const { data: conversation, error: ce } = await admin.from("chat_conversations")
         .select("id,visitor_name,visitor_phone,visitor_email,created_at")
         .eq("id", id).maybeSingle();
@@ -555,6 +557,51 @@ ${transcriptText}
       }).select("*").single();
       if (saveError) throw saveError;
       return reply(200, { success: true, report: saved });
+    }
+
+    if (action === "staff_convert_report_to_client") {
+      const reportId = String(body.report_id || "");
+      const firstName = String(body.first_name || "").trim().slice(0, 120);
+      const lastName = String(body.last_name || "").trim().slice(0, 120);
+      const phone = String(body.phone || "").trim().slice(0, 40);
+      const locality = String(body.locality || "").trim().slice(0, 120) || null;
+      if (!reportId || !firstName || !lastName || !phone) return reply(400, { error: "Prenumele, numele și telefonul sunt obligatorii." });
+      const { data: report, error: reportError } = await admin.from("chat_ai_reports").select("id,conversation_id,report_data,summary,client_id").eq("id", reportId).maybeSingle();
+      if (reportError || !report) return reply(404, { error: "Fișa raportului nu a fost găsită." });
+      if (report.client_id) return reply(409, { error: "Această conversație este deja asociată unui client." });
+      const { data: conversation, error: convError } = await admin.from("chat_conversations").select("id,visitor_phone,visitor_email,visitor_name,assigned_to,client_id").eq("id", report.conversation_id).maybeSingle();
+      if (convError || !conversation) return reply(404, { error: "Conversația nu a fost găsită." });
+      if (conversation.client_id) return reply(409, { error: "Conversația este deja asociată unui client." });
+      const d = report.report_data || {};
+      const { data: codes, error: codesError } = await admin.from("clients").select("client_code");
+      if (codesError) throw codesError;
+      const maxCode = (codes || []).reduce((n: number, row: any) => {
+        const match = /^VMX-(\\d+)$/.exec(row.client_code || "");
+        return match ? Math.max(n, Number(match[1])) : n;
+      }, 0);
+      const payload = {
+        first_name: firstName, last_name: lastName, phone,
+        email: typeof d.email === "string" ? d.email : conversation.visitor_email,
+        region: typeof d.region === "string" ? d.region : null,
+        locality: locality || (typeof d.locality === "string" ? d.locality : null),
+        address: typeof d.address === "string" ? d.address : null,
+        work_type: typeof d.work_type === "string" ? d.work_type : (typeof d.service === "string" ? d.service : "Solicitare din chat"),
+        source: "website_chat", status: "nou",
+        notes: [report.summary || d.summary || "", "Importat din conversația VALMEX " + report.conversation_id].filter(Boolean).join("\\n"),
+        created_by: staff.id, assigned_to: conversation.assigned_to || staff.id
+      };
+      let client: any = null, lastError: any = null;
+      for (let attempt = 0; attempt < 4 && !client; attempt++) {
+        const { data, error } = await admin.from("clients").insert({ ...payload, client_code: "VMX-" + String(maxCode + attempt + 1).padStart(4, "0") }).select("id,client_code,first_name,last_name,phone,locality").single();
+        if (!error) client = data;
+        else { lastError = error; if (error.code !== "23505") throw error; }
+      }
+      if (!client) throw lastError || new Error("Nu s-a putut atribui codul clientului.");
+      const { error: linkReportError } = await admin.from("chat_ai_reports").update({ client_id: client.id, report_status: "reviewed", reviewed_by: staff.id, reviewed_at: new Date().toISOString() }).eq("id", report.id);
+      if (linkReportError) throw linkReportError;
+      const { error: linkConversationError } = await admin.from("chat_conversations").update({ client_id: client.id }).eq("id", conversation.id);
+      if (linkConversationError) throw linkConversationError;
+      return reply(200, { success: true, client });
     }
 
     if (action === "staff_review_report") {
