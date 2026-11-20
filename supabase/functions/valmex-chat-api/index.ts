@@ -162,6 +162,27 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
     "Acoperiș la cheie include țiglă, lemn, sistem de scurgere, accesorii și manoperă.",
     "Fațada la cheie include materiale de finisare și manoperă; configurația se confirmă."
   ].join("\n");
+  const latestText = String(contents[contents.length - 1]?.parts?.[0]?.text || "");
+  const normalizedLatest = latestText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (cms && /\b(pret|costa|cost)\b/.test(normalizedLatest)) {
+    let priceKey: string | null = null, priceLabel = "";
+    if (/\b(tigla|metalica|tabla)\b/.test(normalizedLatest) && !/\b(acoperis la cheie|acoperis complet)\b/.test(normalizedLatest)) {
+      priceKey = "tile"; priceLabel = "Țigla metalică – material";
+    } else if (/\b(fatada|fatade|amk)\b/.test(normalizedLatest)) {
+      priceKey = normalizedLatest.includes("amk") ? "amk" : "facade";
+      priceLabel = priceKey === "amk" ? "Fațadă AMK" : "Fațadă decorativă";
+    } else if (/\b(acoperis|acoperisul)\b/.test(normalizedLatest)) {
+      priceKey = "roof"; priceLabel = "Acoperiș la cheie";
+    }
+    if (priceKey) {
+      const p = effectiveCmsPrice(cms, priceKey);
+      if (!p) return { text: "Prețul pentru " + priceLabel.toLowerCase() + " nu este completat în centralizarea publică. Un consultant VALMEX trebuie să îl confirme." };
+      const prefix = p.show_from ? "Prețul " + priceLabel.toLowerCase() + " începe de la " : "Tariful central pentru " + priceLabel.toLowerCase() + " este ";
+      const promo = p.promo ? " Promoția activă este inclusă în valoare." : "";
+      return { text: prefix + p.amount.toLocaleString("ro-MD") + " MDL/m²." + promo };
+    }
+  }
+
   const system = [
     "Ești asistentul virtual VALMEX.md din Republica Moldova.",
     "Răspunde în română, clar, profesionist, politicos și concis, de regulă în maximum 4 propoziții.",
@@ -179,7 +200,7 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
     "Calculatorul public estimează suprafața geometrică și aplică tariful central pentru acoperiș la cheie. Nu include automat centură, zidărie, planșeu sau lucrări suplimentare.",
     "Telefon VALMEX: +373 780 26212. Website: https://valmex.md."
   ].join("\n");
-  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 45000);
+  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 60000);
   try {
     const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
       method: "POST", signal: controller.signal, headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
