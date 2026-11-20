@@ -529,7 +529,13 @@ ${transcriptText}
         .order("created_at", { ascending: true }).limit(200);
       if (error) throw error;
       await admin.from("chat_conversations").update({ staff_unread_count: 0 }).eq("id", id);
-      return reply(200, { success: true, messages: data });
+      const messages = await Promise.all((data || []).map(async (m: any) => {
+        if (m.message_type !== "attachment" || !m.body) return m;
+        const path = String(m.body), filename = path.split("/").pop() || "oferta-valmex.pdf";
+        const { data: signed } = await admin.storage.from("valmex-chat").createSignedUrl(path, 3600, { download: filename });
+        return { ...m, attachment_name: filename, attachment_url: signed?.signedUrl || null };
+      }));
+      return reply(200, { success: true, messages });
     }
 
     if (action === "staff_send" || action === "internal_note") {
