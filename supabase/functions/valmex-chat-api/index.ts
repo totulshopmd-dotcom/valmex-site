@@ -587,7 +587,7 @@ ${transcriptText}
         locality: locality || (typeof d.locality === "string" ? d.locality : null),
         address: typeof d.address === "string" ? d.address : null,
         work_type: typeof d.work_type === "string" ? d.work_type : (typeof d.service === "string" ? d.service : "Solicitare din chat"),
-        source: "website_chat", status: "nou",
+        source: "Altă sursă", status: "nou",
         notes: [report.summary || d.summary || "", "Importat din conversația VALMEX " + report.conversation_id].filter(Boolean).join("\\n"),
         created_by: staff.id, assigned_to: conversation.assigned_to || staff.id
       };
