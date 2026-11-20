@@ -177,9 +177,12 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
     if (priceKey) {
       const p = effectiveCmsPrice(cms, priceKey);
       if (!p) return { text: "Prețul pentru " + priceLabel.toLowerCase() + " nu este completat în centralizarea publică. Un consultant VALMEX trebuie să îl confirme." };
-      const prefix = p.show_from ? "Prețul " + priceLabel.toLowerCase() + " începe de la " : "Tariful central pentru " + priceLabel.toLowerCase() + " este ";
+      const lead = priceKey === "tile" ? "Prețul pentru țigla metalică (materialul)" :
+        priceKey === "roof" ? "Tariful pentru acoperiș la cheie" :
+        priceKey === "amk" ? "Prețul pentru fațada AMK" : "Prețul pentru fațada decorativă";
+      const prefix = p.show_from ? " începe de la " : " este ";
       const promo = p.promo ? " Promoția activă este inclusă în valoare." : "";
-      return { text: prefix + p.amount.toLocaleString("ro-MD") + " MDL/m²." + promo };
+      return { text: lead + prefix + p.amount.toLocaleString("ro-MD") + " MDL/m²." + promo };
     }
   }
 
