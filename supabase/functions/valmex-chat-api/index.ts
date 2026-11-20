@@ -167,7 +167,7 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
   ].join("\n");
   const latestText = String(contents[contents.length - 1]?.parts?.[0]?.text || "");
   const normalizedLatest = latestText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  if (cms && /\b(pret|costa|cost)\b/.test(normalizedLatest)) {
+  if (cms && /\b(pret\w*|costa|cost)\b/.test(normalizedLatest)) {
     let priceKey: string | null = null, priceLabel = "";
     if (/\b(tigla|metalica|tabla)\b/.test(normalizedLatest) && !/\b(acoperis la cheie|acoperis complet)\b/.test(normalizedLatest)) {
       priceKey = "tile"; priceLabel = "Țigla metalică – material";
