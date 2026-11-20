@@ -1,4 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import "./calculation-engine.js";
+const VALMEX_CALC = (globalThis as any).VALMEX_CALC;
 import { PDFDocument, StandardFonts, rgb } from "npm:pdf-lib@1.17.1";
 
 const allowedOrigins = new Set(["https://valmex.md", "https://www.valmex.md"]);
@@ -106,6 +108,7 @@ async function createRoofOfferPdf(conversationId: string, estimate: any) {
     ["Inclinatie", estimate.pitch_degrees + " grade"],
     ["Streasina", estimate.eave_m + " m"],
     ["Suprafata estimata", estimate.area_m2.toFixed(2) + " m2"],
+    ["Volum estimativ lemn", estimate.wood_m3.toFixed(3) + " m3"],
     ["Tarif central VALMEX", estimate.price_m2 + " MDL/m2"]
   ];
   let y = 581;
@@ -241,19 +244,14 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
       }
       const roofPrice = cms ? effectiveCmsPrice(cms, "roof") : null;
       if (!roofPrice) return { text: "Tariful pentru acoperiș la cheie nu este disponibil în centralizarea publică. Un consultant VALMEX trebuie să confirme prețul." };
-      // Aceeași formulă geometrică din roofGeometry() și area() în Crm/calculator-live.html.
-      const L = length + 2 * eave, W = width + 2 * eave, halfSpan = Math.min(L, W) / 2;
-      const slopeDepth = halfSpan / Math.cos(pitch * Math.PI / 180);
-      let area = 0;
-      if (slopes === 2) area = 2 * Math.max(L, W) * slopeDepth;
-      else {
-        const longSide = Math.max(L, W), shortSide = Math.min(L, W), ridge = Math.max(0, longSide - shortSide);
-        area = 2 * ((longSide + ridge) / 2) * slopeDepth + shortSide * slopeDepth;
-      }
+      // Suprafața este calculată de același modul folosit de calculatorul VALMEX LIVE.
+      const calculationState = { length, width, slopes, pitch, eave };
+      const area = VALMEX_CALC.area(calculationState);
+      const woodEstimate = VALMEX_CALC.wood(calculationState);
       if (!Number.isFinite(area) || area <= 0 || area > 10000) throw new Error("Suprafața calculată nu este validă.");
       const estimate = {
         length_m: length, width_m: width, slopes, pitch_degrees: pitch, eave_m: eave,
-        area_m2: Number(area.toFixed(2)), price_m2: roofPrice.amount,
+        area_m2: Number(area.toFixed(2)), wood_m3: Number(woodEstimate.total.toFixed(3)), price_m2: roofPrice.amount,
         total_mdl: Number((area * roofPrice.amount).toFixed(2)),
         client_name: typeof args.client_name === "string" ? args.client_name.slice(0, 100) : "",
         locality: typeof args.locality === "string" ? args.locality.slice(0, 100) : ""
