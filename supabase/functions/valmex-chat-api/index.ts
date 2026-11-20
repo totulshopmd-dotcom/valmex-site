@@ -577,7 +577,7 @@ ${transcriptText}
       const { data: codes, error: codesError } = await admin.from("clients").select("client_code");
       if (codesError) throw codesError;
       const maxCode = (codes || []).reduce((n: number, row: any) => {
-        const match = /^VMX-(\\d+)$/.exec(row.client_code || "");
+        const match = /^VMX-(\d+)$/.exec(row.client_code || "");
         return match ? Math.max(n, Number(match[1])) : n;
       }, 0);
       const payload = {
