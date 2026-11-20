@@ -356,6 +356,18 @@ Deno.serve(async (req) => {
     if (action === "visitor_send") {
       if (!text || text.length > 4000) return reply(400, { error: "Mesajul trebuie să aibă 1–4000 caractere." });
       const conversation = await visitorConversation();
+      const phoneMatch = text.match(/(?:\+?373[\s().-]*\d{2}[\s().-]*\d{3}[\s().-]*\d{3}|0\d{2}[\s().-]*\d{3}[\s().-]*\d{3}|\b\d{8}\b)/);
+      if (phoneMatch && body.consent !== true) {
+        return reply(400, { error: "Pentru a transmite numărul de telefon, confirmați mai întâi acordul din chat." });
+      }
+      let consentedPhone: string | null = null;
+      if (phoneMatch && body.consent === true) {
+        const digits = phoneMatch[0].replace(/\D/g, "");
+        if (digits.startsWith("373") && digits.length === 11) consentedPhone = "+" + digits;
+        else if (digits.startsWith("0") && digits.length === 9) consentedPhone = "+373" + digits.slice(1);
+        else if (digits.length === 8) consentedPhone = "+373" + digits;
+        else return reply(400, { error: "Numărul de telefon nu are un format valid." });
+      }
       const allowed = await rateLimit(await digest("session:" + sessionToken), "visitor_send", 60, 8);
       if (!allowed) return reply(429, { error: "Ați trimis prea multe mesaje. Așteptați un minut." });
       if (conversation.status === "inchis") return reply(409, { error: "Conversația este închisă." });
@@ -364,10 +376,15 @@ Deno.serve(async (req) => {
         message_type: "text", body: text
       }).select("id,body,created_at").single();
       if (error) throw error;
-      await admin.from("chat_conversations").update({
+      const conversationPatch: Record<string, unknown> = {
         last_message_at: data.created_at, last_message_preview: text.slice(0, 180),
         staff_unread_count: 1
-      }).eq("id", conversation.id);
+      };
+      if (consentedPhone) {
+        conversationPatch.visitor_phone = consentedPhone;
+        conversationPatch.consent_at = new Date().toISOString();
+      }
+      await admin.from("chat_conversations").update(conversationPatch).eq("id", conversation.id);
 
       let aiMessage = null;
       let aiError = null;
