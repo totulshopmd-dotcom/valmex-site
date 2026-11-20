@@ -322,7 +322,7 @@ Deno.serve(async (req) => {
     async function visitorConversation() {
       if (!sessionHash) throw new Error("Sesiune de chat invalidă.");
       const { data, error } = await admin.from("chat_conversations")
-        .select("id,status,visitor_session_expires_at")
+        .select("id,status,created_at,visitor_session_expires_at")
         .eq("visitor_session_hash", sessionHash).maybeSingle();
       if (error || !data || new Date(data.visitor_session_expires_at).getTime() < Date.now()) {
         throw new Error("Sesiunea de chat a expirat.");
@@ -443,7 +443,7 @@ Deno.serve(async (req) => {
         const { data: signed } = await admin.storage.from("valmex-chat").createSignedUrl(path, 3600, { download: filename });
         return { ...m, attachment_name: filename, attachment_url: signed?.signedUrl || null };
       }));
-      return reply(200, { success: true, messages });
+      return reply(200, { success: true, messages, conversation: { id: conversation.id, status: conversation.status, created_at: conversation.created_at } });
     }
 
     const staff = await staffUser();
