@@ -139,6 +139,21 @@ async function createRoofOfferPdf(conversationId: string, estimate: any) {
   return { path, filename: "Estimare-acoperis-VALMEX.pdf" };
 }
 
+async function fetchGeminiWithRetry(url: string, init: RequestInit): Promise<Response> {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const response = await fetch(url, init);
+    if (response.ok) return response;
+    const detail = await response.text();
+    console.error("Gemini API error", response.status, detail.slice(0, 500));
+    if (attempt === 0 && [429, 500, 503].includes(response.status)) {
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      continue;
+    }
+    throw new Error("Gemini nu a putut genera răspunsul (HTTP " + response.status + ").");
+  }
+  throw new Error("Gemini nu a răspuns după reîncercare.");
+}
+
 async function generateGeminiReply(conversationId: string): Promise<{ text: string; attachmentPath?: string } | null> {
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) throw new Error("Secretul GEMINI_API_KEY nu este disponibil în Edge Function.");
@@ -208,7 +223,7 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
   ].join("\n");
   const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 60000);
   try {
-    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
+    const response = await fetchGeminiWithRetry("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
       method: "POST", signal: controller.signal, headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: system }] }, contents,
@@ -228,11 +243,6 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
         generationConfig: { maxOutputTokens: 500, temperature: 0.2 }
       })
     });
-    if (!response.ok) {
-      const detail = await response.text();
-      console.error("Gemini API error", response.status, detail.slice(0, 500));
-      throw new Error("Gemini nu a putut genera răspunsul (HTTP " + response.status + ").");
-    }
     const result = await response.json(), parts = result?.candidates?.[0]?.content?.parts || [];
     const call = parts.find((p: any) => p.functionCall?.name === "calculate_roof_estimate")?.functionCall;
     if (call) {
