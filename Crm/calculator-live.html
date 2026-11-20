@@ -71,6 +71,7 @@ h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 24px;letter-spacin
   <button class="next hidden" id="continue">Continuă →</button>
 </footer>
 </div>
+<script src="../supabase/functions/valmex-chat-api/calculation-engine.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const SETTINGS_KEY='valmex_live_settings_v2';
@@ -134,108 +135,12 @@ let index=0, manualMode=false;
 function esc(v){return String(v??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]))}
 function fmt(n){return Number(n||0).toLocaleString('ro-RO',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function money(n){return fmt(n)+' lei'}
-function roofGeometry(){
- const L=Number(state.length)+2*Number(state.eave);
- const W=Number(state.width)+2*Number(state.eave);
- const pitch=Number(state.pitch)*Math.PI/180;
- if(!L||!W||!Number.isFinite(pitch)||Math.cos(pitch)<=0)return null;
- const halfSpan=Math.min(L,W)/2;
- const ridgeLength=Math.max(0,Math.max(L,W)-Math.min(L,W));
- const slopeDepth=halfSpan/Math.cos(pitch);
- const rise=halfSpan*Math.tan(pitch);
- return {L,W,pitch,halfSpan,ridgeLength,slopeDepth,rise};
-}
-function area(){
- const g=roofGeometry();
- if(!g)return 0;
- if(Number(state.slopes)===2){
-  // Doua versante dreptunghiulare, coama pe latura mai lunga.
-  return 2*Math.max(g.L,g.W)*g.slopeDepth;
- }
- if(Number(state.slopes)===4){
-  // Acoperis in 4 ape: doua trapeze laterale + doua frontoane triunghiulare.
-  // Geometria presupune coama paralela cu latura mai lunga si pante egale.
-  const longSide=Math.max(g.L,g.W), shortSide=Math.min(g.L,g.W);
-  const ridge=Math.max(0,longSide-shortSide);
-  const trapezoids=2*((longSide+ridge)/2)*g.slopeDepth;
-  const triangles=2*(shortSide*g.slopeDepth/2);
-  return trapezoids+triangles;
- }
- return 0;
-}
-function wood(){
- const g=roofGeometry(), A=area();
- if(!g)return {rafters:0,counter:0,battens:0,total:0};
- const longSide=Math.max(g.L,g.W), shortSide=Math.min(g.L,g.W);
- const sectionRafter=.05*.15, sectionCounter=.05*.03, sectionBatten=.10*.03;
- let rafterLengthTotal=0, counterLengthTotal=0, battenLengthTotal=0;
- if(Number(state.slopes)===2){
-  // Perechi de capriori la 80 cm, pe ambele versante.
-  const pairs=Math.ceil(longSide/.8)+1;
-  rafterLengthTotal=pairs*2*g.slopeDepth;
-  counterLengthTotal=rafterLengthTotal;
-  const rows=Math.ceil(g.slopeDepth/.30)+1;
-  battenLengthTotal=rows*2*longSide;
- }else if(Number(state.slopes)===4){
-  // 4 ape: capriori comuni pe cele doua trapeze, capriori scurti pe triunghiuri,
-  // plus cei 4 capriori diagonali (solduri). Estimare geometrică, nu proiect structural.
-  const ridge=Math.max(0,longSide-shortSide);
-  const commonPairs=Math.ceil(ridge/.8)+1;
-  const commonLength=commonPairs*2*g.slopeDepth;
-  const hipPlan=Math.sqrt((shortSide/2)**2+(shortSide/2)**2);
-  const hipLength=Math.sqrt(hipPlan**2+g.rise**2);
-  const hipTotal=4*hipLength;
-  const endRafters=Math.ceil((shortSide/2)/.8)*2;
-  const endCommonLength=endRafters*g.slopeDepth;
-  rafterLengthTotal=commonLength+hipTotal+endCommonLength;
-  counterLengthTotal=rafterLengthTotal;
-  // Sipci estimate pe cele patru fete, pe baza suprafeței reale și pasului de 30 cm.
-  battenLengthTotal=A/.30;
- }
- const rafters=rafterLengthTotal*sectionRafter;
- const counter=counterLengthTotal*sectionCounter;
- const battens=battenLengthTotal*sectionBatten;
- return {rafters,counter,battens,total:rafters+counter+battens,
-  rafterLengthTotal,counterLengthTotal,battenLengthTotal};
-}
-function commissions(){return Number(settings.commission[state.months])||0}
-function costs(){
-  const A=area(),woodVol=wood();
-  const roofIncluded=['turnkey'].includes(state.type);
-  const tile=(roofIncluded||state.type==='materials')?A*settings.tileCost:0, accessories=roofIncluded?tile*settings.accessoriesPercent/100:0, labor=roofIncluded?A*settings.laborCost:(state.type==='install'?A*settings.laborCost:0), consumables=roofIncluded?settings.consumables:0, woodCost=roofIncluded?woodVol.total*settings.woodCostPerM3:0;
-  const beamPerimeter=2*(Number(state.length)+Number(state.width));
-  const beamVol=state.beam==='yes'?beamPerimeter*state.beamWidth*state.beamHeight:0;
-  const beamCost=beamVol*settings.beamCostPerM3, roofSale=A*Number(state.price);
-  const masonryPerimeter=2*(Number(state.length)+Number(state.width));
-  const masonryGrossArea=state.masonry==='yes'?masonryPerimeter*(Number(state.masonryHeightCm)/100):0;
-  const masonryArea=Math.max(0,masonryGrossArea-Math.max(0,Number(state.openingsArea)||0));
-  const blockFaceArea=(Number(settings.blockLengthCm)/100)*(Number(settings.blockHeightCm)/100);
-  const blockThickness=Number(settings.blockThicknessCm)/100;
-  const masonryVolume=masonryArea*blockThickness;
-  const theoreticalBlocks=blockFaceArea>0?Math.ceil(masonryArea/blockFaceArea):0;
-  const blockCount=state.masonry==='yes'?Math.ceil(theoreticalBlocks*(1+Number(settings.blockWastePercent)/100)):0;
-  const blockCost=blockCount*Math.max(0,Number(state.blockPrice)||0);
-  const masonryLaborCost=masonryVolume*Math.max(0,Number(state.masonryLaborRate)||0);
-  const masonryCost=state.masonry==='yes'?blockCost+masonryLaborCost:0;
-  const slabArea=state.slab==='yes'?Number(state.length)*Number(state.width):0;
-  const slabVolume=slabArea*(Math.max(0,Number(state.slabThickness)||0)/100);
-  const concreteCost=slabVolume*Math.max(0,Number(state.concretePrice)||0);
-  const slabExtras=state.slab==='yes'?(Math.max(0,Number(state.pumpCost)||0)+Math.max(0,Number(state.slabOtherCost)||0)):0;
-  const slabCost=state.slab==='yes'?concreteCost+slabExtras:0;
-  const baseWorkSale=state.type==='turnkey'?roofSale:(state.type==='install'?A*Number(state.price||0):A*Number(state.price||0));
-  const extraTotal=(Array.isArray(state.extraItems)?state.extraItems:[]).reduce((sum,it)=>sum+Math.max(0,Number(it.price)||0),0);
-  const sale=baseWorkSale+beamCost+masonryCost+slabCost+extraTotal;
-  const commission=state.payment==='installments'?sale*commissions()/100:0;
-  const known=tile+accessories+(roofIncluded?labor:state.type==='install'?A*settings.laborCost:0)+consumables+woodCost+beamCost+blockCost+masonryLaborCost+concreteCost+slabExtras+(state.payer==='valmex'?commission:0);
-  const clientTotal=sale+(state.payment==='installments'&&state.payer==='client'?commission:0);
-  const firstPayment=state.payment==='installments'?Math.max(0,Number(state.firstPayment)||0):0;
-  const financedBalance=Math.max(0,clientTotal-firstPayment);
-  const monthlyBase=state.payment==='installments'&&Number(state.months)>0?Math.floor((financedBalance/Number(state.months))*100)/100:0;
-  const lastMonthly=state.payment==='installments'?Math.round((financedBalance-monthlyBase*(Number(state.months)-1))*100)/100:0;
-  return {A,roofSale,sale,extraTotal,tile,accessories,labor,consumables,woodVol,woodCost,beamVol,beamCost,commission,known,clientTotal,remaining:sale-known,beamPerimeter,
-    masonryPerimeter,masonryGrossArea,masonryArea,masonryVolume,theoreticalBlocks,blockCount,blockCost,masonryLaborCost,masonryCost,
-    slabArea,slabVolume,concreteCost,slabExtras,slabCost,firstPayment,financedBalance,monthlyBase,lastMonthly};
-}
+function roofGeometry(){return VALMEX_CALC.roofGeometry(state)}
+function area(){return VALMEX_CALC.area(state)}
+function wood(){return VALMEX_CALC.wood(state)}
+function commissions(){return VALMEX_CALC.commissions(state,settings)}
+function costs(){return VALMEX_CALC.costs(state,settings)}
+
 function render(){
  if(!Number.isInteger(index)||index<0||index>=steps.length)index=0;
  // Afișează zona înainte de a calcula opțiunile, astfel încât o eroare să nu lase ecranul gol.
