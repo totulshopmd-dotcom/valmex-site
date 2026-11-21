@@ -26,12 +26,12 @@
       {
         "key": "acoperisuri",
         "enabled": true,
-        "question": "Doriți să calculați costul estimativ al acoperișului casei dumneavoastră?",
-        "yes": "Deschide calculatorul",
+        "question": "Vrei să calculăm costul acoperișului casei tale? Îți vom solicita dimensiunile și configurația acoperișului.",
+        "yes": "Începe calculul",
         "no": "Mai târziu",
         "after": "",
         "cta": "calculator",
-        "ctaLabel": "Deschide calculatorul",
+        "ctaLabel": "Începe calculul",
         "ctaLink": "/calculator-acoperis.html",
         "signals": [
           "calc",
@@ -44,14 +44,14 @@
       },
       {
         "enabled": true,
-        "yes": "Deschide calculatorul",
+        "yes": "Începe calculul",
         "no": "Mai târziu",
         "cta": "calculator",
-        "ctaLabel": "Deschide calculatorul",
+        "ctaLabel": "Începe calculul",
         "ctaLink": "/calculator-fatada.html",
         "cooldownDays": 30,
         "key": "fatade",
-        "question": "Doriți să calculați materialele și costul estimativ pentru fațada casei?",
+        "question": "Vrei să calculăm materialele și costul estimativ pentru fațada casei? Începem cu suprafața și tipul fațadei.",
         "after": "",
         "signals": [
           "calc",
