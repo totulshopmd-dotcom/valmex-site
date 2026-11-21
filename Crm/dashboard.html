@@ -112,10 +112,12 @@ $("avatarFile").addEventListener("change",async()=>{
   if(uploadError)throw uploadError;
   const {error:saveError}=await db.rpc("set_my_avatar_path",{p_path:path});
   if(saveError){await db.storage.from("valmex-profile-photos").remove([path]);throw saveError}
+  const {data:verified,error:verifyError}=await db.from("profiles").select("avatar_path").eq("id",session.user.id).single();
+  if(verifyError||verified?.avatar_path!==path)throw new Error("Fotografia a fost încărcată, dar nu s-a confirmat salvarea în profil. Reîncarcă pagina și verifică din nou.");
   const {data,error}=await db.storage.from("valmex-profile-photos").createSignedUrl(path,3600);
-  if(error)throw error;
+  if(error||!data?.signedUrl){$("removeAvatar").hidden=false;msg.textContent="Fotografia a fost salvată în profil, dar previzualizarea nu este disponibilă momentan.";return}
   $("profileAvatar").innerHTML='<img alt="Fotografie de profil" style="width:100%;height:100%;object-fit:cover;border-radius:50%" src="'+data.signedUrl+'">';
-  $("removeAvatar").hidden=false;msg.textContent="Fotografia de profil a fost actualizată.";
+  $("removeAvatar").hidden=false;msg.textContent="Fotografia a fost salvată și verificată în profil.";
  }catch(e){msg.textContent="Nu s-a putut salva fotografia: "+(e.message||e)}
  finally{btn.disabled=false;$("avatarFile").value=""}
 });
