@@ -201,6 +201,7 @@
         </div>
       </div>
 
+      <div class="rate-plan-head"><strong>Planul de plată</strong><span id="planTotal"></span></div>
       <div class="rtl"><div class="rtr"><div class="rfl" id="rfl"></div><div class="rdt" id="rdt"></div></div><div class="rn-row" id="rnr"></div></div>
       <div class="rsay" id="rsay" aria-live="polite"></div>
       <button class="replay2" id="rep" type="button">↻ Vezi din nou</button>
@@ -492,6 +493,7 @@ function controls(){
   $('sumR').value=st.sum;if(document.activeElement!==$('sumN'))$('sumN').value=st.sum;tween($('sumV'),st.sum,money);
   $('nR').value=st.n;tween($('nV'),st.n,v=>Math.round(v));fill($('areaR'));fill($('sumR'));fill($('nR'));$('rcnt').textContent='× '+st.n+' rate';const tbs=$('tabs');if(tbs.style&&tbs.style.setProperty)tbs.style.setProperty('--i',['roof','facade','custom'].indexOf(st.mode));$('bubA').textContent=st.area+' m²';$('bubS').textContent=money(st.sum);$('bubN').textContent=st.n+' rate';
   const m=model();
+  const planTotal=$('planTotal');if(planTotal)planTotal.textContent='Suma lucrării: '+money(m.S);
   $('est').innerHTML=st.mode==='custom'?`Suma lucrării: <b>${money(m.S)}</b>. Rata se calculează egal pe ${m.n} rate.`:`Estimare orientativă <b>de la ${money(m.S)}</b> (${st.area} m² × ${PRICE[st.mode]} lei/m², la cheie). Prețul final se stabilește în ofertă.`;
   /* comparație credit: simulare simplificată, dobândă nominală ipotetică, fără comisioane */
   const i=APR/12,pmt=m.S*i/(1-Math.pow(1+i,-m.n)),tb=pmt*m.n,extra=tb-m.S;
