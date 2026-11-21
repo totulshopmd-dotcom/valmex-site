@@ -66,26 +66,7 @@
             if (modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
           }
         });
-    } else if (form.id === 'gateForm') {
-      event.preventDefault(); event.stopImmediatePropagation();
-      var saved = {};
-      try { saved = JSON.parse(localStorage.getItem('valmex_roof_config_v1') || '{}') || {}; } catch (_) {}
-      submit({
-        source: 'roof_calculator',
-        name: value('leadName'),
-        phone: value('leadPhone'),
-        locality: value('leadLocality'),
-        service: 'Calculator Acoperiș 3D',
-        details: { configuration: saved, page: 'calculator-acoperis.html' }
-      }, 'leadStatus').then(function (ok) {
-        if (ok) {
-          var result = document.getElementById('result');
-          if (result) result.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          var form = document.getElementById('gateForm');
-          if (form) form.reset();
-        }
-      });
-    }
+
   }, true);
 
   document.addEventListener('click', function (event) {
