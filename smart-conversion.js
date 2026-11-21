@@ -169,6 +169,31 @@
     setTimeout(function(){close(false);},9000);
   }
 
+  /* ---------- Calculator în popup: reutilizează calculatoarele VALMEX existente ---------- */
+  function openCalculatorPopup(p) {
+    var path = location.pathname.toLowerCase(), isRoof = p.key === 'acoperisuri';
+    var isAmk = !isRoof && (path.indexOf('amk') > -1);
+    var cards = document.querySelectorAll('[data-valmex-product="panouri-amk"]');
+    if (!isRoof && cards.length && Array.prototype.some.call(cards, function(el){ return el.getBoundingClientRect().width > 0; })) isAmk = true;
+    var url = isRoof ? '/calculator-acoperis.html?valmexEmbed=1' : (isAmk ? '/calculator-amk.html?valmexEmbed=1' : '/calculator-fatada.html?valmexEmbed=1');
+    var old = document.getElementById('valmex-calculator-popup');
+    if (old) old.remove();
+    if (!document.getElementById('valmex-calculator-popup-style')) {
+      var css = document.createElement('style'); css.id = 'valmex-calculator-popup-style';
+      css.textContent = '#valmex-calculator-popup{position:fixed;inset:0;z-index:100200;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:16px}#valmex-calculator-popup .vcp-box{position:relative;width:min(980px,100%);height:min(92vh,900px);background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 70px #0008}#valmex-calculator-popup .vcp-close{position:absolute;right:10px;top:10px;z-index:2;width:40px;height:40px;border:0;border-radius:50%;background:#e30613;color:#fff;font-size:26px;cursor:pointer}#valmex-calculator-popup iframe{width:100%;height:100%;border:0;background:#fff}@media(max-width:600px){#valmex-calculator-popup{padding:0}#valmex-calculator-popup .vcp-box{width:100%;height:100dvh;border-radius:0}#valmex-calculator-popup .vcp-close{right:8px;top:8px}}';
+      document.head.appendChild(css);
+    }
+    var modal = document.createElement('div'); modal.id = 'valmex-calculator-popup';
+    modal.innerHTML = '<div class="vcp-box"><button type="button" class="vcp-close" aria-label="Închide calculatorul">×</button><iframe title="Calculator ofertă VALMEX" loading="eager"></iframe></div>';
+    modal.querySelector('iframe').src = url;
+    document.body.appendChild(modal); document.body.style.overflow = 'hidden';
+    function close(){ modal.remove(); document.body.style.overflow = ''; }
+    modal.querySelector('.vcp-close').addEventListener('click', close);
+    modal.addEventListener('click', function(e){ if(e.target===modal) close(); });
+    document.addEventListener('keydown', function esc(e){ if(e.key==='Escape' && document.getElementById('valmex-calculator-popup')){close();document.removeEventListener('keydown',esc);} });
+    document.dispatchEvent(new CustomEvent('valmex:sc-calculator-opened',{detail:{topic:p.key,url:url}}));
+  }
+
   /* ---------- UI: mic, discret, fără overlay, fără furt de focus ---------- */
   var UI = {
     el: null,
@@ -186,22 +211,10 @@
     dismiss: function (p) { state.dismissed[p.key] = Date.now(); Store.save(state); this.close(); document.dispatchEvent(new CustomEvent('valmex:sc-dismissed', { detail: p.key })); },
     yes: function (p) {
       state.done[p.key] = Date.now(); Store.save(state);
-      /* Pentru acoperiș și fațade, răspunsul „Da” duce direct la calculator.
-         Datele personale se cer numai după afișarea estimării în calculator. */
+      /* Deschide calculatorul potrivit în popup; formularul și oferta rămân în calculatorul existent. */
       if (p.key === 'acoperisuri' || p.key === 'fatade') {
-        var path = location.pathname.toLowerCase();
-        var isRoof = p.key === 'acoperisuri';
-        var isAmk = !isRoof && (path.indexOf('amk') > -1);
-        var targetUrl = isRoof ? '/calculator-acoperis.html' : (isAmk ? '/calculator-amk.html' : '/calculator-fatada.html');
-        var targetId = isRoof ? 'panel' : 'detalii';
         this.close();
-        document.dispatchEvent(new CustomEvent('valmex:sc-converted', { detail: { topic: p.key, action: 'calculator', destination: targetUrl } }));
-        if ((isRoof && path.indexOf('calculator-acoperis') > -1) || (!isRoof && path.indexOf('calculator-') > -1)) {
-          var target = document.getElementById(targetId);
-          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-          location.href = targetUrl;
-        }
+        openCalculatorPopup(p);
         document.dispatchEvent(new CustomEvent('valmex:sc-yes', { detail: p.key }));
         return;
       }
@@ -247,6 +260,7 @@
     }, 1000);
     addEventListener('pagehide', function () { if (Consent.ok()) Store.save(state); });
   }
+  if (new URLSearchParams(location.search).get('valmexEmbed') === '1') return;
   window.ValmexSC = { state: function () { return state; }, config: function () { return cfg; }, reset: function () { try { localStorage.removeItem(KEY); sessionStorage.removeItem(KEY + 'n'); } catch (e) {} } };
   if (window.VALMEX_CMS) start(window.VALMEX_CMS); else document.addEventListener('valmex:cms', function (e) { start(e.detail); });
 })();
