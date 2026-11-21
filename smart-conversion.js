@@ -186,6 +186,25 @@
     dismiss: function (p) { state.dismissed[p.key] = Date.now(); Store.save(state); this.close(); document.dispatchEvent(new CustomEvent('valmex:sc-dismissed', { detail: p.key })); },
     yes: function (p) {
       state.done[p.key] = Date.now(); Store.save(state);
+      /* Pentru acoperiș și fațade, răspunsul „Da” duce direct la calculator.
+         Datele personale se cer numai după afișarea estimării în calculator. */
+      if (p.key === 'acoperisuri' || p.key === 'fatade') {
+        var path = location.pathname.toLowerCase();
+        var isRoof = p.key === 'acoperisuri';
+        var isAmk = !isRoof && (path.indexOf('amk') > -1);
+        var targetUrl = isRoof ? '/calculator-acoperis.html' : (isAmk ? '/calculator-amk.html' : '/calculator-fatada.html');
+        var targetId = isRoof ? 'panel' : 'detalii';
+        this.close();
+        document.dispatchEvent(new CustomEvent('valmex:sc-converted', { detail: { topic: p.key, action: 'calculator', destination: targetUrl } }));
+        if ((isRoof && path.indexOf('calculator-acoperis') > -1) || (!isRoof && path.indexOf('calculator-') > -1)) {
+          var target = document.getElementById(targetId);
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          location.href = targetUrl;
+        }
+        document.dispatchEvent(new CustomEvent('valmex:sc-yes', { detail: p.key }));
+        return;
+      }
       var self = this, whats = (cfg.whats || '37378026212').replace(/\D/g, ''), btns = '';
       var label = this.esc(p.ctaLabel || 'Cere ofertă');
       if (p.cta === 'whatsapp') btns = '<button class="vsc-go" data-k="wa" type="button">WhatsApp</button>';
