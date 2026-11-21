@@ -220,3 +220,21 @@ html:not(.dk) footer.site-footer .footer-bottom{border-top:1px solid #343740!imp
 
 /* Project gallery thumbnails: real lazy-loaded images */
 .story-thumb{overflow:hidden;display:block;background:#e9e9e9}.story-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+
+
+/* VALMEX – cards vizuale pentru zona „Ce vă oferim?” */
+.valmex-start-here{padding:54px 0 60px;background:#f5f6f8}
+.valmex-start-here .eyebrow{color:#e30613;font-weight:800;letter-spacing:.22em;text-transform:uppercase;font-size:12px}
+.valmex-start-here h2{margin:8px 0;font-size:clamp(30px,4vw,44px);letter-spacing:-.04em;color:#17191d}
+.valmex-start-here>.wrap>.lead{max-width:760px;color:#626a75;font-size:16px;line-height:1.55}
+.valmex-start-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:26px}
+.valmex-start-grid a{position:relative;display:flex;flex-direction:column;gap:0;min-height:0;padding:0 0 16px;background:#fff;border:1px solid #e3e5e9;border-radius:16px;overflow:hidden;text-decoration:none;color:#20242b;box-shadow:0 6px 22px rgba(20,25,35,.045);transition:transform .2s,border-color .2s,box-shadow .2s}
+.valmex-start-grid a:hover{transform:translateY(-3px);border-color:#e30613;box-shadow:0 12px 28px rgba(20,25,35,.10)}
+.valmex-start-grid a>img{display:block;width:100%;height:142px;object-fit:cover;object-position:center}
+.valmex-start-grid .vsh-copy{display:flex;flex-direction:column;gap:5px;padding:13px 42px 0 16px}
+.valmex-start-grid b{font-size:16px;line-height:1.3;color:#20242b}
+.valmex-start-grid span{font-size:13px;line-height:1.4;color:#737b86}
+.valmex-start-grid i{position:absolute;right:15px;bottom:17px;color:#e30613;font-size:22px;font-style:normal}
+@media(min-width:761px) and (max-width:1100px){.valmex-start-grid a>img{height:118px}.valmex-start-grid .vsh-copy{padding:11px 36px 0 13px}.valmex-start-grid b{font-size:14px}.valmex-start-grid span{font-size:12px}}
+@media(max-width:760px){.valmex-start-here{padding:34px 0 40px}.valmex-start-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}.valmex-start-grid a{border-radius:12px;padding-bottom:13px}.valmex-start-grid a>img{height:104px}.valmex-start-grid .vsh-copy{gap:4px;padding:10px 28px 0 11px}.valmex-start-grid b{font-size:13px;line-height:1.25}.valmex-start-grid span{font-size:11px;line-height:1.35}.valmex-start-grid i{right:10px;bottom:12px;font-size:18px}}
+@media(max-width:360px){.valmex-start-grid a>img{height:88px}.valmex-start-grid b{font-size:12px}.valmex-start-grid span{font-size:10px}}
