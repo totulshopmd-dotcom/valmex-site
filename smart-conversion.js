@@ -7,7 +7,7 @@
   var PRODUCT_TOPIC = { 'acoperis-la-cheie': 'acoperisuri', 'tigla-metalica': 'acoperisuri', 'fatada-la-cheie': 'fatade', 'panouri-amk': 'fatade', 'tencuiala-decorativa': 'fatade', 'pavaj': 'pavaje' };
   var SECTION_TOPIC = { amk: 'fatade' };
   var LABEL = { acoperisuri: 'Acoperiș metalic', fatade: 'Fațade decorative', 'rate-0': 'Rate 0%', proiecte: 'Proiecte', produse: 'Produse și materiale' };
-  var KEY = 'valmexSC', CONSENT_KEY = 'valmexCookieConsent', CHAT_KEY = 'valmexChatInvite', DAY = 864e5, WARMUP = 8000, IDLE = 5000;
+  var KEY = 'valmexSC', CONSENT_KEY = 'valmexCookieConsent', CHAT_KEY = 'valmexChatInvite', DAY = 864e5, WARMUP = 8000;
 
   /* ---------- Store: stare persistentă între pagini (doar cu consimțământ) ---------- */
   var Store = {
@@ -19,7 +19,7 @@
   /* ---------- Consent ---------- */
   var Consent = { ok: function () { try { return localStorage.getItem(CONSENT_KEY) === 'accepted'; } catch (e) { return false; } } };
 
-  var cfg = null, state = null, started = false, lastActivity = Date.now(), shownNow = null;
+  var cfg = null, state = null, started = false, shownNow = null;
   function topicsOf(el) {
     var t = {}, s = el.closest && el.closest('[data-valmex-section]'), p = el.closest && el.closest('[data-valmex-product]'), o = el.closest && el.closest('[data-valmex-offer]');
     if (s) { var v = s.getAttribute('data-valmex-section'); t[SECTION_TOPIC[v] || v] = 1; }
@@ -44,7 +44,6 @@
     visible: {}, inView: {}, dwell: {},
     init: function () {
       var self = this;
-      ['scroll', 'mousemove', 'touchstart', 'keydown', 'click'].forEach(function (e) { addEventListener(e, function () { lastActivity = Date.now(); }, { passive: true }); });
       if (!('IntersectionObserver' in window)) return;
       var io = new IntersectionObserver(function (es) {
         es.forEach(function (e) {
@@ -67,7 +66,9 @@
       document.addEventListener('input', function (e) { if (e.target.closest && e.target.closest('#ratePanel,.calc-card')) calcTopics(e.target).forEach(function (k) { T(k).calc = 1; }); }, true);
     },
     tick: function (dt) {
-      var active = !document.hidden && Date.now() - lastActivity < IDLE;
+      /* Citirea paginii este activitate: acumulăm timpul cât tabul este vizibil,
+         fără să cerem mișcare, scroll sau click la fiecare 5 secunde. */
+      var active = !document.hidden;
       var seen = {};
       for (var id in this.inView) if (this.inView[id]) {
         var el = this.visible[id];
