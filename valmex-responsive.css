@@ -229,3 +229,74 @@ h1,h2,h3,p{overflow-wrap:break-word}
   html:not(.dk) #ratePanel .chip{font-size:9px!important}
   html:not(.dk) #ratePanel .rout strong{font-size:12px!important}
 }
+
+
+/* VALMEX RATE CALCULATOR – redesign adaptiv pentru toate ecranele */
+html:not(.dk) #ratePanel{width:min(100%,1120px);margin-left:auto;margin-right:auto;padding:clamp(18px,2.4vw,30px);box-sizing:border-box}
+html:not(.dk) #ratePanel .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+html:not(.dk) #ratePanel .tab{min-width:0;min-height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:12px 10px}
+html:not(.dk) #ratePanel .tab svg{display:block;width:25px;height:25px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html:not(.dk) #ratePanel .tab span{display:block;text-align:center;line-height:1.2}
+html:not(.dk) #ratePanel .rate-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+html:not(.dk) #ratePanel .rc{display:flex;flex-direction:column;gap:12px;min-width:0}
+html:not(.dk) #ratePanel .rc .blk{width:100%;min-width:0;box-sizing:border-box;padding:clamp(14px,2vw,20px);border:1px solid rgba(255,255,255,.10);border-radius:14px}
+html:not(.dk) #ratePanel .rc .cap{display:flex;align-items:center;gap:10px;white-space:normal;line-height:1.3}
+html:not(.dk) #ratePanel .rc .lb{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:12px 0 10px;min-width:0}
+html:not(.dk) #ratePanel .rc .lb span{font-size:clamp(13px,1.2vw,15px);line-height:1.25}
+html:not(.dk) #ratePanel .rc .lb b{flex:0 0 auto;margin:0;font-size:clamp(20px,2.2vw,27px);line-height:1.1;white-space:nowrap}
+html:not(.dk) #ratePanel .rc .srow{display:flex;align-items:center;gap:14px;width:100%}
+html:not(.dk) #ratePanel .rc .rw{flex:1 1 auto;min-width:0}
+html:not(.dk) #ratePanel .rc input[type=range]{width:100%;min-width:0;height:9px;cursor:pointer;touch-action:pan-y}
+html:not(.dk) #ratePanel .rc .sb{width:38px;height:38px;min-width:38px;flex:0 0 38px;border-radius:50%;font-size:22px}
+html:not(.dk) #ratePanel .rc .scale{display:flex;justify-content:space-between;margin:8px 52px 0;font-size:11px}
+html:not(.dk) #ratePanel .rc .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+html:not(.dk) #ratePanel .rc .chip{min-width:48px;padding:9px 13px}
+html:not(.dk) #ratePanel .res{min-width:0}
+html:not(.dk) #ratePanel .rout{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px}
+html:not(.dk) #ratePanel .rout>div{min-width:0;padding:clamp(12px,1.8vw,20px);border-radius:15px}
+html:not(.dk) #ratePanel .rout strong{display:block;font-size:clamp(18px,2.5vw,30px);line-height:1.15;overflow-wrap:anywhere}
+html:not(.dk) #ratePanel .rout .main strong{font-size:clamp(24px,3.2vw,40px)}
+html:not(.dk) #ratePanel .rate-plan-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:22px 0 10px;color:#fff}
+html:not(.dk) #ratePanel .rate-plan-head strong{font-size:clamp(15px,1.5vw,18px)}
+html:not(.dk) #ratePanel .rate-plan-head span{color:#fff;font-size:clamp(14px,1.5vw,18px);font-weight:800;text-align:right}
+html:not(.dk) #ratePanel .rtl{margin-top:0;overflow:hidden}
+html:not(.dk) #ratePanel .rn-row{display:flex;gap:0;min-width:0}
+html:not(.dk) #ratePanel .rn{flex:1 1 0;min-width:0}
+html:not(.dk) #ratePanel .rn small{font-size:clamp(9px,.9vw,12px);overflow-wrap:anywhere}
+html:not(.dk) #ratePanel .cmp{margin-top:clamp(22px,3vw,34px)}
+@media(max-width:760px){
+ html:not(.dk) #ratePanel{padding:16px 14px 20px;border-radius:18px}
+ html:not(.dk) #ratePanel>.cap{font-size:14px;margin-bottom:10px}
+ html:not(.dk) #ratePanel .tab{min-height:68px;padding:9px 5px}
+ html:not(.dk) #ratePanel .tab svg{width:22px;height:22px}
+ html:not(.dk) #ratePanel .tab span{font-size:12px}
+ html:not(.dk) #ratePanel .rc .blk{padding:13px 12px}
+ html:not(.dk) #ratePanel .rc .cap{font-size:13px}
+ html:not(.dk) #ratePanel .rc .lb{gap:8px;margin:10px 0}
+ html:not(.dk) #ratePanel .rc .lb span{font-size:12px}
+ html:not(.dk) #ratePanel .rc .lb b{font-size:22px}
+ html:not(.dk) #ratePanel .rc .srow{gap:9px}
+ html:not(.dk) #ratePanel .rc .sb{width:34px;height:34px;min-width:34px;flex-basis:34px}
+ html:not(.dk) #ratePanel .rc input[type=range]{height:8px}
+ html:not(.dk) #ratePanel .rc .scale{margin-left:43px;margin-right:43px}
+ html:not(.dk) #ratePanel .rout{gap:7px}
+ html:not(.dk) #ratePanel .rout>div{padding:11px 8px}
+ html:not(.dk) #ratePanel .rout small{font-size:10px}
+ html:not(.dk) #ratePanel .rout strong{font-size:clamp(14px,3.8vw,20px)}
+ html:not(.dk) #ratePanel .rout .main strong{font-size:clamp(19px,5vw,27px)}
+ html:not(.dk) #ratePanel .rate-plan-head{margin-top:17px}
+ html:not(.dk) #ratePanel .rn small{font-size:9px}
+}
+@media(max-width:390px){
+ html:not(.dk) #ratePanel{padding:13px 10px 16px}
+ html:not(.dk) #ratePanel .tabs{gap:4px}
+ html:not(.dk) #ratePanel .tab{min-height:62px;padding:7px 2px}
+ html:not(.dk) #ratePanel .tab span{font-size:10px}
+ html:not(.dk) #ratePanel .rc .lb b{font-size:19px}
+ html:not(.dk) #ratePanel .rout{gap:5px}
+ html:not(.dk) #ratePanel .rout>div{padding:9px 6px}
+ html:not(.dk) #ratePanel .rout small{font-size:9px}
+ html:not(.dk) #ratePanel .rout strong{font-size:12px}
+ html:not(.dk) #ratePanel .rout .main strong{font-size:18px}
+ html:not(.dk) #ratePanel .rate-plan-head{gap:8px}
+}
