@@ -1805,22 +1805,27 @@ function lastCfgOrDefault() { return lastCfg; }
     if (els.sendLeadBtn) els.sendLeadBtn.disabled = true;
     if (btnLabel) btnLabel.textContent = "Se trimite...";
 
-    var query = WEBAPP_URL +
-      "?name=" + encodeURIComponent(leadName) +
-      "&phone=" + encodeURIComponent(leadPhone) +
-      "&city=" + encodeURIComponent(leadLocality || "-") +
-      "&product=" + encodeURIComponent(buildRoofProductLabel()) +
-      "&price=" + encodeURIComponent(fmtMDL(computeEstimatedPrice())) +
-      "&t=" + Date.now();
-
     try {
-      await fetch(query, { method: "GET", cache: "no-store" });
-      if (els.leadStatus) els.leadStatus.style.display = "block";
+      if (!window.VALMEX_LEAD_TRACKER) throw new Error("Serviciul de înregistrare nu este disponibil.");
+      var saved = {};
+      try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {}; } catch (_) {}
+      var accepted = await window.VALMEX_LEAD_TRACKER.submit({
+        source: "roof_calculator",
+        name: leadName,
+        phone: leadPhone,
+        locality: leadLocality,
+        service: buildRoofProductLabel(),
+        details: { configuration: saved, estimated_price: fmtMDL(computeEstimatedPrice()) }
+      }, "leadStatus");
+      if (!accepted) throw new Error("Solicitarea nu a fost confirmată de server.");
       leadSubmitted = true;
       localStorage.removeItem(STORAGE_KEY);
       goTo(5);
     } catch (e) {
-      alert("Eroare la trimitere.");
+      if (els.leadStatus && !els.leadStatus.textContent) {
+        els.leadStatus.textContent = e.message || "Eroare la trimitere.";
+        els.leadStatus.style.display = "block";
+      }
     }
 
     if (els.sendLeadBtn) els.sendLeadBtn.disabled = false;
@@ -1892,6 +1897,7 @@ function lastCfgOrDefault() { return lastCfg; }
   }
 })();
 </script>
+<script src="/valmex-lead-tracker.js?v=1" defer></script>
 <script src="images-loader.js" defer></script>
 <script src="nav-ui.js" defer></script>
 <script src="chat-widget.js" defer></script>
