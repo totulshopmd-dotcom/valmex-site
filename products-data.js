@@ -242,7 +242,7 @@ const PRODUCTS = [
     title: "Tencuială Mozaicată Caparol Buntsteinputz",
     price: 2199,
     unit: "lei/căldare 25kg",
-    image: "materiale-buntsteinputz---tencuial-mozaicat-pentru-socl-22397-1-17889393957614",
+    image: "materiale-buntsteinputz-caparol",
     shortDescription: "Tencuială mozaicată decorativă, ideală pentru soclu, rezistentă la impact și umiditate.",
     description: "Tencuială mozaicată Caparol Buntsteinputz, recomandată pentru soclul clădirii. Rezistență ridicată la impact, umiditate și murdărire, cu aspect decorativ mozaicat.",
     specs: [
@@ -385,7 +385,7 @@ const PRODUCTS = [
     title: "Vată Bazaltică pentru Termoizolații (100mm)",
     price: null,
     unit: "lei",
-    image: "materiale-vat-bazaltic-pentrutermoizola-ii100mm-20798-1-1607950466",
+    image: "materiale-vat-bazaltic-pentrutermoizola-ii100mm",
     shortDescription: "Vată bazaltică, grosime 100mm, izolație termică și fonică pentru fațade.",
     description: "Vată bazaltică pentru termoizolații, grosime 100mm. Oferă izolare termică și fonică superioară, incombustibilă, recomandată pentru fațade ventilate sau ETICS.",
     specs: [
@@ -400,7 +400,7 @@ const PRODUCTS = [
     title: "Vată Bazaltică Fawori TR10 (100mm)",
     price: null,
     unit: "lei",
-    image: "materiale-vata-bazaltica-fawori-tr10-30kpa-100-mm-21024-1-16285793302419",
+    image: "materiale-vata-bazaltica-fawori-tr10-30kpa-100-mm",
     shortDescription: "Vată bazaltică Fawori TR10, rezistență 30kPa, grosime 100mm.",
     description: "Vată bazaltică Fawori TR10, cu rezistență la compresiune de 30 kPa și grosime de 100mm. Recomandată pentru termoizolarea fațadelor.",
     specs: [
@@ -547,23 +547,5 @@ const PRODUCTS = [
       { label: "Fixare", value: "Mecanică, fără lucrări umede" }
     ]
   },
-
-  // ---------------- PAVAJ ----------------
-  {
-    id: "pavaj-arka",
-    category: "Pavaj",
-    title: "Pavaj Arka 20×20 / 15×20 / 20×10",
-    price: null,
-    unit: "lei/m²",
-    image: "pavaj-01kkqdka5wyb78shej82eck5pr",
-    shortDescription: "Grosime 4.5cm. Textură premium cu aspect natural de piatră.",
-    description: "Pavaj Arka, grosime 4.5cm, cu textură premium și aspect natural de piatră. Finisaj elegant, ideal pentru curți și terase moderne. Rezistent la îngheț și trafic pietonal/auto ușor.",
-    specs: [
-      { label: "Grosime", value: "4.5 cm" },
-      { label: "Dimensiuni", value: "20×20 / 15×20 / 20×10 cm" },
-      { label: "Rezistență la îngheț", value: "Da" },
-      { label: "Recomandat pentru", value: "Curți, terase, alei" }
-    ]
-  }
 
 ];
