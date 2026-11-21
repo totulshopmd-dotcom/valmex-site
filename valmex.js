@@ -361,9 +361,10 @@
       const adhesive = Math.ceil(netArea * 5);
       const mesh = Math.ceil(netArea * 1.1);
       const primer = Math.ceil(netArea * 0.3);
-      const turnkeyPrice = Math.ceil(netArea*850);
+      const facadePrice = Number(window.VALMEX_CMS && window.VALMEX_CMS.prices && window.VALMEX_CMS.prices.facade);
+      const turnkeyPrice = facadePrice > 0 ? Math.ceil(netArea*facadePrice) : null;
       facadeCalcResult.style.display='block';
-      facadeCalcResult.innerHTML = '<h3>Rezultat Estimativ</h3><p><b>Tip:</b> '+type+'</p><p><b>Suprafață netă:</b> '+netArea.toFixed(1)+' m²</p><p><b>Adeziv:</b> ~'+adhesive+' kg</p><p><b>Plasă armare:</b> ~'+mesh+' m²</p><p><b>Grund:</b> ~'+primer+' L</p><div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)"><p><b>Fațadă decorativă la cheie (de la 850 lei/m²):</b> ~'+turnkeyPrice.toLocaleString('ro-RO')+' lei</p></div><p style="margin-top:10px;font-size:13px;color:#777">*Calcule și prețuri orientative. Contactează-ne pentru ofertă exactă.</p>';
+      facadeCalcResult.innerHTML = '<h3>Rezultat Estimativ</h3><p><b>Tip:</b> '+type+'</p><p><b>Suprafață netă:</b> '+netArea.toFixed(1)+' m²</p><p><b>Adeziv:</b> ~'+adhesive+' kg</p><p><b>Plasă armare:</b> ~'+mesh+' m²</p><p><b>Grund:</b> ~'+primer+' L</p><div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">'+(turnkeyPrice !== null ? '<p><b>Fațadă decorativă (tarif CMS: '+facadePrice+' lei/m²):</b> ~'+turnkeyPrice.toLocaleString('ro-RO')+' lei</p>' : '<p><b>Preț:</b> Se confirmă prin ofertă.</p>')+'</div><p style="margin-top:10px;font-size:13px;color:#777">*Calcule și prețuri orientative. Oferta finală se confirmă după evaluarea proiectului.</p>';
     });
   }
 
