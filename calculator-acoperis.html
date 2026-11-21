@@ -1780,7 +1780,7 @@ function lastCfgOrDefault() { return lastCfg; }
   async function submitGateForm() {
     var name = document.getElementById("leadName").value.trim();
     var phone = document.getElementById("leadPhone").value.trim();
-    if (!name || !phone) { alert("Completează câmpurile."); return; }
+    if (!name || !phone || !document.getElementById("leadLocality").value.trim()) { alert("Completează numele, telefonul și localitatea."); return; }
 
     leadName = name;
     leadPhone = phone;
@@ -1800,7 +1800,7 @@ function lastCfgOrDefault() { return lastCfg; }
         phone: leadPhone,
         locality: leadLocality,
         service: buildRoofProductLabel(),
-        details: { configuration: saved, estimated_price: fmtMDL(computeEstimatedPrice()) }
+        details: { configuration: saved, dimensions: { length: state.length, width: state.width }, roof_type: state.type, variant: state.variant, color: state.colorName, calculated_area_m2: round1(computeMontajArea(state.length, state.width)), estimated_price: fmtMDL(computeEstimatedPrice()) }
       }, "leadStatus");
       if (!accepted) throw new Error("Solicitarea nu a fost confirmată de server.");
       leadSubmitted = true;
