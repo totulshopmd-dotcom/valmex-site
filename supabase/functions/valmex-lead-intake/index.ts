@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
       req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
     const rateKey = await sha256("lead:" + ip);
     const { data: permitted, error: rateError } = await admin.rpc("consume_chat_rate_limit", {
-      p_key_hash: "\\x" + rateKey,
+      p_key_hash: rateKey,
       p_action: "lead_intake",
       p_window_seconds: 60,
       p_max_requests: 12
