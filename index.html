@@ -161,7 +161,6 @@
       <div class="tabs" id="tabs"><i class="ind"></i>
         <button class="tab on" data-mode="roof"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12 12 4l10 8M5 10.5V20h14v-9.5"/></svg><span>Acoperiș<br>la cheie</span></button>
         <button class="tab" data-mode="facade"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4h14v17M9 8h2M13 8h2M9 12h2M13 12h2M10 21v-4h4v4"/></svg><span>Fațadă<br>decorativă</span></button>
-        <button class="tab" data-mode="custom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M16.5 7.5C15.5 6 14 5.5 12 5.5c-2.2 0-4 1-4 2.8 0 4 8.500 2 8.500 6.200 0 1.800-1.800 3-4.500 3-2 0-3.600-.7-4.500-2"/></svg><span>Altă<br>sumă</span></button>
       </div>
 
       <div class="rate-grid">
@@ -171,14 +170,6 @@
             <div class="lb"><span>Suprafața lucrării</span><b id="aV"></b></div>
             <div class="srow"><button class="sb" data-a="-10" aria-label="Scade suprafața">−</button><div class="rw"><input id="areaR" type="range" min="20" max="400" step="5" value="120" aria-label="Suprafața în metri pătrați"><span class="bub" id="bubA"></span></div><button class="sb" data-a="10" aria-label="Crește suprafața">+</button></div>
             <div class="scale"><span>20 m²</span><span>400 m²</span></div>
-          </div>
-          <div class="blk" id="sumBox" style="display:none">
-            <div class="cap"><i>2</i>Ce sumă ai în minte?</div>
-            <div class="lb"><span>Suma lucrării</span><b id="sumV"></b></div>
-            <div class="srow"><button class="sb" data-s="-5000" aria-label="Scade suma">−</button><div class="rw"><input id="sumR" type="range" min="5000" max="500000" step="1000" value="60000" aria-label="Suma lucrării"><span class="bub" id="bubS"></span></div><button class="sb" data-s="5000" aria-label="Crește suma">+</button></div>
-            <div class="scale"><span>5 000 lei</span><span>500 000 lei</span></div>
-            <div class="chips" id="sumChips"><button class="chip" data-v="25000">25&nbsp;000</button><button class="chip" data-v="50000">50&nbsp;000</button><button class="chip" data-v="100000">100&nbsp;000</button><button class="chip" data-v="250000">250&nbsp;000</button><button class="chip" data-v="500000">500&nbsp;000</button></div>
-            <div class="nin"><label for="sumN">Suma exactă (lei)</label><input id="sumN" type="number" inputmode="numeric" min="5000" max="500000" step="1000" value="60000"></div>
           </div>
           <div class="blk">
             <div class="cap"><i>3</i>În câte rate vrei să plătești?</div>
@@ -460,13 +451,13 @@ document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',()=>
 
 /* ===== Calculator rate ===== */
 (function(){
-const PRICE={roof:950,facade:850}, NAME={roof:'Acoperiș la cheie',facade:'Fațadă decorativă la cheie',custom:'Lucrare'};
+const PRICE={roof:950,facade:850}, NAME={roof:'Acoperiș la cheie',facade:'Fațadă decorativă la cheie'};
 const APR=0.415; /* dobândă nominală ipotetică, doar exemplu matematic orientativ */
 const $=id=>document.getElementById(id);
 const fn=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0');
-const st={mode:'roof',area:120,sum:60000,n:6};
+const st={mode:'roof',area:120,n:6};
 const money=v=>fn(v)+'\u00a0lei';
-const total=()=>st.mode==='custom'?st.sum:st.area*PRICE[st.mode];
+const total=()=>st.area*PRICE[st.mode];
 const model=()=>{const S=total(),n=st.n,r=Math.round(S/n);return{S,n,r,last:S-r*(n-1)}};
 const amt=(m,k)=>k===m.n?m.last:m.r;
 const row=$('rnr'),fl=$('rfl'),dt=$('rdt'),say=$('rsay');
@@ -487,14 +478,14 @@ const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 function controls(){
   document.querySelectorAll('#tabs .tab').forEach(b=>b.classList.toggle('on',b.dataset.mode===st.mode));
   document.querySelectorAll('#nChips .chip').forEach(b=>b.classList.toggle('on',+b.dataset.v===st.n));
-  document.querySelectorAll('#sumChips .chip').forEach(b=>b.classList.toggle('on',+b.dataset.v===st.sum));
-  $('areaBox').style.display=st.mode==='custom'?'none':'';$('sumBox').style.display=st.mode==='custom'?'':'none';
+
+
   $('areaR').value=st.area;tween($('aV'),st.area,v=>Math.round(v)+' m²');
-  $('sumR').value=st.sum;if(document.activeElement!==$('sumN'))$('sumN').value=st.sum;tween($('sumV'),st.sum,money);
-  $('nR').value=st.n;tween($('nV'),st.n,v=>Math.round(v));fill($('areaR'));fill($('sumR'));fill($('nR'));$('rcnt').textContent='× '+st.n+' rate';const tbs=$('tabs');if(tbs.style&&tbs.style.setProperty)tbs.style.setProperty('--i',['roof','facade','custom'].indexOf(st.mode));$('bubA').textContent=st.area+' m²';$('bubS').textContent=money(st.sum);$('bubN').textContent=st.n+' rate';
+
+  $('nR').value=st.n;tween($('nV'),st.n,v=>Math.round(v));fill($('areaR'));fill($('nR'));$('rcnt').textContent='× '+st.n+' rate';const tbs=$('tabs');if(tbs.style&&tbs.style.setProperty)tbs.style.setProperty('--i',['roof','facade'].indexOf(st.mode));$('bubA').textContent=st.area+' m²';$('bubN').textContent=st.n+' rate';
   const m=model();
   const planTotal=$('planTotal');if(planTotal)planTotal.textContent='Suma lucrării: '+money(m.S);
-  $('est').innerHTML=st.mode==='custom'?`Suma lucrării: <b>${money(m.S)}</b>. Rata se calculează egal pe ${m.n} rate.`:`Estimare orientativă <b>de la ${money(m.S)}</b> (${st.area} m² × ${PRICE[st.mode]} lei/m², la cheie). Prețul final se stabilește în ofertă.`;
+  $('est').innerHTML=`Estimare orientativă <b>de la ${money(m.S)}</b> (${st.area} m² × ${PRICE[st.mode]} lei/m², la cheie). Prețul final se stabilește în ofertă.`;
   /* comparație credit: simulare simplificată, dobândă nominală ipotetică, fără comisioane */
   const i=APR/12,pmt=m.S*i/(1-Math.pow(1+i,-m.n)),tb=pmt*m.n,extra=tb-m.S;
   $('tBank').textContent=money(tb);$('tVx').textContent=money(m.S);
@@ -502,7 +493,7 @@ function controls(){
   $('bBank').style.width='100%';$('bVx').style.width=(m.S/tb*100)+'%';
   $('save').innerHTML=`În această simulare, diferența de cost față de un credit cu dobândă nominală ipotetică de 41,5% pe an este de aproximativ <b>${money(extra)}</b>, dacă lucrarea este eligibilă pentru rate fără dobândă.`;
   /* WhatsApp */
-  const what=st.mode==='custom'?`suma ${fn(m.S)} lei`:`${NAME[st.mode]}, ${st.area} m², estimare de la ${fn(m.S)} lei`;
+  const what=`${NAME[st.mode]}, ${st.area} m², estimare de la ${fn(m.S)} lei`;
   const msg=`Bună ziua! Am făcut calculul pe valmex.md: ${what}, ${m.n} rate de aproximativ ${fn(m.r)} lei. Doresc o ofertă în rate.`;
   $('waCalc').href='https://wa.me/37378026212?text='+encodeURIComponent(msg);
 }
@@ -522,19 +513,13 @@ const upd=()=>{clearInterval(tp);clearTimeout(tp2);play()};
 
 document.querySelectorAll('#tabs .tab').forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;upd()});
 $('areaR').oninput=e=>{st.area=+e.target.value;upd()};
-$('sumR').oninput=e=>{st.sum=+e.target.value;upd()};
 $('nR').oninput=e=>{st.n=+e.target.value;upd()};
-$('sumN').oninput=e=>{const v=+e.target.value;if(v>=5000){st.sum=clamp(Math.round(v),5000,500000);upd()}};
-$('sumN').onblur=()=>{$('sumN').value=st.sum};
 document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{st.area=clamp(st.area+ +b.dataset.a,20,400);upd()});
-document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{st.sum=clamp(st.sum+ +b.dataset.s,5000,500000);upd()});
 document.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{st.n=clamp(st.n+ +b.dataset.n,2,12);upd()});
 document.querySelectorAll('#nChips .chip').forEach(b=>b.onclick=()=>{st.n=+b.dataset.v;upd()});
-document.querySelectorAll('#sumChips .chip').forEach(b=>b.onclick=()=>{st.sum=+b.dataset.v;upd()});
 new IntersectionObserver(es=>es.forEach(e=>{const was=vis;vis=e.isIntersecting;if(vis&&!was)play();if(!vis)run++}),{threshold:.3}).observe($('ratePanel'));
 new IntersectionObserver(es=>es.forEach(e=>{const fc=document.querySelector('.float-contact');if(e.isIntersecting)$('ratePanel').classList.add('go');if(fc)fc.classList.toggle('hide',e.isIntersecting)}),{threshold:.08}).observe($('ratePanel'));
 const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}};
-[['areaR','bubA'],['sumR','bubS'],['nR','bubN']].forEach(([r,b])=>{let t;const el=$(r);if(!el.addEventListener)return;el.addEventListener('input',()=>{const x=$(b);x.classList.add('show');clearTimeout(t);t=setTimeout(()=>x.classList.remove('show'),1400);buzz()})});
 document.querySelectorAll('.sb,.chip,.tab').forEach(b=>b.addEventListener('click',buzz));
 $('rep').onclick=()=>{buzz();upd()};
 controls();step(build(),0);
