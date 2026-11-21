@@ -238,3 +238,24 @@ html:not(.dk) footer.site-footer .footer-bottom{border-top:1px solid #343740!imp
 @media(min-width:761px) and (max-width:1100px){.valmex-start-grid a>img{height:118px}.valmex-start-grid .vsh-copy{padding:11px 36px 0 13px}.valmex-start-grid b{font-size:14px}.valmex-start-grid span{font-size:12px}}
 @media(max-width:760px){.valmex-start-here{padding:34px 0 40px}.valmex-start-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}.valmex-start-grid a{border-radius:12px;padding-bottom:13px}.valmex-start-grid a>img{height:104px}.valmex-start-grid .vsh-copy{gap:4px;padding:10px 28px 0 11px}.valmex-start-grid b{font-size:13px;line-height:1.25}.valmex-start-grid span{font-size:11px;line-height:1.35}.valmex-start-grid i{right:10px;bottom:12px;font-size:18px}}
 @media(max-width:360px){.valmex-start-grid a>img{height:88px}.valmex-start-grid b{font-size:12px}.valmex-start-grid span{font-size:10px}}
+
+
+/* VALMEX – uniformizare secțiune servicii */
+#valmex-start-here{padding:68px 0 72px;background:#f4f5f7}
+#valmex-start-here>.wrap{width:min(1320px,100%);margin:0 auto;padding-left:28px;padding-right:28px}
+#valmex-start-here .eyebrow{margin:0 0 12px;color:#e30613;font-size:12px;font-weight:800;letter-spacing:.2em;line-height:1.4}
+#valmex-start-here h2{margin:0 0 14px;color:#17191d;font-size:clamp(32px,4vw,46px);line-height:1.08;letter-spacing:-.04em}
+#valmex-start-here>.wrap>.lead{max-width:760px;margin:0;color:#626a75;font-size:17px;line-height:1.6}
+#valmex-start-here .valmex-start-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:20px;margin:34px 0 0}
+#valmex-start-here .valmex-start-grid>a{display:flex;flex-direction:column;min-width:0;min-height:0;height:100%;padding:0 0 20px;overflow:hidden;background:#fff;border:1px solid #e1e3e7;border-radius:16px;color:#17191d;text-decoration:none;box-shadow:0 5px 18px rgba(20,25,35,.045);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+#valmex-start-here .valmex-start-grid>a:hover{transform:translateY(-3px);border-color:#e30613;box-shadow:0 12px 28px rgba(20,25,35,.09)}
+#valmex-start-here .valmex-start-grid>a>img{display:block;width:100%;height:190px;flex:0 0 190px;object-fit:cover;object-position:center}
+#valmex-start-here .valmex-start-grid .vsh-copy{display:flex;flex:1;flex-direction:column;align-items:flex-start;gap:8px;padding:18px 20px 0}
+#valmex-start-here .valmex-start-grid b{display:block;margin:0;color:#17191d;font-size:20px;font-weight:750;line-height:1.25}
+#valmex-start-here .valmex-start-grid span{display:block;margin:0;color:#d71920;font-size:14px;font-weight:600;line-height:1.45}
+#valmex-start-here .valmex-start-grid em{display:inline-block;margin-top:auto;padding-top:18px;color:#24272d;font-size:13px;font-style:normal;font-weight:700;line-height:1.3}
+#valmex-start-here .valmex-start-grid em:after{content:"  ›";color:#e30613;font-size:18px;vertical-align:-1px}
+@media(min-width:761px){#valmex-start-here .valmex-start-grid{grid-auto-rows:1fr}}
+@media(min-width:761px) and (max-width:1050px){#valmex-start-here .valmex-start-grid{gap:14px}#valmex-start-here .valmex-start-grid>a>img{height:150px;flex-basis:150px}#valmex-start-here .valmex-start-grid .vsh-copy{padding:15px 15px 0}#valmex-start-here .valmex-start-grid b{font-size:17px}}
+@media(max-width:760px){#valmex-start-here{padding:42px 0 48px}#valmex-start-here>.wrap{padding-left:18px;padding-right:18px}#valmex-start-here h2{font-size:34px;margin-bottom:12px}#valmex-start-here>.wrap>.lead{font-size:15px;line-height:1.5}#valmex-start-here .valmex-start-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px}#valmex-start-here .valmex-start-grid>a{border-radius:13px;padding-bottom:15px}#valmex-start-here .valmex-start-grid>a>img{height:112px;flex-basis:112px}#valmex-start-here .valmex-start-grid .vsh-copy{gap:7px;padding:12px 12px 0}#valmex-start-here .valmex-start-grid b{font-size:15px;line-height:1.25}#valmex-start-here .valmex-start-grid span{font-size:12px;line-height:1.4}#valmex-start-here .valmex-start-grid em{padding-top:14px;font-size:12px}}
+@media(max-width:380px){#valmex-start-here>.wrap{padding-left:13px;padding-right:13px}#valmex-start-here .valmex-start-grid{gap:9px}#valmex-start-here .valmex-start-grid>a>img{height:96px;flex-basis:96px}#valmex-start-here .valmex-start-grid .vsh-copy{padding:10px 9px 0}#valmex-start-here .valmex-start-grid b{font-size:14px}#valmex-start-here .valmex-start-grid span{font-size:11px}}
