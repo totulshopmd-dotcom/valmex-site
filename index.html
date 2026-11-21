@@ -104,11 +104,57 @@
     <div class="eyebrow reveal">Calculator · plată în rate 0%*</div>
     <h2 class="reveal">Calculează lucrarea. <span class="red">Vezi cât plătești pe rată.</span></h2>
     <p class="lead reveal">Alege lucrarea, suprafața și numărul de rate. Vezi rata lunară orientativă, suma achitată și compară costul total cu un credit obișnuit, într-o simulare simplificată.</p>
-    <div class="rate-intro reveal">
-      <div><b>01</b><strong>Ne scrii</strong><p>Ne spui ce lucrare dorești și unde.</p></div>
-      <div><b>02</b><strong>Primești oferta</strong><p>Oferta arată suma totală, numărul de rate și condițiile.</p></div>
-      <div><b>03</b><strong>Achiți rată cu rată</strong><p>Fără dobândă pentru lucrările eligibile.</p></div>
+    <div class="rate-intro reveal rate-intro-chat" aria-label="Cum funcționează plata în rate">
+      <div class="rate-step" data-step="1">
+        <b>01</b><strong>Ne scrii</strong>
+        <p>Ne spui ce lucrare dorești și unde.</p>
+        <div class="rate-example"><small>EXEMPLU DE MESAJ</small><p class="rate-typed" data-text="Bună ziua! Doresc un acoperiș de aproximativ 120 m². Pot achita în rate?"><span class="rate-typed-text"></span><span class="rate-caret" aria-hidden="true"></span></p></div>
+      </div>
+      <div class="rate-step" data-step="2">
+        <b>02</b><strong>Primești oferta</strong>
+        <p>Oferta arată suma totală, numărul de rate și condițiile.</p>
+        <div class="rate-example"><small>EXEMPLU DE MESAJ</small><p class="rate-typed" data-text="Am primit calculul. Cât voi achita lunar pentru 12 luni?"><span class="rate-typed-text"></span><span class="rate-caret" aria-hidden="true"></span></p></div>
+      </div>
+      <div class="rate-step" data-step="3">
+        <b>03</b><strong>Achiți rată cu rată</strong>
+        <p>Fără dobândă pentru lucrările eligibile.</p>
+        <div class="rate-example"><small>EXEMPLU DE MESAJ</small><p class="rate-typed" data-text="Mulțumesc! Doresc să continui cu oferta VALMEX."><span class="rate-typed-text"></span><span class="rate-caret" aria-hidden="true"></span></p></div>
+      </div>
     </div>
+    <script>
+    (function(){
+      var section=document.querySelector('.rate-intro-chat');
+      if(!section || section.dataset.typingReady) return;
+      section.dataset.typingReady='1';
+      var steps=Array.from(section.querySelectorAll('.rate-step'));
+      var started=false;
+      function play(){
+        if(started) return; started=true;
+        steps.forEach(function(step,index){
+          var line=step.querySelector('.rate-typed');
+          var target=line && line.querySelector('.rate-typed-text');
+          var full=line && line.getAttribute('data-text') || '';
+          if(!target) return;
+          window.setTimeout(function(){
+            var n=0, caret=line.querySelector('.rate-caret');
+            if(caret) caret.classList.add('is-active');
+            var timer=window.setInterval(function(){
+              n++; target.textContent=full.slice(0,n);
+              if(n>=full.length){window.clearInterval(timer); if(caret) caret.classList.add('is-pulsing');}
+            },15);
+          },index*1550);
+        });
+      }
+      if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+        steps.forEach(function(step){var line=step.querySelector('.rate-typed');if(line){line.querySelector('.rate-typed-text').textContent=line.getAttribute('data-text');line.querySelector('.rate-caret').classList.add('is-pulsing');}});
+        return;
+      }
+      if('IntersectionObserver' in window){
+        var observer=new IntersectionObserver(function(entries){if(entries.some(function(e){return e.isIntersecting;})){play();observer.disconnect();}},{threshold:.18});
+        observer.observe(section);
+      }else{play();}
+    })();
+    </script>
 
     <div class="rate-panel reveal" id="ratePanel" data-valmex-product="calculator-rate">
       <div class="cap"><i>1</i>Ce lucrare te interesează?</div>
