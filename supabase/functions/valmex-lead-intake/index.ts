@@ -54,8 +54,9 @@ Deno.serve(async (req) => {
     const locality = String(body.locality || "").trim().slice(0, 120) || null;
     const service = String(body.service || "Solicitare VALMEX").trim().slice(0, 180);
     const pageUrl = String(body.page_url || "").slice(0, 500);
-    const details = body.details && typeof body.details === "object" && !Array.isArray(body.details)
+    const rawDetails = body.details && typeof body.details === "object" && !Array.isArray(body.details)
       ? body.details : {};
+    const details = JSON.stringify(rawDetails).length <= 6000 ? rawDetails : { truncated: true };
     if (!name) return reply(400, { error: "Numele este obligatoriu." });
     if (!phone) return reply(400, { error: "Numărul de telefon nu este valid. Introdu un număr din Republica Moldova." });
 
@@ -73,7 +74,7 @@ Deno.serve(async (req) => {
 
     const { data, error } = await admin.from("lead_events").insert({
       source, visitor_name: name, phone, locality, service, page_url: pageUrl,
-      details: JSON.parse(JSON.stringify(details).slice(0, 6000))
+      details
     }).select("id,created_at").single();
     if (error) throw error;
     return reply(200, { success: true, lead_id: data.id, created_at: data.created_at });
