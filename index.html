@@ -26,7 +26,7 @@
 <meta name="twitter:image" content="https://valmex.md/images/acoperisuri/acoperis-finisat2.png">
 <link rel="stylesheet" href="valmex-v3.css?v=20261121-accordion">
 <link rel="stylesheet" href="valmex-compat.css?v=20261120-footer">
-<link rel="stylesheet" href="valmex-responsive.css?v=20261121-mobilefix4">
+<link rel="stylesheet" href="valmex-responsive.css?v=20261121-rates-crm1">
 <link rel="stylesheet" href="valmex-home-motion.css?v=20261121-2">
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Valmex.md","url":"https://valmex.md/","potentialAction":{"@type":"SearchAction","target":"https://valmex.md/?s={search_term_string}","query-input":"required name=search_term_string"}}</script>
@@ -174,9 +174,9 @@
           <div class="blk">
             <div class="cap"><i>3</i>În câte rate vrei să plătești?</div>
             <div class="lb"><span>Numărul de rate</span><b id="nV"></b></div>
-            <div class="srow"><button class="sb" data-n="-1" aria-label="Mai puține rate">−</button><div class="rw"><input id="nR" type="range" min="2" max="12" step="1" value="6" aria-label="Numărul de rate"><span class="bub" id="bubN"></span></div><button class="sb" data-n="1" aria-label="Mai multe rate">+</button></div>
-            <div class="scale"><span>2 rate</span><span>12 rate</span></div>
-            <div class="chips" id="nChips"><button class="chip" data-v="2">2</button><button class="chip" data-v="3">3</button><button class="chip" data-v="4">4</button><button class="chip" data-v="6">6</button><button class="chip" data-v="9">9</button><button class="chip" data-v="12">12</button></div>
+            <div class="srow"><button class="sb" data-n="-1" aria-label="Mai puține rate">−</button><div class="rw"><input id="nR" type="range" min="3" max="24" step="1" value="6" aria-label="Numărul de rate"><span class="bub" id="bubN"></span></div><button class="sb" data-n="1" aria-label="Mai multe rate">+</button></div>
+            <div class="scale"><span>3 rate</span><span>24 rate</span></div>
+            <div class="chips" id="nChips"><button class="chip" data-v="3">3</button><button class="chip" data-v="4">4</button><button class="chip" data-v="6">6</button><button class="chip" data-v="10">10</button><button class="chip" data-v="12">12</button><button class="chip" data-v="18">18</button><button class="chip" data-v="24">24</button></div>
           </div>
         </div>
         <div class="res">
@@ -223,7 +223,7 @@
           </details>
           <details class="finance-info-item">
             <summary><span><b>Cum este calculată comparația?</b><small>Vezi ipotezele folosite în simularea creditului obișnuit.</small></span></summary>
-            <div class="finance-info-body">Simularea folosește o dobândă nominală ipotetică de 41,5% pe an, rate lunare egale și nu include comisioane suplimentare. Este un exemplu matematic pentru compararea aceleiași sume și a aceleiași perioade. Nu reprezintă oferta unei instituții financiare, iar costul real poate fi diferit.</div>
+            <div class="finance-info-body">Pentru comparație, calculatorul aplică o dobândă nominală de 41,5% pe an, împărțită lunar, asupra soldului rămas, cu rate lunare egale. Astfel este estimat cât ar rambursa clientul pentru aceeași sumă și aceeași perioadă printr-un credit obișnuit. Este doar o simulare matematică: 41,5% nu reprezintă o ofertă individuală și nu include eventuale comisioane sau alte costuri ale creditorului.</div>
           </details>
           <details class="finance-info-item">
             <summary><span><b>Ce trebuie să știi despre ratele 0% Valmex?</b><small>Eligibilitatea și condițiile se confirmă înainte de acceptare.</small></span></summary>
@@ -233,10 +233,17 @@
       </div>
 
       <p class="rfine" id="fine">*Calcul orientativ. Rata lunară se calculează în funcție de suma lucrării și numărul de rate. Eligibilitatea pentru 0% dobândă, numărul de rate și condițiile exacte se confirmă în oferta Valmex, înainte de acceptare.</p>
-      <div class="cta-row">
-        <a class="btn wa" id="waCalc" href="https://wa.me/37378026212" data-cms-href="wa:site.contact.whats">Trimite calculul pe WhatsApp</a>
-        <a class="btn gw" href="tel:+37378026212" data-cms-href="tel:site.contact.phone">Sună: <span data-cms="site.contact.phone" data-cms-fmt="phone">078 026 212</span></a>
+      <div class="cta-row rate-submit-row">
+        <button class="btn gw" id="openRateLead" type="button">Trimite calculul către VALMEX</button>
       </div>
+      <form class="rate-lead-form" id="rateLeadForm" hidden autocomplete="on">
+        <label for="rateLeadName">Nume și prenume</label>
+        <input id="rateLeadName" name="name" type="text" autocomplete="name" placeholder="Nume și prenume" required>
+        <label for="rateLeadPhone">Număr de telefon</label>
+        <div class="rate-phone-field"><span>+373</span><input id="rateLeadPhone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="6x xxx xxx" maxlength="8" pattern="[0-9]{8}" required></div>
+        <button class="btn gw" id="submitRateLead" type="submit">Trimite</button>
+        <p class="rate-lead-status" id="rateLeadStatus" role="status" aria-live="polite"></p>
+      </form>
     </div>
 
     <div class="proof reveal">
@@ -457,7 +464,7 @@ const $=id=>document.getElementById(id);
 const fn=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0');
 const st={mode:'roof',area:120,n:6};
 const money=v=>fn(v)+'\u00a0lei';
-const total=()=>st.area*PRICE[st.mode];
+const total=()=>PRICE[st.mode]>0?st.area*PRICE[st.mode]:0;
 const model=()=>{const S=total(),n=st.n,r=Math.round(S/n);return{S,n,r,last:S-r*(n-1)}};
 const amt=(m,k)=>k===m.n?m.last:m.r;
 const row=$('rnr'),fl=$('rfl'),dt=$('rdt'),say=$('rsay');
@@ -485,17 +492,15 @@ function controls(){
   $('nR').value=st.n;tween($('nV'),st.n,v=>Math.round(v));fill($('areaR'));fill($('nR'));$('rcnt').textContent='× '+st.n+' rate';const tbs=$('tabs');if(tbs.style&&tbs.style.setProperty)tbs.style.setProperty('--i',['roof','facade'].indexOf(st.mode));$('bubA').textContent=st.area+' m²';$('bubN').textContent=st.n+' rate';
   const m=model();
   const planTotal=$('planTotal');if(planTotal)planTotal.textContent='Suma lucrării: '+money(m.S);
-  $('est').innerHTML=`Estimare orientativă <b>de la ${money(m.S)}</b> (${st.area} m² × ${PRICE[st.mode]} lei/m², la cheie). Prețul final se stabilește în ofertă.`;
+  $('est').innerHTML=PRICE[st.mode]>0?`Estimare orientativă <b>${money(m.S)}</b> (${st.area} m² × ${money(PRICE[st.mode])}/m², la cheie). Prețul final se stabilește în ofertă.`:'Se încarcă prețul centralizat VALMEX…';
   /* comparație credit: simulare simplificată, dobândă nominală ipotetică, fără comisioane */
   const i=APR/12,pmt=m.S*i/(1-Math.pow(1+i,-m.n)),tb=pmt*m.n,extra=tb-m.S;
   $('tBank').textContent=money(tb);$('tVx').textContent=money(m.S);
   $('mBank').textContent=money(pmt);$('mVx').textContent=money(m.r);
   $('bBank').style.width='100%';$('bVx').style.width=(m.S/tb*100)+'%';
-  $('save').innerHTML=`În această simulare, diferența de cost față de un credit cu dobândă nominală ipotetică de 41,5% pe an este de aproximativ <b>${money(extra)}</b>, dacă lucrarea este eligibilă pentru rate fără dobândă.`;
-  /* WhatsApp */
-  const what=`${NAME[st.mode]}, ${st.area} m², estimare de la ${fn(m.S)} lei`;
-  const msg=`Bună ziua! Am făcut calculul pe valmex.md: ${what}, ${m.n} rate de aproximativ ${fn(m.r)} lei. Doresc o ofertă în rate.`;
-  $('waCalc').href='https://wa.me/37378026212?text='+encodeURIComponent(msg);
+  $('save').innerHTML=PRICE[st.mode]>0?`<strong>Cu VALMEX economisești aproximativ ${money(Math.max(0,extra))}.</strong><p>Pentru lucrarea estimată la ${money(m.S)}, achitată în ${m.n} rate, simularea unui credit cu dobândă de 41,5% pe an ar ajunge la ${money(tb)}. Prin calculul VALMEX, suma lucrării este ${money(m.S)}. Diferența estimată este ${money(Math.max(0,extra))}.</p><small>Dobânda de 41,5% este ipoteza folosită pentru comparația matematică, aplicată lunar la soldul rămas. Nu este o ofertă individuală a creditorului și nu include comisioane sau alte costuri. Ratele VALMEX la 0% sunt disponibile numai pentru lucrările eligibile, după confirmarea condițiilor.</small>`:'Comparația va apărea după încărcarea prețului centralizat VALMEX.';
+  /* Datele simulării sunt trimise în CRM prin formularul VALMEX. */
+  window.VALMEX_RATE_CALC={service:NAME[st.mode],area:st.area,pricePerM2:PRICE[st.mode],total:m.S,months:m.n,monthly:m.r,creditTotal:tb,savings:Math.max(0,extra),interestRate:41.5};
 }
 function build(){const m=model();
   row.innerHTML='<div class="rn"><b>0</b><small>Start</small></div>'+Array.from({length:m.n},(_,i)=>`<div class="rn"><b>${i+1}</b><small>${money(amt(m,i+1))}</small></div>`).join('');return m}
@@ -513,9 +518,9 @@ const upd=()=>{clearInterval(tp);clearTimeout(tp2);play()};
 
 document.querySelectorAll('#tabs .tab').forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;upd()});
 $('areaR').oninput=e=>{st.area=+e.target.value;upd()};
-$('nR').oninput=e=>{st.n=+e.target.value;upd()};
+$('nR').oninput=e=>{const v=+e.target.value;st.n=PERIODS.reduce((a,b)=>Math.abs(b-v)<Math.abs(a-v)?b:a,PERIODS[0]);upd()};
 document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{st.area=clamp(st.area+ +b.dataset.a,20,400);upd()});
-document.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{st.n=clamp(st.n+ +b.dataset.n,2,12);upd()});
+document.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{const i=PERIODS.indexOf(st.n);st.n=PERIODS[clamp(i+(+b.dataset.n),0,PERIODS.length-1)];upd()});
 document.querySelectorAll('#nChips .chip').forEach(b=>b.onclick=()=>{st.n=+b.dataset.v;upd()});
 new IntersectionObserver(es=>es.forEach(e=>{const was=vis;vis=e.isIntersecting;if(vis&&!was)play();if(!vis)run++}),{threshold:.3}).observe($('ratePanel'));
 new IntersectionObserver(es=>es.forEach(e=>{const fc=document.querySelector('.float-contact');if(e.isIntersecting)$('ratePanel').classList.add('go');if(fc)fc.classList.toggle('hide',e.isIntersecting)}),{threshold:.08}).observe($('ratePanel'));
@@ -523,6 +528,9 @@ const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}};
 document.querySelectorAll('.sb,.chip,.tab').forEach(b=>b.addEventListener('click',buzz));
 $('rep').onclick=()=>{buzz();upd()};
 controls();step(build(),0);
+document.addEventListener('valmex:cms',function(e){const db=e.detail||{},prices=db.prices||{},display=db.priceDisplay||{};function currentPrice(key){let base=Number(prices[key]);if(!Number.isFinite(base)||base<=0)return 0;const cfg=display[key]||{};if(cfg.mode!=='promo'||cfg.discountValue===''||cfg.discountValue==null)return base;const now=new Date(),today=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');if((cfg.start&&today<cfg.start)||(cfg.end&&today>cfg.end))return base;const v=Number(cfg.discountValue);let final=cfg.discountType==='percent'?base*(1-v/100):cfg.discountType==='amount'?base-v:v;return Number.isFinite(final)&&final>=0&&final<base?final:base;}PRICE.roof=currentPrice('roof');PRICE.facade=currentPrice('facade');upd();});
+const openLead=$('openRateLead'),leadForm=$('rateLeadForm');if(openLead&&leadForm)openLead.addEventListener('click',()=>{leadForm.hidden=!leadForm.hidden;if(!leadForm.hidden){leadForm.scrollIntoView({behavior:'smooth',block:'nearest'});$('rateLeadName').focus();}});
+if(leadForm)leadForm.addEventListener('submit',async function(e){e.preventDefault();const fullName=$('rateLeadName').value.trim(),digits=$('rateLeadPhone').value.replace(/\\D/g,'');if(fullName.split(/\\s+/).filter(Boolean).length<2){$('rateLeadStatus').textContent='Introdu numele și prenumele.';return;}if(!/^\\d{8}$/.test(digits)){$('rateLeadStatus').textContent='Introdu cele 8 cifre ale numărului de telefon.';return;}if(!window.VALMEX_LEAD_TRACKER||typeof window.VALMEX_LEAD_TRACKER.submit!=='function'){$('rateLeadStatus').textContent='Formularul nu este disponibil momentan. Încearcă din nou.';return;}const d=window.VALMEX_RATE_CALC||{};const btn=$('submitRateLead');btn.disabled=true;btn.textContent='Se trimite…';const ok=await window.VALMEX_LEAD_TRACKER.submit({source:'website_form',name:fullName,phone:'+373'+digits,service:'Calculator rate VALMEX – '+(d.service||''),details:{calculator:'rate',work_type:d.service,area_m2:d.area,price_per_m2_mdl:d.pricePerM2,work_total_mdl:d.total,installments:d.months,monthly_payment_mdl:d.monthly,simulated_credit_total_mdl:d.creditTotal,estimated_savings_mdl:d.savings,comparison_nominal_interest_annual_percent:41.5,pricing_source:'/cms/content.json'}},'rateLeadStatus');if(ok){leadForm.reset();$('rateLeadStatus').textContent='Calculul a fost trimis către VALMEX. Vă vom contacta.';}btn.disabled=false;btn.textContent='Trimite';});
 
 })();
 </script>
