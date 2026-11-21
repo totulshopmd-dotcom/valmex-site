@@ -66,7 +66,7 @@
             if (modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
           }
         });
-
+    }
   }, true);
 
   document.addEventListener('click', function (event) {
