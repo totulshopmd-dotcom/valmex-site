@@ -259,3 +259,16 @@ html:not(.dk) footer.site-footer .footer-bottom{border-top:1px solid #343740!imp
 @media(min-width:761px) and (max-width:1050px){#valmex-start-here .valmex-start-grid{gap:14px}#valmex-start-here .valmex-start-grid>a>img{height:150px;flex-basis:150px}#valmex-start-here .valmex-start-grid .vsh-copy{padding:15px 15px 0}#valmex-start-here .valmex-start-grid b{font-size:17px}}
 @media(max-width:760px){#valmex-start-here{padding:42px 0 48px}#valmex-start-here>.wrap{padding-left:18px;padding-right:18px}#valmex-start-here h2{font-size:34px;margin-bottom:12px}#valmex-start-here>.wrap>.lead{font-size:15px;line-height:1.5}#valmex-start-here .valmex-start-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px}#valmex-start-here .valmex-start-grid>a{border-radius:13px;padding-bottom:15px}#valmex-start-here .valmex-start-grid>a>img{height:112px;flex-basis:112px}#valmex-start-here .valmex-start-grid .vsh-copy{gap:7px;padding:12px 12px 0}#valmex-start-here .valmex-start-grid b{font-size:15px;line-height:1.25}#valmex-start-here .valmex-start-grid span{font-size:12px;line-height:1.4}#valmex-start-here .valmex-start-grid em{padding-top:14px;font-size:12px}}
 @media(max-width:380px){#valmex-start-here>.wrap{padding-left:13px;padding-right:13px}#valmex-start-here .valmex-start-grid{gap:9px}#valmex-start-here .valmex-start-grid>a>img{height:96px;flex-basis:96px}#valmex-start-here .valmex-start-grid .vsh-copy{padding:10px 9px 0}#valmex-start-here .valmex-start-grid b{font-size:14px}#valmex-start-here .valmex-start-grid span{font-size:11px}}
+
+
+/* Banner compact de rate pentru paginile de categorie */
+.service-financing{margin:0}
+.service-financing .finance-inner{max-width:var(--max);padding:25px 7%;gap:28px}
+.service-financing .finance-tag{font-size:10px;letter-spacing:2px}
+.service-financing .finance-inner h2{font-size:clamp(25px,3.4vw,40px);line-height:1.12;letter-spacing:-1.2px;margin:7px 0 6px;color:#fff}
+.service-financing .finance-inner h2 span{color:#160608}
+.service-financing .finance-inner p{font-size:13px;line-height:1.5}
+.service-financing .fin-link{display:inline-block;margin-top:10px;padding-bottom:3px;border-bottom:2px solid #fff;color:#fff;font-size:11px;font-weight:900;letter-spacing:1.2px;text-decoration:none;text-transform:uppercase}
+.service-financing .finance-stamp{font-size:clamp(52px,6vw,76px);line-height:.9;letter-spacing:-4px}
+.service-financing .finance-stamp small{font-size:12px;letter-spacing:1px;margin-top:7px}
+@media(max-width:700px){.service-financing .finance-inner{padding:22px 20px;gap:14px}.service-financing .finance-inner h2{font-size:clamp(22px,6vw,30px);letter-spacing:-.8px}.service-financing .finance-inner p{max-width:290px;font-size:12px}.service-financing .finance-tag{font-size:9px;letter-spacing:1.4px}.service-financing .finance-stamp{font-size:48px;letter-spacing:-3px}.service-financing .finance-stamp small{font-size:10px}.service-financing .fin-link{font-size:9px;letter-spacing:.7px}}
