@@ -198,6 +198,8 @@
           var k = b.getAttribute('data-k');
           if (k === 'wa') window.open('https://wa.me/' + whats + '?text=' + encodeURIComponent('Bună ziua, doresc o ofertă (' + (document.title.split('|')[0].trim()) + ')'), '_blank', 'noopener');
           else if (k === 'link') location.href = p.ctaLink;
+          else if (p.key === 'acoperisuri') { location.href = '/calculator-acoperis.html'; }
+          else if (p.key === 'fatade') { location.href = location.pathname.toLowerCase().indexOf('amk') > -1 ? '/calculator-amk.html' : '/calculator-fatada.html'; }
           else { var o = document.querySelector('.openLeadModal'); if (o) { var old = o.getAttribute('data-service'); o.setAttribute('data-service', LABEL[p.key] || p.key); o.click(); if (old != null) o.setAttribute('data-service', old); } else location.href = (location.pathname.indexOf('/blog/') > -1 ? '../' : '') + 'contact.html'; }
           document.dispatchEvent(new CustomEvent('valmex:sc-converted', { detail: { topic: p.key, action: k } }));
           self.close();
