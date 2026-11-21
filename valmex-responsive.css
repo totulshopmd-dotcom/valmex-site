@@ -359,3 +359,21 @@ html:not(.dk) #ratePanel .cmp{margin-top:clamp(22px,3vw,34px)}
  #ratePanel .rate-plan-head{gap:7px!important}
  #ratePanel .rn{flex-basis:48px!important;min-width:48px!important}
 }
+
+
+/* Force steps 2 and 3 into separate full-width rows */
+#ratePanel .rc{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ grid-auto-flow:row!important;
+ align-items:stretch!important;
+ gap:12px!important;
+ width:100%!important;
+ min-width:0!important;
+}
+#ratePanel .rc>.blk{
+ grid-column:1 / -1!important;
+ grid-row:auto!important;
+ width:100%!important;
+ min-width:0!important;
+}
