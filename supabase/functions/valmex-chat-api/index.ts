@@ -32,6 +32,41 @@ const secretKey = keyFromEnv("SUPABASE_SECRET_KEYS");
 const admin = createClient(url, secretKey, { auth: { persistSession: false, autoRefreshToken: false } });
 const authClient = createClient(url, publishableKey, { auth: { persistSession: false, autoRefreshToken: false } });
 
+async function notifyVisitorChatMessage(assignedTo: string | null, message: string, conversationId: string) {
+  const appId = Deno.env.get("ONESIGNAL_APP_ID");
+  const restKey = Deno.env.get("ONESIGNAL_REST_API_KEY");
+  if (!appId || !restKey) {
+    console.warn("VALMEX chat push skipped: OneSignal secrets are not configured.");
+    return;
+  }
+  let ids: string[] = [];
+  if (assignedTo) {
+    ids = [assignedTo];
+  } else {
+    const { data: admins, error } = await admin.from("profiles")
+      .select("id").eq("active", true).eq("role", "administrator");
+    if (error) throw error;
+    ids = (admins || []).map((row: { id: string }) => row.id).filter(Boolean);
+  }
+  if (!ids.length) return;
+  const response = await fetch("https://api.onesignal.com/notifications", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Key " + restKey },
+    body: JSON.stringify({
+      app_id: appId,
+      target_channel: "push",
+      include_aliases: { external_id: ids },
+      headings: { en: "VALMEX LIVE", ro: "VALMEX LIVE" },
+      contents: { en: "Mesaj nou în chat: " + message.slice(0, 120), ro: "Mesaj nou în chat: " + message.slice(0, 120) },
+      url: "https://valmex.md/Crm/chat.html",
+      data: { source: "VALMEX website chat", conversation_id: conversationId }
+    })
+  });
+  const responseText = await response.text();
+  if (!response.ok) throw new Error("OneSignal HTTP " + response.status + ": " + responseText.slice(0, 300));
+}
+
+
 
 async function readCentralCms(): Promise<any> {
   const response = await fetch("https://raw.githubusercontent.com/totulshopmd-dotcom/valmex-site/main/cms/content.json", {
@@ -322,7 +357,7 @@ Deno.serve(async (req) => {
     async function visitorConversation() {
       if (!sessionHash) throw new Error("Sesiune de chat invalidă.");
       const { data, error } = await admin.from("chat_conversations")
-        .select("id,status,created_at,visitor_session_expires_at")
+        .select("id,status,created_at,visitor_session_expires_at,assigned_to")
         .eq("visitor_session_hash", sessionHash).maybeSingle();
       if (error || !data || new Date(data.visitor_session_expires_at).getTime() < Date.now()) {
         throw new Error("Sesiunea de chat a expirat.");
@@ -393,6 +428,11 @@ Deno.serve(async (req) => {
         conversationPatch.consent_at = new Date().toISOString();
       }
       await admin.from("chat_conversations").update(conversationPatch).eq("id", conversation.id);
+      try {
+        await notifyVisitorChatMessage(conversation.assigned_to || null, text, conversation.id);
+      } catch (pushError) {
+        console.error("VALMEX visitor chat push failed:", pushError);
+      }
 
       let aiMessage = null;
       let aiError = null;

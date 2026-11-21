@@ -46,4 +46,5 @@ async function load(){
 }
 $('refresh').onclick=()=>load().catch(e=>$('message').textContent=e.message);$('source').onchange=()=>load().catch(e=>$('message').textContent=e.message);$('status').onchange=()=>load().catch(e=>$('message').textContent=e.message);
 load().catch(e=>$('message').textContent='Eroare: '+e.message);
-</script></body></html>
+</script><script src="onesignal-auth.js?v=1" defer></script>
+</body></html>

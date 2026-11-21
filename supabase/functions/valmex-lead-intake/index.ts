@@ -25,6 +25,35 @@ const sha256 = async (value: string) => {
   return [...bytes].map(x => x.toString(16).padStart(2, "0")).join("");
 };
 
+async function notifyLeadPush(title: string, message: string, leadId: string) {
+  const appId = Deno.env.get("ONESIGNAL_APP_ID");
+  const restKey = Deno.env.get("ONESIGNAL_REST_API_KEY");
+  if (!appId || !restKey) {
+    console.warn("VALMEX lead push skipped: OneSignal secrets are not configured.");
+    return;
+  }
+  const { data: admins, error } = await admin.from("profiles")
+    .select("id").eq("active", true).eq("role", "administrator");
+  if (error) throw error;
+  const ids = (admins || []).map((row: { id: string }) => row.id).filter(Boolean);
+  if (!ids.length) return;
+  const response = await fetch("https://api.onesignal.com/notifications", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Key " + restKey },
+    body: JSON.stringify({
+      app_id: appId,
+      target_channel: "push",
+      include_aliases: { external_id: ids },
+      headings: { en: "VALMEX LIVE", ro: "VALMEX LIVE" },
+      contents: { en: message, ro: message },
+      url: "https://valmex.md/Crm/lead-tracker.html",
+      data: { source: "VALMEX lead tracker", lead_id: leadId }
+    })
+  });
+  const responseText = await response.text();
+  if (!response.ok) throw new Error("OneSignal HTTP " + response.status + ": " + responseText.slice(0, 300));
+}
+
 Deno.serve(async (req) => {
   const origin = req.headers.get("origin");
   const headers = { ...cors(origin), "Content-Type": "application/json" };
@@ -77,6 +106,12 @@ Deno.serve(async (req) => {
       details
     }).select("id,created_at").single();
     if (error) throw error;
+    try {
+      const message = name + " · " + phone + " · " + service + (locality ? " · " + locality : "");
+      await notifyLeadPush("Solicitare nouă VALMEX", message.slice(0, 180), data.id);
+    } catch (pushError) {
+      console.error("VALMEX lead push failed:", pushError);
+    }
     return reply(200, { success: true, lead_id: data.id, created_at: data.created_at });
   } catch (error) {
     console.error("VALMEX lead intake error:", error);

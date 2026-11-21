@@ -184,4 +184,5 @@ async function init(){
 $("logout").addEventListener("click",async()=>{await db.auth.signOut();location.replace("index.html")});
 db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)location.replace("index.html")});
 init().catch(e=>{$("notice").textContent="Eroare la încărcarea Dashboard-ului: "+e.message});
-</script></body></html>
+</script><script src="onesignal-auth.js?v=1" defer></script>
+</body></html>
