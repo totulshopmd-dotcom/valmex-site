@@ -210,6 +210,16 @@ html:not(.dk) .mrow{display:flex;gap:10px 28px;flex-wrap:wrap;margin-top:18px;fo
 html:not(.dk) .mrow b{color:#fff;font-size:15px}
 html:not(.dk) .dae{margin-top:18px;padding:16px 18px;background:#17171c;border-left:4px solid #6b6e78;font-size:13.5px;line-height:1.7;color:#d6d6da}
 html:not(.dk) .dae b{color:#fff}
+html:not(.dk) .finance-info{display:grid;gap:9px;margin-top:16px}
+html:not(.dk) .finance-info-item{border:1px solid #ffffff20;background:#17171c;border-radius:8px;overflow:hidden}
+html:not(.dk) .finance-info-item summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;cursor:pointer;color:#fff}
+html:not(.dk) .finance-info-item summary::-webkit-details-marker{display:none}
+html:not(.dk) .finance-info-item summary:after{content:"+";display:grid;place-items:center;flex:none;width:26px;height:26px;border-radius:50%;background:#e30613;color:#fff;font-size:19px;font-weight:700;line-height:1}
+html:not(.dk) .finance-info-item[open] summary:after{content:"−"}
+html:not(.dk) .finance-info-item summary b{display:block;font-size:14px;line-height:1.35}
+html:not(.dk) .finance-info-item summary small{display:block;margin-top:3px;color:#a5a5ad;font-size:12px;line-height:1.4}
+html:not(.dk) .finance-info-body{padding:0 16px 15px;color:#c9c9d0;font-size:13px;line-height:1.65}
+@media(max-width:600px){html:not(.dk) .finance-info-item summary{padding:13px 12px}html:not(.dk) .finance-info-body{padding:0 12px 13px;font-size:12.5px}}
 html:not(.dk) /* ===== v5: calculator mai clar,html:not(.dk) mai frumos,html:not(.dk) mai animat ===== */
 .rate-panel{padding:34px 34px 38px}
 html:not(.dk) .cap{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:12px;letter-spacing:1.8px;text-transform:uppercase;font-weight:950;color:#fff}
