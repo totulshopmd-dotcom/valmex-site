@@ -272,3 +272,18 @@ html:not(.dk) footer.site-footer .footer-bottom{border-top:1px solid #343740!imp
 .service-financing .finance-stamp{font-size:clamp(52px,6vw,76px);line-height:.9;letter-spacing:-4px}
 .service-financing .finance-stamp small{font-size:12px;letter-spacing:1px;margin-top:7px}
 @media(max-width:700px){.service-financing .finance-inner{padding:22px 20px;gap:14px}.service-financing .finance-inner h2{font-size:clamp(22px,6vw,30px);letter-spacing:-.8px}.service-financing .finance-inner p{max-width:290px;font-size:12px}.service-financing .finance-tag{font-size:9px;letter-spacing:1.4px}.service-financing .finance-stamp{font-size:48px;letter-spacing:-3px}.service-financing .finance-stamp small{font-size:10px}.service-financing .fin-link{font-size:9px;letter-spacing:.7px}}
+
+
+/* Etapele ratelor – exemple de mesaje scrise progresiv */
+.rate-intro-chat{align-items:stretch}
+.rate-intro-chat .rate-step{display:flex;flex-direction:column;min-width:0;min-height:100%}
+.rate-intro-chat .rate-step>p{min-height:42px}
+.rate-intro-chat .rate-example{margin-top:18px;padding:14px 15px 15px;background:#fff5f5;border-left:3px solid #e30613;border-radius:0 9px 9px 0;min-width:0}
+.rate-intro-chat .rate-example>small{display:block;margin:0 0 8px;color:#c71926;font-size:9px;font-weight:900;letter-spacing:1.5px}
+.rate-intro-chat .rate-typed{margin:0;color:#25252a;font-size:14px;line-height:1.55;font-weight:600;overflow-wrap:anywhere}
+.rate-intro-chat .rate-caret{display:inline-block;width:2px;height:1.05em;margin-left:3px;vertical-align:-.16em;background:#e30613;opacity:0}
+.rate-intro-chat .rate-caret.is-active{opacity:1}
+.rate-intro-chat .rate-caret.is-pulsing{animation:valmexCaretPulse .8s steps(2,start) infinite}
+@keyframes valmexCaretPulse{to{visibility:hidden}}
+@media(max-width:760px){.rate-intro-chat{grid-template-columns:1fr!important;gap:0!important}.rate-intro-chat .rate-step{padding:20px 17px!important}.rate-intro-chat .rate-step>p{min-height:0}.rate-intro-chat .rate-example{margin-top:13px;padding:12px}.rate-intro-chat .rate-typed{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.rate-intro-chat .rate-caret.is-pulsing{animation:none;opacity:1}}
