@@ -377,3 +377,16 @@ html:not(.dk) #ratePanel .cmp{margin-top:clamp(22px,3vw,34px)}
  width:100%!important;
  min-width:0!important;
 }
+
+
+/* Formular trimitere calcul rate VALMEX */
+.rate-lead-form{display:grid;grid-template-columns:1fr;gap:9px;max-width:520px;margin:14px auto 0;padding:16px;border:1px solid var(--line,#ddd);border-radius:12px;background:var(--panel,#fff)}
+.rate-lead-form[hidden]{display:none!important}
+.rate-lead-form label{font-weight:650;font-size:14px}
+.rate-lead-form input{width:100%;min-width:0;padding:12px 13px;border:1px solid #b8b8b8;border-radius:8px;font:inherit;background:#fff;color:#171717}
+.rate-phone-field{display:flex;align-items:stretch;border:1px solid #b8b8b8;border-radius:8px;overflow:hidden;background:#fff}
+.rate-phone-field>span{display:flex;align-items:center;padding:0 13px;background:#f1f1f1;color:#171717;font-weight:700;border-right:1px solid #ccc}
+.rate-phone-field input{border:0;border-radius:0}
+.rate-lead-form button{width:100%;margin-top:4px}
+.rate-lead-status{margin:0;font-size:13px;line-height:1.45}
+.rate-submit-row{justify-content:center}
