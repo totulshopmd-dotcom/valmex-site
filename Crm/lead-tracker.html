@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VALMEX – Auto Lead Tracker</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--red:#e30613;--ink:#172033;--muted:#687386;--line:#e4e9f0;--bg:#f4f6f9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px Arial,sans-serif}
+header{background:#171d29;color:#fff;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-size:22px;font-weight:900}.brand span{color:var(--red)}header a{color:#fff;text-decoration:none}
+main{max-width:1100px;margin:auto;padding:24px 16px 50px}
+h1{font-size:26px;margin:0 0 6px}.sub{color:var(--muted);margin-bottom:20px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+select,button{font:inherit;border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:#fff}
+button{cursor:pointer;font-weight:700}button.primary{background:var(--red);color:#fff;border-color:var(--red)}
+#message{color:var(--muted);margin:12px 0}
+.lead{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px;margin:10px 0;display:grid;grid-template-columns:1fr auto;gap:12px}
+.lead h3{margin:0 0 6px;font-size:16px}.meta{color:var(--muted);font-size:12px;line-height:1.7}
+.phone{font-weight:700;color:#172033;text-decoration:none}.status{min-width:135px}
+.empty{background:#fff;border:1px dashed #cbd3df;border-radius:12px;padding:30px;text-align:center;color:var(--muted)}
+@media(max-width:600px){header{padding:14px}main{padding:18px 12px}.lead{grid-template-columns:1fr}.status{width:100%}h1{font-size:23px}}
+</style></head><body>
+<header><div class="brand">VAL<span>MEX</span> · AUTO LEAD TRACKER</div><a href="dashboard.html">← Dashboard</a></header>
+<main><h1>Solicitări primite</h1><div class="sub">Formulare website, calculatoare și conversații chat într-un singur registru.</div>
+<div class="toolbar"><select id="source"><option value="">Toate sursele</option><option value="website_form">Formular website</option><option value="roof_calculator">Calculator acoperiș</option><option value="facade_calculator">Calculator fațadă</option><option value="amk_calculator">Calculator AMK</option><option value="contact_form">Contact</option><option value="chat">Chat</option></select><select id="status"><option value="">Toate statusurile</option><option value="nou">Nou</option><option value="in_lucru">În lucru</option><option value="convertit">Convertit</option><option value="inchis">Închis</option></select><button class="primary" id="refresh">Reîncarcă</button></div>
+<div id="message" role="status">Se verifică accesul...</div><section id="list"></section></main>
+<script>
+const URL='https://qejnbbzhpvfjeqzwotwt.supabase.co',KEY='sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov',SK='sb-qejnbbzhpvfjeqzwotwt-auth-token';
+const storage=localStorage.getItem(SK)?localStorage:(sessionStorage.getItem(SK)?sessionStorage:localStorage);
+const db=window.supabase.createClient(URL,KEY,{auth:{storage,storageKey:SK,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sourceLabel={website_form:'Formular website',roof_calculator:'Calculator acoperiș',facade_calculator:'Calculator fațadă',amk_calculator:'Calculator AMK',contact_form:'Contact',chat:'Chat',other:'Altă sursă'};
+async function load(){
+ $('message').textContent='Se încarcă solicitările...';
+ const {data:{session},error:authError}=await db.auth.getSession();
+ if(authError||!session){$('message').textContent='Sesiunea CRM a expirat. Autentifică-te din nou.';return}
+ const {data:profile,error:profileError}=await db.from('profiles').select('id,role,active').eq('id',session.user.id).maybeSingle();
+ if(profileError||!profile||!profile.active){$('message').textContent='Contul CRM nu este activ.';return}
+ if(!['administrator','vanzari'].includes(profile.role)){$('message').textContent='Accesul la Auto Lead Tracker este disponibil administratorului și rolului Vânzări.';return}
+ let q=db.from('lead_events').select('id,source,visitor_name,phone,locality,service,page_url,details,status,created_at,last_activity_at').order('last_activity_at',{ascending:false}).limit(250);
+ if($('source').value)q=q.eq('source',$('source').value);if($('status').value)q=q.eq('status',$('status').value);
+ const {data,error}=await q;if(error)throw error;
+ if(!data?.length){$('list').innerHTML='<div class="empty">Nu există solicitări pentru filtrul selectat.</div>';$('message').textContent='0 solicitări';return}
+ $('list').innerHTML=data.map(x=>'<article class="lead"><div><h3>'+esc(x.visitor_name||'Vizitator fără nume')+'</h3><div class="meta"><a class="phone" href="tel:'+esc(x.phone||'')+'">'+esc(x.phone||'Telefon necompletat')+'</a><br>'+esc(x.service||'Solicitare VALMEX')+' · '+esc(sourceLabel[x.source]||x.source)+'<br>'+esc(x.locality||'Localitate necompletată')+' · '+esc(new Date(x.created_at).toLocaleString('ro-MD'))+(x.page_url?'<br><a href="'+esc(x.page_url)+'" target="_blank" rel="noopener">Pagina sursă</a>':'')+'</div></div><select class="status" data-id="'+esc(x.id)+'"><option value="nou" '+(x.status==='nou'?'selected':'')+'>Nou</option><option value="in_lucru" '+(x.status==='in_lucru'?'selected':'')+'>În lucru</option><option value="convertit" '+(x.status==='convertit'?'selected':'')+'>Convertit</option><option value="inchis" '+(x.status==='inchis'?'selected':'')+'>Închis</option></select></article>').join('');
+ $('message').textContent=data.length+' solicitări afișate';
+ document.querySelectorAll('[data-id]').forEach(el=>el.addEventListener('change',async()=>{el.disabled=true;const {error}=await db.from('lead_events').update({status:el.value,updated_at:new Date().toISOString()}).eq('id',el.dataset.id);el.disabled=false;if(error){$('message').textContent='Statusul nu a putut fi actualizat: '+error.message;return}$('message').textContent='Status actualizat.'}));
+}
+$('refresh').onclick=()=>load().catch(e=>$('message').textContent=e.message);$('source').onchange=()=>load().catch(e=>$('message').textContent=e.message);$('status').onchange=()=>load().catch(e=>$('message').textContent=e.message);
+load().catch(e=>$('message').textContent='Eroare: '+e.message);
+</script></body></html>
