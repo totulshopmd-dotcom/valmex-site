@@ -458,7 +458,7 @@ document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',()=>
 
 /* ===== Calculator rate ===== */
 (function(){
-const PRICE={roof:950,facade:850}, NAME={roof:'Acoperiș la cheie',facade:'Fațadă decorativă la cheie'};
+const PRICE={roof:0,facade:0}, NAME={roof:'Acoperiș la cheie',facade:'Fațadă decorativă la cheie'}, PERIODS=[3,4,6,10,12,18,24];
 const APR=0.415; /* dobândă nominală ipotetică, doar exemplu matematic orientativ */
 const $=id=>document.getElementById(id);
 const fn=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0');
