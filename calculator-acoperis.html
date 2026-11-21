@@ -718,41 +718,11 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
       </div>
     </section>
 
-    <!-- STEP 4 — DATE DE CONTACT (înainte de preț) -->
+    <!-- STEP 4 — REZULTAT ESTIMATIV, FĂRĂ DATE PERSONALE -->
     <section class="step" data-step="4" hidden>
-      <h2>Ești la un pas distanță de preț</h2>
-      <p class="lede">Completează numele și telefonul și îți arătăm imediat estimarea pentru proiectul tău.</p>
-
-      <form id="gateForm">
-        <div class="form-field">
-          <label for="leadName">Nume *</label>
-          <input type="text" id="leadName" name="name" placeholder="Numele tău" autocomplete="name" required>
-        </div>
-        <div class="form-field">
-          <label for="leadPhone">Număr de telefon *</label>
-          <input type="tel" id="leadPhone" name="phone" inputmode="tel" autocomplete="tel"
-                 pattern="^(\+373|0)[0-9]{8}$" placeholder="06X XXX XXX sau +373 6X XXX XXX" required>
-        </div>
-        <div class="form-field">
-          <label for="leadLocality">Localitate (opțional)</label>
-          <input type="text" id="leadLocality" name="locality" placeholder="ex. Chișinău">
-        </div>
-
-        <div class="step-actions">
-          <button class="btn btn-ghost" type="button" data-prev>Înapoi</button>
-          <button class="btn btn-primary" type="submit" id="sendLeadBtn"><span>Vezi prețul estimat</span></button>
-        </div>
-        <p class="microcopy">Nu îți vindem datele nimănui. Cererea ajunge direct la echipa Valmex.</p>
-        <p class="status-msg" id="leadStatus" style="display:none;color:var(--red);font-size:12.5px;margin-top:6px;">Cererea a fost trimisă cu succes!</p>
-      </form>
-    </section>
-
-    <!-- STEP 5 — REZULTAT PERSONALIZAT -->
-    <section class="step" data-step="5" hidden>
       <p class="field-label">Proiectul tău</p>
-      <h2 id="resGreeting">Felicitări!</h2>
-      <p class="lede">Cererea a fost trimisă cu succes. Iată estimarea proiectului tău.</p>
-
+      <h2>Estimarea proiectului</h2>
+      <p class="lede">Am calculat suprafața și costul estimativ pe baza dimensiunilor și opțiunilor selectate.</p>
       <div class="result-grid">
         <div class="result-row"><span>Dimensiuni</span><strong id="resDims">—</strong></div>
         <div class="result-row"><span>Tip acoperiș</span><strong id="resType">—</strong></div>
@@ -761,11 +731,26 @@ input[type="range"]::-moz-range-thumb{ width: 22px; height: 22px; border-radius:
         <div class="result-row result-row-accent"><span>Preț estimativ</span><strong id="resPrice">—</strong></div>
       </div>
       <p class="microcopy" id="resNote"></p>
-      <p class="microcopy">Un specialist Valmex te contactează în cel mai scurt timp, pentru oferta finală.</p>
-
+      <p class="microcopy">Estimarea este orientativă. Oferta finală se confirmă după evaluarea proiectului.</p>
       <div class="step-actions">
         <button class="btn btn-ghost" id="btnModifyProject">Modifică proiectul</button>
+        <button class="btn btn-primary" id="btnRequestQuote" type="button">Continuă pentru oferta PDF</button>
+        <button class="btn btn-primary" id="btnDownloadOffer" type="button" hidden>Descarcă oferta PDF</button>
       </div>
+    </section>
+
+    <!-- STEP 5 — DATE CLIENT, DUPĂ CALCUL -->
+    <section class="step" data-step="5" hidden>
+      <h2>Primește oferta pentru proiectul tău</h2>
+      <p class="lede">Completează datele de contact pentru a înregistra solicitarea și a genera oferta PDF.</p>
+      <form id="gateForm">
+        <div class="form-field"><label for="leadName">Nume și prenume *</label><input type="text" id="leadName" name="name" placeholder="Nume și prenume" autocomplete="name" required></div>
+        <div class="form-field"><label for="leadPhone">Număr de telefon *</label><input type="tel" id="leadPhone" name="phone" inputmode="tel" autocomplete="tel" pattern="^(\+373|0)[0-9]{8}$" placeholder="06X XXX XXX sau +373 6X XXX XXX" required></div>
+        <div class="form-field"><label for="leadLocality">Localitate *</label><input type="text" id="leadLocality" name="locality" placeholder="Localitatea" required></div>
+        <div class="step-actions"><button class="btn btn-ghost" type="button" data-prev>Înapoi</button><button class="btn btn-primary" type="submit" id="sendLeadBtn"><span>Înregistrează și pregătește oferta</span></button></div>
+        <p class="microcopy">După înregistrare vei putea descărca oferta. Un consultant VALMEX va reveni pentru discutarea detaliilor.</p>
+        <p class="status-msg" id="leadStatus" style="display:none;color:var(--red);font-size:12.5px;margin-top:6px;"></p>
+      </form>
     </section>
 
   </main>
@@ -1637,6 +1622,10 @@ function lastCfgOrDefault() { return lastCfg; }
     });
 
     els.btnModifyProject.addEventListener("click", function () { goTo(3); });
+    var requestQuote = document.getElementById("btnRequestQuote");
+    var downloadOffer = document.getElementById("btnDownloadOffer");
+    if (requestQuote) requestQuote.addEventListener("click", function () { goTo(5); });
+    if (downloadOffer) downloadOffer.addEventListener("click", downloadRoofOfferPDF);
 
     els.btnIntroMain.addEventListener("click", function () {
       if (resumeTargetStep !== null) goTo(resumeTargetStep);
@@ -1684,7 +1673,7 @@ function lastCfgOrDefault() { return lastCfg; }
     if (stepIndex > 5) stepIndex = 5;
     state.step = stepIndex;
     renderStep();
-    if (stepIndex === 5) showPersonalizedResult();
+    if (stepIndex === 4) computeAndRenderResult();
     persist();
     triggerPulse();
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1709,8 +1698,8 @@ function lastCfgOrDefault() { return lastCfg; }
     1: "Reglează lungimea și lățimea casei tale.",
     2: "Selectează tipul acoperișului: 2 ape sau 4 ape.",
     3: "Alege varianta și culoarea țiglei metalice.",
-    4: "Completează numele și telefonul ca să vezi prețul.",
-    5: "Iată estimarea ta — te contactăm în cel mai scurt timp."
+    4: "Iată estimarea calculată pentru acoperișul tău.",
+    5: "Completează datele pentru a primi oferta PDF."
   };
   var hintTimer = null;
   var hintToken = 0;
@@ -1816,7 +1805,9 @@ function lastCfgOrDefault() { return lastCfg; }
       if (!accepted) throw new Error("Solicitarea nu a fost confirmată de server.");
       leadSubmitted = true;
       localStorage.removeItem(STORAGE_KEY);
-      goTo(5);
+      var rq = document.getElementById("btnRequestQuote"); if (rq) rq.hidden = true;
+      var dl = document.getElementById("btnDownloadOffer"); if (dl) dl.hidden = false;
+      goTo(4);
     } catch (e) {
       if (els.leadStatus && !els.leadStatus.textContent) {
         els.leadStatus.textContent = e.message || "Eroare la trimitere.";
@@ -1826,6 +1817,23 @@ function lastCfgOrDefault() { return lastCfg; }
 
     if (els.sendLeadBtn) els.sendLeadBtn.disabled = false;
     if (btnLabel) btnLabel.textContent = "Vezi prețul estimat";
+  }
+
+
+  function downloadRoofOfferPDF() {
+    var w = window.open("", "_blank");
+    if (!w) { alert("Permite deschiderea ferestrelor pentru a genera oferta PDF."); return; }
+    var rows = [
+      ["Client", leadName], ["Telefon", leadPhone], ["Localitate", leadLocality],
+      ["Dimensiuni casă", fmtMeters(state.length) + " × " + fmtMeters(state.width)],
+      ["Tip acoperiș", state.type === "4ape" ? "4 ape" : "2 ape"],
+      ["Suprafață estimată", document.getElementById("resArea").textContent],
+      ["Variantă", document.getElementById("resVariant").textContent],
+      ["Preț estimativ", document.getElementById("resPrice").textContent]
+    ];
+    var esc = function(v){return String(v == null ? "" : v).replace(/[&<>"]/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch];});};
+    w.document.write("<!doctype html><html lang='ro'><meta charset='utf-8'><title>Ofertă VALMEX – Acoperiș</title><style>body{font:15px Arial,sans-serif;color:#222;padding:36px;max-width:780px;margin:auto}h1{color:#e30613}table{width:100%;border-collapse:collapse;margin:24px 0}td{padding:12px;border-bottom:1px solid #ddd}td:first-child{font-weight:bold;width:40%}.note{margin-top:28px;color:#555;font-size:13px}.brand{font-weight:bold;font-size:24px}</style><div class='brand'>VALMEX</div><h1>Ofertă estimativă – Acoperiș</h1><p>Rezumatul configurației și estimării solicitate.</p><table>"+rows.map(function(r){return "<tr><td>"+esc(r[0])+"</td><td>"+esc(r[1])+"</td></tr>";}).join("")+"</table><p class='note'>Estimare orientativă, calculată pe baza datelor introduse. Oferta finală se confirmă după evaluarea tehnică a proiectului. VALMEX.md · +373 780 26212 · Valmex.md@gmail.com</p><script>window.onload=function(){window.print();};<\/script></html>");
+    w.document.close();
   }
 
   function showPersonalizedResult() {
