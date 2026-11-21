@@ -42,4 +42,5 @@ async function send(){const msg=$('input').value.trim();if(!current||!msg)return
 $('send').onclick=send;$('generateReport').onclick=generateReport;$('showReport').onclick=()=>$('layout').classList.add('report-open');$('reportBack').onclick=()=>$('layout').classList.remove('report-open');$('input').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}};document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));$('input').placeholder=mode==='internal'?'Notă vizibilă doar în CRM…':'Scrie răspunsul pentru client…'});$('filters').onclick=async e=>{const b=e.target.closest('[data-s]');if(!b)return;filter=b.dataset.s;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));try{await inbox()}catch(x){alertMsg(x.message)}};$('search').oninput=drawList;start();
 })();
 </script><script src="components/persistent-nav.js"></script>
+<script src="onesignal-auth.js?v=1" defer></script>
 </body></html>
