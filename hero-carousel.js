@@ -11,7 +11,7 @@
  }
  function setBackground(image){
   if(!bg||!image)return;
-  const layers='linear-gradient(90deg,rgba(255,255,255,.97) 0%,rgba(255,255,255,.88) 43%,rgba(255,255,255,.18) 100%),linear-gradient(0deg,#fff 0%,rgba(255,255,255,0) 42%),url("'+image+'")';
+  const layers='linear-gradient(90deg,rgba(255,255,255,.30) 0%,rgba(255,255,255,.14) 34%,rgba(255,255,255,0) 68%),linear-gradient(0deg,rgba(255,255,255,.06) 0%,rgba(255,255,255,0) 28%),url("'+image+'")';
   if(!layer){bg.style.backgroundImage=layers;return}
   clearTimeout(bgTimer);
   layer.style.backgroundImage=layers;
