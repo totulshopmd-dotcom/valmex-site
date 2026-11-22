@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#e30613">
+<title>VALMEX PROJECT – Configurează proiectul casei tale</title>
+<meta name="description" content="Configurează proiectul casei tale cu VALMEX: acoperiș, fațadă decorativă, panouri AMK și gard. Primește consultanță și solicită o ofertă cu opțiuni de plată disponibile.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://valmex.md/project.html">
+<meta property="og:title" content="VALMEX PROJECT – Casa ta. Proiectul tău. Acum.">
+<meta property="og:description" content="Alege lucrările, configurează proiectul și discută cu consultantul VALMEX.">
+<meta property="og:image" content="https://valmex.md/images/acoperisuri/acoperis-finisat2.png">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/valmex-v3.css?v=20261121-accordion">
+<link rel="stylesheet" href="/valmex-compat.css?v=20261120-footer">
+<link rel="stylesheet" href="/valmex-responsive.css?v=20261122-before-after-lead">
+<style>
+:root{--vp-red:#e30613;--vp-ink:#15171c;--vp-muted:#68707d;--vp-line:#e7e9ed;--vp-soft:#f5f6f8;--vp-white:#fff}
+html{scroll-behavior:smooth}body{background:#fff;color:var(--vp-ink);font-family:inherit}
+#mainHeader{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--vp-line)}
+#mainHeader .brand{font-size:42px;font-weight:950;letter-spacing:-2px;text-decoration:none;color:#15171c}
+#mainHeader .brand span:last-child{color:var(--vp-red)}
+#mainHeader nav a{color:#252932;text-decoration:none}
+#mainHeader nav a.project-current{color:var(--vp-red)}
+#mainHeader .menu{border:0;background:none;font-size:25px}
+.vp-shell{max-width:1240px;width:calc(100% - 48px);margin:auto}
+.vp-hero{position:relative;overflow:hidden;background:#141518;color:#fff;padding:clamp(64px,9vw,120px) 0 76px}
+.vp-hero:after{content:"";position:absolute;width:560px;height:560px;border:1px solid #ffffff18;border-radius:50%;right:-150px;top:-220px;box-shadow:0 0 0 65px #ffffff08,0 0 0 130px #ffffff05;pointer-events:none}
+.vp-hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:50px;align-items:center;position:relative;z-index:1}
+.vp-kicker{display:inline-flex;gap:10px;align-items:center;color:#ff6570;font-size:12px;font-weight:850;letter-spacing:.2em;text-transform:uppercase}
+.vp-kicker:before{content:"";width:28px;height:2px;background:var(--vp-red)}
+.vp-hero h1{font-size:clamp(44px,7vw,86px);line-height:.98;letter-spacing:-.055em;margin:24px 0 22px;color:#fff;max-width:780px}
+.vp-hero h1 span{color:#ff3946}
+.vp-hero p{max-width:650px;color:#d0d2d7;font-size:clamp(16px,1.6vw,20px);line-height:1.65}
+.vp-hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.vp-btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 22px;border:1px solid transparent;border-radius:7px;background:var(--vp-red);color:#fff;text-decoration:none;font-weight:800;cursor:pointer;transition:.2s}
+.vp-btn:hover{background:#bd0611;transform:translateY(-1px)}
+.vp-btn.secondary{background:transparent;border-color:#ffffff55;color:#fff}
+.vp-hero-note{font-size:12px!important;color:#aeb3bc!important;margin-top:18px}
+.vp-hero-side{border:1px solid #ffffff25;border-radius:18px;padding:28px;background:linear-gradient(145deg,#25272d,#17181c);box-shadow:0 24px 70px #0005}
+.vp-hero-side small{color:#ff7b84;font-weight:800;letter-spacing:.16em}
+.vp-hero-side strong{display:block;font-size:clamp(34px,4vw,52px);line-height:1.05;margin:12px 0}
+.vp-hero-side p{font-size:14px;margin:0;color:#c4c7ce}
+.vp-side-line{height:1px;background:#ffffff20;margin:22px 0}
+.vp-side-points{display:grid;gap:12px;color:#e9eaed;font-size:14px}
+.vp-side-points span:before{content:"✓";color:#ff3946;font-weight:900;margin-right:10px}
+.vp-intro{padding:76px 0 32px}
+.vp-section-head{max-width:760px;margin-bottom:28px}
+.vp-eyebrow{font-size:11px;font-weight:900;letter-spacing:.18em;color:var(--vp-red);text-transform:uppercase}
+.vp-section-head h2{font-size:clamp(30px,4.5vw,52px);line-height:1.05;letter-spacing:-.04em;margin:12px 0}
+.vp-section-head p{color:var(--vp-muted);line-height:1.65;margin:0}
+.vp-workspace{padding:34px 0 90px;background:linear-gradient(180deg,#fff 0%,#f6f7f9 100%)}
+.vp-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+.vp-main-card,.vp-summary{background:#fff;border:1px solid var(--vp-line);border-radius:16px;box-shadow:0 14px 42px #14171c0a}
+.vp-main-card{padding:clamp(20px,3vw,36px)}
+.vp-progress{display:flex;gap:8px;margin-bottom:30px}
+.vp-progress span{height:5px;border-radius:20px;background:#e8eaee;flex:1}
+.vp-progress span.active{background:var(--vp-red)}
+.vp-step-label{font-size:11px;color:var(--vp-red);font-weight:900;letter-spacing:.15em;text-transform:uppercase}
+.vp-main-card h3{font-size:clamp(24px,3vw,34px);letter-spacing:-.035em;margin:10px 0}
+.vp-step-desc{color:var(--vp-muted);line-height:1.6;margin:0 0 24px}
+.vp-service-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.vp-service{position:relative;display:flex;align-items:center;gap:14px;text-align:left;padding:14px;border:1px solid var(--vp-line);border-radius:12px;background:#fff;cursor:pointer;min-height:92px;transition:.18s}
+.vp-service:hover{border-color:#f18b91;transform:translateY(-1px)}
+.vp-service[aria-pressed=true]{border:2px solid var(--vp-red);background:#fff8f8;padding:13px}
+.vp-service .vp-symbol{width:48px;height:48px;flex:0 0 48px;border-radius:10px;background:#f2f3f5;display:grid;place-items:center;color:#242832;font-size:22px}
+.vp-service[aria-pressed=true] .vp-symbol{background:#ffe4e6;color:var(--vp-red)}
+.vp-service b{display:block;font-size:15px}
+.vp-service small{display:block;color:var(--vp-muted);font-size:12px;margin-top:4px;line-height:1.35}
+.vp-check{margin-left:auto;color:var(--vp-red);font-size:18px;opacity:0}
+.vp-service[aria-pressed=true] .vp-check{opacity:1}
+.vp-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.vp-field{display:grid;gap:7px}
+.vp-field.full{grid-column:1/-1}
+.vp-field label{font-size:13px;font-weight:800}
+.vp-field input,.vp-field select,.vp-field textarea{width:100%;min-width:0;border:1px solid #d9dde3;border-radius:8px;background:#fff;padding:13px 14px;color:var(--vp-ink);outline:none}
+.vp-field textarea{min-height:100px;resize:vertical}
+.vp-field input:focus,.vp-field select:focus,.vp-field textarea:focus{border-color:var(--vp-red);box-shadow:0 0 0 3px #e3061314}
+.vp-choice-row{display:flex;gap:9px;flex-wrap:wrap}
+.vp-choice{border:1px solid #dfe2e7;background:#fff;border-radius:8px;padding:11px 14px;cursor:pointer;font-size:13px;font-weight:750}
+.vp-choice[aria-pressed=true]{border-color:var(--vp-red);background:#fff4f4;color:#b80e19}
+.vp-actions{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.vp-actions .vp-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.vp-back{background:#f0f1f3;color:#252932}
+.vp-summary{position:sticky;top:100px;padding:24px}
+.vp-summary h3{font-size:20px;margin:0 0 7px}
+.vp-summary>p{font-size:13px;color:var(--vp-muted);line-height:1.5;margin:0 0 18px}
+.vp-summary-list{display:grid;gap:10px;padding:14px 0;border-top:1px solid var(--vp-line);border-bottom:1px solid var(--vp-line);min-height:64px}
+.vp-summary-item{font-size:13px;display:flex;justify-content:space-between;gap:12px}
+.vp-summary-item span:last-child{font-weight:800;text-align:right}
+.vp-finance{margin-top:18px;padding:15px;border-radius:10px;background:#17181c;color:#fff}
+.vp-finance b{display:block;color:#ff626c;font-size:24px}
+.vp-finance small{display:block;color:#c8cbd1;line-height:1.5;margin-top:5px}
+.vp-summary-foot{font-size:11px!important;margin-top:14px!important;color:#7b818c!important}
+.vp-chat{margin-top:24px;border:1px solid var(--vp-line);border-radius:14px;overflow:hidden;background:#fff}
+.vp-chat-head{display:flex;align-items:center;gap:12px;padding:16px 18px;background:#17181c;color:#fff}
+.vp-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--vp-red);font-weight:900}
+.vp-chat-head b{display:block;font-size:14px}
+.vp-chat-head small{display:block;color:#c2c5cb;font-size:11px;margin-top:3px}
+.vp-chat-body{padding:18px;display:grid;gap:12px;max-height:390px;overflow:auto;background:#fafbfc}
+.vp-msg{max-width:90%;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.55}
+.vp-msg.bot{background:#fff;border:1px solid #e8eaee;justify-self:start}
+.vp-msg.user{background:#17181c;color:#fff;justify-self:end}
+.vp-chat-compose{display:flex;gap:8px;padding:12px;border-top:1px solid var(--vp-line)}
+.vp-chat-compose input{min-width:0;flex:1;border:1px solid #dfe2e7;border-radius:8px;padding:12px}
+.vp-chat-compose button{border:0;border-radius:8px;background:var(--vp-red);color:#fff;font-weight:800;padding:0 16px;cursor:pointer}
+.vp-chat-hint{padding:0 14px 12px;font-size:11px;color:#7b818c;background:#fafbfc}
+.vp-trust{padding:0 0 80px}
+.vp-trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.vp-trust-card{padding:22px;border:1px solid var(--vp-line);border-radius:12px}
+.vp-trust-card b{display:block;margin-bottom:8px}
+.vp-trust-card p{margin:0;color:var(--vp-muted);font-size:13px;line-height:1.6}
+.vp-faq{padding:70px 0;background:#f6f7f9}
+.vp-faq details{background:#fff;border:1px solid var(--vp-line);border-radius:10px;padding:16px 18px;margin-top:10px}
+.vp-faq summary{font-weight:800;cursor:pointer}
+.vp-faq details p{color:var(--vp-muted);font-size:14px;line-height:1.65;margin-bottom:0}
+.vp-footer{background:#15171c;color:#fff;padding:32px 0}
+.vp-footer-inner{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center}
+.vp-footer a{color:#fff;text-decoration:none}
+.vp-status{font-size:13px;line-height:1.5;margin-top:14px}
+.vp-status.error{color:#b42318}.vp-status.success{color:#16803c}
+.vp-consent{display:flex;gap:10px;align-items:flex-start;font-size:12px;line-height:1.5;color:#626975;margin-top:16px}
+.vp-consent input{margin-top:3px;accent-color:var(--vp-red)}
+.vp-hidden{display:none!important}
+@media(max-width:900px){.vp-hero-grid{grid-template-columns:1fr;gap:30px}.vp-hero-side{max-width:600px}.vp-layout{grid-template-columns:1fr}.vp-summary{position:static;order:-1}.vp-trust-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.vp-shell{width:calc(100% - 28px)}.vp-hero{padding:58px 0 54px}.vp-hero h1{font-size:clamp(40px,12vw,58px)}.vp-service-grid,.vp-field-grid{grid-template-columns:1fr}.vp-main-card{padding:18px 14px}.vp-service{min-height:78px}.vp-actions{flex-direction:column-reverse}.vp-actions .vp-btn{width:100%}.vp-chat-compose button{padding:0 12px}.vp-summary{padding:18px}}
+</style>
+</head>
+<body>
+<header id="mainHeader">
+  <a class="brand" href="/" aria-label="VALMEX"><span>Val</span><span>mex</span></a>
+  <nav id="nav" aria-label="Meniu principal">
+    <a href="/">Acasă</a><a href="/acoperis.html">Acoperișuri</a><a href="/fatade.html">Fațade</a><a href="/amk.html">AMK</a><a href="/proiecte.html">Proiecte</a><a href="/project.html" class="project-current" aria-current="page">Proiectul meu</a><a href="/contact.html">Contact</a>
+  </nav>
+  <a class="vp-btn" href="#configurator" style="min-height:40px;padding:0 15px">Începe proiectul</a>
+  <button class="menu" id="menu" aria-label="Deschide meniul">☰</button>
+</header>
+
+<main>
+<section class="vp-hero">
+ <div class="vp-shell vp-hero-grid">
+  <div>
+   <div class="vp-kicker">VALMEX PROJECT · Planificare și ofertare</div>
+   <h1>Casa ta.<br><span>Proiectul tău.</span><br>Acum.</h1>
+   <p>Adună lucrările de care ai nevoie într-un singur proiect. Alege ce dorești să realizezi, discută cu consultantul VALMEX și solicită o ofertă cu opțiunile de plată disponibile.</p>
+   <div class="vp-hero-actions"><a class="vp-btn" href="#configurator">Configurează proiectul</a><a class="vp-btn secondary" href="#cum-functioneaza">Cum funcționează</a></div>
+   <p class="vp-hero-note">Ratele cu 0% dobândă sunt disponibile numai pentru proiectele eligibile, în condițiile confirmate la ofertare.</p>
+  </div>
+  <aside class="vp-hero-side">
+   <small>UN SINGUR PROIECT</small>
+   <strong>Mai multe lucrări.<br>O ofertă comună.</strong>
+   <p>Acoperiș, fațadă, panouri AMK și gard – selectează lucrările dorite și descrie-ne ce ai planificat.</p>
+   <div class="vp-side-line"></div>
+   <div class="vp-side-points"><span>Consultanță inițială pas cu pas</span><span>Estimare pe baza datelor disponibile</span><span>Opțiuni de plată explicate transparent</span></div>
+  </aside>
+ </div>
+</section>
+
+<section class="vp-intro" id="configurator">
+ <div class="vp-shell">
+  <div class="vp-section-head">
+   <div class="vp-eyebrow">Începe cu planul tău</div>
+   <h2>Ce dorești să realizăm?</h2>
+   <p>Selectează una sau mai multe lucrări. Vom păstra toate alegerile într-o singură solicitare, ca VALMEX să poată analiza proiectul în ansamblu.</p>
+  </div>
+ </div>
+</section>
+
+<section class="vp-workspace">
+ <div class="vp-shell vp-layout">
+  <div class="vp-main-card">
+   <div class="vp-progress" aria-label="Progres configurare"><span class="active"></span><span></span><span></span><span></span></div>
+   <section id="vpStep1">
+    <div class="vp-step-label">Pasul 01 · Selectarea lucrărilor</div>
+    <h3>Alege ce dorești să schimbi la casă</h3>
+    <p class="vp-step-desc">Poți selecta mai multe servicii. Le vom trata ca un singur proiect și vom pregăti o solicitare comună.</p>
+    <div class="vp-service-grid">
+     <button class="vp-service" type="button" data-service="Acoperiș metalic" aria-pressed="false"><span class="vp-symbol">⌂</span><span><b>Acoperiș metalic</b><small>Materiale, accesorii și montaj</small></span><span class="vp-check">✓</span></button>
+     <button class="vp-service" type="button" data-service="Fațadă decorativă" aria-pressed="false"><span class="vp-symbol">▤</span><span><b>Fațadă decorativă</b><small>Finisare și termoizolație</small></span><span class="vp-check">✓</span></button>
+     <button class="vp-service" type="button" data-service="Fațadă AMK" aria-pressed="false"><span class="vp-symbol">▧</span><span><b>Fațadă AMK</b><small>Panouri și finisaje AMK</small></span><span class="vp-check">✓</span></button>
+     <button class="vp-service" type="button" data-service="Gard" aria-pressed="false"><span class="vp-symbol">▥</span><span><b>Gard</b><small>Delimitarea proprietății</small></span><span class="vp-check">✓</span></button>
+    </div>
+    <div class="vp-actions"><span></span><button class="vp-btn" id="vpNext1" type="button" disabled>Continuă proiectul →</button></div>
+   </section>
+
+   <section id="vpStep2" class="vp-hidden">
+    <div class="vp-step-label">Pasul 02 · Detalii proiect</div>
+    <h3>Spune-ne în ce etapă te afli</h3>
+    <p class="vp-step-desc">Răspunsurile ne ajută să înțelegem mai bine lucrarea. Dacă nu cunoști toate detaliile, poți continua.</p>
+    <div class="vp-field-grid">
+     <div class="vp-field full"><label>Care este situația actuală?</label><div class="vp-choice-row" data-group="stage"><button class="vp-choice" type="button" aria-pressed="false">Construcție nouă</button><button class="vp-choice" type="button" aria-pressed="false">Renovare</button><button class="vp-choice" type="button" aria-pressed="false">Încă planific</button></div></div>
+     <div class="vp-field"><label for="vpLocation">Localitatea</label><input id="vpLocation" placeholder="Ex.: Telenești, Chișinău..." autocomplete="address-level2"></div>
+     <div class="vp-field"><label for="vpTiming">Când dorești să începi?</label><select id="vpTiming"><option value="">Alege perioada</option><option>În cel mai scurt timp</option><option>În următoarea lună</option><option>În 2–3 luni</option><option>Mai târziu</option><option>Nu am stabilit</option></select></div>
+     <div class="vp-field full"><label for="vpDimensions">Dimensiuni sau suprafață aproximativă (opțional)</label><input id="vpDimensions" placeholder="Ex.: acoperiș 150 m², fațadă aproximativ 180 m²"></div>
+     <div class="vp-field full"><label for="vpDetails">Ce este important pentru tine?</label><textarea id="vpDetails" placeholder="Descrie lucrarea, materialele dorite sau întrebările pe care le ai..."></textarea></div>
+    </div>
+    <div class="vp-actions"><button class="vp-btn vp-back" type="button" data-back="1">← Înapoi</button><button class="vp-btn" type="button" id="vpNext2">Continuă →</button></div>
+   </section>
+
+   <section id="vpStep3" class="vp-hidden">
+    <div class="vp-step-label">Pasul 03 · Modalitate de plată</div>
+    <h3>Care este varianta de achitare preferată?</h3>
+    <p class="vp-step-desc">Alegerea este orientativă. Disponibilitatea ratelor și condițiile finale se confirmă după evaluarea proiectului.</p>
+    <div class="vp-field full">
+     <div class="vp-choice-row" data-group="payment">
+      <button class="vp-choice" type="button" aria-pressed="false" data-value="Rate VALMEX 0%">Rate VALMEX 0%</button>
+      <button class="vp-choice" type="button" aria-pressed="false" data-value="Achitare integrală">Achitare integrală</button>
+      <button class="vp-choice" type="button" aria-pressed="false" data-value="Doresc să discut opțiunile">Vreau să discut opțiunile</button>
+     </div>
+    </div>
+    <div id="vpPeriods" class="vp-field vp-hidden" style="margin-top:20px">
+     <label for="vpPeriod">Ce perioadă ai în vedere?</label>
+     <select id="vpPeriod"><option value="">Selectează perioada</option><option>3 luni</option><option>4 luni</option><option>6 luni</option><option>10 luni</option><option>12 luni</option><option>18 luni</option><option>24 luni</option></select>
+    </div>
+    <div class="vp-field" style="margin-top:20px">
+     <label for="vpBudget">Ai stabilit un buget aproximativ? (opțional)</label>
+     <input id="vpBudget" placeholder="Ex.: 100 000 lei">
+    </div>
+    <div class="vp-actions"><button class="vp-btn vp-back" type="button" data-back="2">← Înapoi</button><button class="vp-btn" type="button" id="vpNext3">Continuă →</button></div>
+   </section>
+
+   <section id="vpStep4" class="vp-hidden">
+    <div class="vp-step-label">Pasul 04 · Consultanță și contact</div>
+    <h3>Discută proiectul cu VALMEX</h3>
+    <p class="vp-step-desc">Poți adresa o întrebare în câmpul de mai jos. Consultantul interactiv îți poate ghida solicitarea; răspunsurile tehnice și oferta finală sunt confirmate de VALMEX.</p>
+    <div class="vp-chat">
+     <div class="vp-chat-head"><div class="vp-avatar">V</div><div><b>Consultant VALMEX</b><small>Asistent de configurare · răspunsuri ghidate</small></div></div>
+     <div class="vp-chat-body" id="vpChat" aria-live="polite">
+      <div class="vp-msg bot">Am notat lucrările selectate. Ce ai dori să clarificăm înainte să pregătim solicitarea?</div>
+     </div>
+     <div class="vp-chat-compose"><input id="vpQuestion" maxlength="600" placeholder="Scrie întrebarea sau detaliile..."><button type="button" id="vpAsk">Trimite</button></div>
+     <div class="vp-chat-hint">Nu introduce date bancare sau informații confidențiale în conversație.</div>
+    </div>
+    <div class="vp-field-grid" style="margin-top:22px">
+     <div class="vp-field"><label for="vpName">Nume și prenume *</label><input id="vpName" autocomplete="name" required placeholder="Numele tău"></div>
+     <div class="vp-field"><label for="vpPhone">Telefon *</label><input id="vpPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="+373 6XXXXXXXX" required></div>
+     <div class="vp-field full"><label class="vp-consent"><input type="checkbox" id="vpConsent"><span>Sunt de acord ca VALMEX să utilizeze datele de contact și informațiile proiectului pentru a răspunde solicitării mele.</span></label></div>
+    </div>
+    <div class="vp-actions"><button class="vp-btn vp-back" type="button" data-back="3">← Înapoi</button><button class="vp-btn" type="button" id="vpSubmit">Trimite proiectul către VALMEX</button></div>
+    <div id="vpStatus" class="vp-status" role="status" aria-live="polite"></div>
+   </section>
+  </div>
+
+  <aside class="vp-summary">
+   <div class="vp-eyebrow">Sumarul proiectului</div>
+   <h3>Proiectul meu</h3>
+   <p>Selecțiile tale sunt reunite aici, într-o singură solicitare.</p>
+   <div class="vp-summary-list" id="vpSummary"><div class="vp-summary-item"><span>Lucrări selectate</span><span>Încă nu ai ales</span></div></div>
+   <div class="vp-finance"><b>Rate 0%*</b><span>O opțiune de plată pentru proiectele eligibile</span><small>Perioada și condițiile se confirmă după verificarea solicitării.</small></div>
+   <p class="vp-summary-foot">*Nu reprezintă o aprobare automată a finanțării. Estimarea și condițiile se stabilesc pe baza proiectului concret.</p>
+  </aside>
+ </div>
+</section>
+
+<section class="vp-trust" id="cum-functioneaza">
+ <div class="vp-shell">
+  <div class="vp-section-head"><div class="vp-eyebrow">Simplu și transparent</div><h2>De la idee la ofertă</h2><p>Un singur punct de pornire pentru lucrările pe care dorești să le realizezi.</p></div>
+  <div class="vp-trust-grid">
+   <article class="vp-trust-card"><b>01 · Configurezi</b><p>Selectezi lucrările și ne comunici informațiile pe care le cunoști deja.</p></article>
+   <article class="vp-trust-card"><b>02 · Discutăm</b><p>VALMEX analizează solicitarea, clarifică detaliile și verifică opțiunile disponibile.</p></article>
+   <article class="vp-trust-card"><b>03 · Primești oferta</b><p>Primești o propunere pentru proiectul complet, cu costuri și condiții explicate.</p></article>
+  </div>
+ </div>
+</section>
+
+<section class="vp-faq">
+ <div class="vp-shell">
+  <div class="vp-section-head"><div class="vp-eyebrow">Întrebări frecvente</div><h2>Înainte să începi</h2></div>
+  <details><summary>Pot combina mai multe servicii într-o singură solicitare?</summary><p>Da. Poți selecta acoperișul, fațada decorativă, fațada AMK și gardul. VALMEX va analiza lucrările ca un proiect comun și va pregăti oferta după clarificarea detaliilor.</p></details>
+  <details><summary>Toate proiectele pot fi achitate în rate cu 0%?</summary><p>Nu automat. Opțiunea se verifică în funcție de proiect și de condițiile finanțării. Disponibilitatea și perioada se confirmă înainte de acceptarea ofertei.</p></details>
+  <details><summary>Trebuie să cunosc dimensiunile exacte?</summary><p>Nu. Poți trimite o estimare sau poți solicita consultanță pentru a stabili ce măsurători sunt necesare.</p></details>
+  <details><summary>Ce se întâmplă după trimiterea proiectului?</summary><p>Informațiile ajung la VALMEX pentru analiză. Vei fi contactat la numărul indicat pentru clarificarea lucrărilor și pregătirea ofertei.</p></details>
+ </div>
+</section>
+</main>
+
+<footer class="vp-footer"><div class="vp-shell vp-footer-inner"><strong>VALMEX PROJECT</strong><span>+373 780 26212 · <a href="mailto:Valmex.md@gmail.com">Valmex.md@gmail.com</a></span><a href="/">valmex.md</a></div></footer>
+
+<script src="/nav-ui.js" defer></script>
+<script src="/valmex-lead-tracker.js?v=1" defer></script>
+<script src="/cms-public.js" defer></script>
+<script src="/cookie-consent.js" defer></script>
+<script>
+(function(){
+'use strict';
+var selected=new Set(),answers={stage:'',payment:'',questions:[]},step=1;
+var steps=[1,2,3,4],progress=document.querySelectorAll('.vp-progress span');
+var serviceButtons=[].slice.call(document.querySelectorAll('.vp-service'));
+function $(id){return document.getElementById(id)}
+function showStep(n){step=n;steps.forEach(function(k){$('vpStep'+k).classList.toggle('vp-hidden',k!==n);});progress.forEach(function(el,i){el.classList.toggle('active',i<n);});if(n===4)renderSummary();window.scrollTo({top:$('configurator').offsetTop-80,behavior:'smooth'});}
+function renderSummary(){var box=$('vpSummary');box.innerHTML='';var items=Array.from(selected);if(!items.length)items=['Nu au fost selectate lucrări'];items.forEach(function(s){var row=document.createElement('div');row.className='vp-summary-item';var a=document.createElement('span'),b=document.createElement('span');a.textContent='Lucrare';b.textContent=s;row.append(a,b);box.appendChild(row);});if(answers.payment){var row=document.createElement('div');row.className='vp-summary-item';row.innerHTML='<span>Plată preferată</span><span></span>';row.lastChild.textContent=answers.payment;box.appendChild(row);}if($('vpPeriod').value){var row=document.createElement('div');row.className='vp-summary-item';row.innerHTML='<span>Perioadă dorită</span><span></span>';row.lastChild.textContent=$('vpPeriod').value;box.appendChild(row);}}
+function addMessage(text,type){var el=document.createElement('div');el.className='vp-msg '+type;el.textContent=text;$('vpChat').appendChild(el);$('vpChat').scrollTop=$('vpChat').scrollHeight;}
+function replyTo(text){var q=text.toLowerCase(),reply='Am notat întrebarea. Pentru un răspuns exact, VALMEX va verifica detaliile proiectului și îți va confirma varianta potrivită.';if(/pret|cost|lei|buget|scump/.test(q))reply='Costul depinde de dimensiuni, materialele alese și lucrările incluse. Trimite dimensiunile aproximative sau fotografii în discuția cu VALMEX pentru o estimare mai apropiată.';else if(/rate|0%|doband|finant/.test(q))reply='Poți solicita verificarea opțiunii VALMEX 0%. Eligibilitatea, suma și perioada disponibilă se confirmă după analiza proiectului.';else if(/material|tigla|țigl|amk|fatad|fațad|gard/.test(q))reply='Pot înregistra materialul sau serviciul care te interesează. Spune-ne ce aspect, model sau rezultat urmărești, iar VALMEX va confirma caracteristicile și disponibilitatea.';else if(/durat|cand|când|termen/.test(q))reply='Termenul depinde de volumul și complexitatea lucrărilor și se stabilește după evaluarea proiectului.';answers.questions.push({question:text,reply:reply});addMessage(reply,'bot');}
+serviceButtons.forEach(function(btn){btn.addEventListener('click',function(){var s=btn.dataset.service;if(selected.has(s))selected.delete(s);else selected.add(s);btn.setAttribute('aria-pressed',String(selected.has(s)));$('vpNext1').disabled=!selected.size;renderSummary();});});
+$('vpNext1').addEventListener('click',function(){if(selected.size)showStep(2);});
+document.querySelectorAll('[data-group="stage"] .vp-choice').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('[data-group="stage"] .vp-choice').forEach(function(x){x.setAttribute('aria-pressed','false');});btn.setAttribute('aria-pressed','true');answers.stage=btn.textContent.trim();});});
+document.querySelectorAll('[data-group="payment"] .vp-choice').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('[data-group="payment"] .vp-choice').forEach(function(x){x.setAttribute('aria-pressed','false');});btn.setAttribute('aria-pressed','true');answers.payment=btn.dataset.value;$('vpPeriods').classList.toggle('vp-hidden',answers.payment!=='Rate VALMEX 0%');renderSummary();});});
+$('vpNext2').addEventListener('click',function(){answers.location=$('vpLocation').value.trim();answers.timing=$('vpTiming').value;answers.dimensions=$('vpDimensions').value.trim();answers.details=$('vpDetails').value.trim();showStep(3);});
+$('vpNext3').addEventListener('click',function(){answers.period=$('vpPeriod').value;answers.budget=$('vpBudget').value.trim();showStep(4);});
+document.querySelectorAll('[data-back]').forEach(function(btn){btn.addEventListener('click',function(){showStep(Number(btn.dataset.back));});});
+function ask(){var input=$('vpQuestion'),text=input.value.trim();if(!text)return;input.value='';addMessage(text,'user');replyTo(text);}
+$('vpAsk').addEventListener('click',ask);$('vpQuestion').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ask();}});
+$('vpPhone').addEventListener('input',function(){this.value=this.value.replace(/[^0-9+ ]/g,'').slice(0,18);});
+$('vpSubmit').addEventListener('click',async function(){
+ var name=$('vpName').value.trim(),raw=$('vpPhone').value.replace(/\D/g,''),phone=raw;
+ if(phone.indexOf('373')===0)phone=phone.slice(3);if(phone.length!==8){$('vpStatus').className='vp-status error';$('vpStatus').textContent='Introdu un număr din Republica Moldova: +373 și 8 cifre.';return;}
+ if(!name){$('vpStatus').className='vp-status error';$('vpStatus').textContent='Completează numele și prenumele.';return;}
+ if(!$('vpConsent').checked){$('vpStatus').className='vp-status error';$('vpStatus').textContent='Confirmă acordul pentru prelucrarea datelor necesare solicitării.';return;}
+ if(!window.VALMEX_LEAD_TRACKER){$('vpStatus').className='vp-status error';$('vpStatus').textContent='Formularul nu este disponibil momentan. Încearcă din nou mai târziu.';return;}
+ var payload={source:'website_form',name:name,phone:'+373'+phone,service:Array.from(selected).join(' + '),details:{origin:'VALMEX PROJECT',project_services:Array.from(selected),project_stage:answers.stage,location:answers.location||'',start_timing:answers.timing||'',dimensions:answers.dimensions||'',client_details:answers.details||'',payment_preference:answers.payment||'',preferred_period:answers.period||'',budget:answers.budget||'',consultation_messages:answers.questions,page_url:location.href,consent:true}};
+ var btn=this;btn.disabled=true;btn.textContent='Se transmite...';$('vpStatus').className='vp-status';$('vpStatus').textContent='';
+ var ok=await window.VALMEX_LEAD_TRACKER.submit(payload,'vpStatus');
+ if(ok){$('vpStatus').className='vp-status success';$('vpStatus').textContent='Proiectul a fost transmis către VALMEX. Te vom contacta pentru clarificarea detaliilor.';btn.textContent='Solicitare transmisă';}else{btn.disabled=false;btn.textContent='Încearcă din nou';}
+});
+document.addEventListener('DOMContentLoaded',function(){var menu=$('menu'),nav=$('nav');if(menu&&nav)menu.addEventListener('click',function(){nav.classList.toggle('open');});});
+})();
+</script>
+</body>
+</html>
