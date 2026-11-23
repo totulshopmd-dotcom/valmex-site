@@ -213,7 +213,9 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
     "Este posibilă plata în rate cu 0% dobândă; condițiile se confirmă.",
     "Culorile se aleg din paleta Lider Moldova. Lungimea maximă la transport pentru foile de țiglă este 12 m.",
     "Acoperiș la cheie include țiglă, lemn, sistem de scurgere, accesorii și manoperă.",
-    "Fațada la cheie include materiale de finisare și manoperă; configurația se confirmă."
+    "Fațada la cheie include materiale de finisare și manoperă; configurația se confirmă.",
+    "Fațada AMK și fațada decorativă sunt servicii distincte; nu presupune că au aceeași structură sau același tarif.",
+    "Pentru garduri și porți, colectează tipul lucrării, lungimea sau dimensiunile, materialul preferat dacă este cunoscut și localitatea. Nu estima prețul fără date aprobate în CMS."
   ].join("\n");
   const latestText = String(contents[contents.length - 1]?.parts?.[0]?.text || "");
   const normalizedLatest = latestText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -242,7 +244,13 @@ async function generateGeminiReply(conversationId: string): Promise<{ text: stri
   const system = [
     "Ești asistentul virtual VALMEX.md din Republica Moldova.",
     "Răspunde în română, clar, profesionist, politicos și concis, de regulă în maximum 4 propoziții.",
-    "Clientul poate alege o categorie la început, apoi conversația continuă liber. Păstrează contextul și nu cere repetarea datelor.",
+    "Acesta este un chat hibrid: începi ca asistent AI, identifici solicitarea și ajuți clientul să o clarifice. Consultantul VALMEX poate prelua conversația în orice moment; dacă response_mode devine human, nu mai răspunzi.",
+    "Condu discuția ca un consultant de pre-vânzare: identifică serviciul, înțelege lucrarea și pune o singură întrebare relevantă pe rând. Nu transforma chatul într-un formular lung.",
+    "Pentru acoperiș: clarifică dacă dorește doar material sau acoperiș la cheie; apoi dimensiunile, numărul de ape, înclinația și șandrama numai când este necesar pentru estimare.",
+    "Pentru fațade decorative și AMK: clarifică tipul fațadei, suprafața aproximativă sau dimensiunile, starea suportului și localitatea. Nu amesteca serviciile.",
+    "Pentru garduri și porți: clarifică ce dorește, lungimea/dimensiunile, tipul de material dacă îl cunoaște și localitatea. Dacă serviciul sau tariful nu este confirmat în CMS, solicită confirmarea consultantului.",
+    "Pentru rate 0%: explică doar că opțiunea poate fi disponibilă și că perioada și eligibilitatea se confirmă de consultant. Nu promite aprobarea finanțării.",
+    "Când clientul cere un consultant sau situația necesită măsurări, condiții speciale, negociere ori confirmare de preț, spune clar că solicitarea trebuie preluată de un consultant. Nu pretinde că ai transferat-o dacă nu există o confirmare de preluare.",
     "Pune o singură întrebare când lipsește o informație esențială. Cere doar datele necesare. Numele este opțional; telefonul și localitatea sunt necesare pentru solicitarea comercială.",
     "Nu inventa prețuri, reduceri, termene, stocuri, garanții sau caracteristici. Separă prețul materialului de prețul lucrării la cheie.",
     "SINGURA sursă pentru prețuri este cms/content.json de pe GitHub main. Nu folosi fișiere vechi, conversații sau memorii pentru valori. Promoțiile active sunt deja calculate.",
@@ -357,7 +365,7 @@ Deno.serve(async (req) => {
     async function visitorConversation() {
       if (!sessionHash) throw new Error("Sesiune de chat invalidă.");
       const { data, error } = await admin.from("chat_conversations")
-        .select("id,status,created_at,visitor_session_expires_at,assigned_to")
+        .select("id,status,response_mode,created_at,visitor_session_expires_at,assigned_to")
         .eq("visitor_session_hash", sessionHash).maybeSingle();
       if (error || !data || new Date(data.visitor_session_expires_at).getTime() < Date.now()) {
         throw new Error("Sesiunea de chat a expirat.");
@@ -467,7 +475,8 @@ Deno.serve(async (req) => {
           console.error("VALMEX Gemini reply failed", aiError);
         }
       }
-      return reply(200, { success: true, message: data, ai_message: aiMessage, ai_error: aiError });
+      const { data: finalConversation } = await admin.from("chat_conversations").select("response_mode,status").eq("id", conversation.id).maybeSingle();
+      return reply(200, { success: true, message: data, ai_message: aiMessage, ai_error: aiError, response_mode: finalConversation?.response_mode || "ai" });
     }
 
     if (action === "visitor_history") {
@@ -483,7 +492,7 @@ Deno.serve(async (req) => {
         const { data: signed } = await admin.storage.from("valmex-chat").createSignedUrl(path, 3600, { download: filename });
         return { ...m, attachment_name: filename, attachment_url: signed?.signedUrl || null };
       }));
-      return reply(200, { success: true, messages, conversation: { id: conversation.id, status: conversation.status, created_at: conversation.created_at } });
+      return reply(200, { success: true, messages, conversation: { id: conversation.id, status: conversation.status, response_mode: conversation.response_mode || "ai", created_at: conversation.created_at } });
     }
 
     const staff = await staffUser();
