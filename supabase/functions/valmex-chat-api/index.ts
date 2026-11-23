@@ -436,8 +436,31 @@ Deno.serve(async (req) => {
         conversationPatch.consent_at = new Date().toISOString();
       }
       await admin.from("chat_conversations").update(conversationPatch).eq("id", conversation.id);
+      const normalizedRequest = text.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase();
+      const explicitHumanRequest = /\\b(vreau|doresc|as vrea|pot sa vorbesc|vreau sa vorbesc|conectati-ma|transferati-ma|vorbesc cu|discut cu|sa discut cu)\\b.{0,55}\\b(consultant|operator|persoana reala|om)\\b/.test(normalizedRequest) ||
+        /\\b(consultant|operator)\\b.{0,25}\\b(va rog|te rog|acum|uman|real)\\b/.test(normalizedRequest);
+      let escalatedToHuman = false;
+      if (explicitHumanRequest && conversation.response_mode !== "human") {
+        const escalationText = "Solicitarea dvs. de a discuta cu un consultant a fost transmisă către VALMEX. Asistentul automat este oprit până când un consultant preia conversația.";
+        const { error: escalationError } = await admin.from("chat_conversations").update({
+          response_mode: "human", status: "escaladat", taken_over_by: null, taken_over_at: null,
+          last_message_at: new Date().toISOString(), last_message_preview: "Clientul solicită un consultant"
+        }).eq("id", conversation.id);
+        if (escalationError) throw escalationError;
+        const { data: escalationNotice, error: escalationMessageError } = await admin.from("chat_messages").insert({
+          conversation_id: conversation.id, sender_type: "system", visibility: "public",
+          message_type: "system", body: escalationText
+        }).select("created_at").single();
+        if (escalationMessageError) throw escalationMessageError;
+        await admin.from("chat_conversations").update({
+          last_message_at: escalationNotice.created_at, last_message_preview: "Solicitare consultant VALMEX",
+          staff_unread_count: 1, visitor_unread_count: 1
+        }).eq("id", conversation.id);
+        escalatedToHuman = true;
+      }
       try {
-        await notifyVisitorChatMessage(conversation.assigned_to || null, text, conversation.id);
+        await notifyVisitorChatMessage(conversation.assigned_to || null,
+          explicitHumanRequest ? "Clientul solicită preluarea de către un consultant." : text, conversation.id);
       } catch (pushError) {
         console.error("VALMEX visitor chat push failed:", pushError);
       }
@@ -446,7 +469,7 @@ Deno.serve(async (req) => {
       let aiError = null;
       const { data: modeCheck } = await admin.from("chat_conversations")
         .select("response_mode,status").eq("id", conversation.id).maybeSingle();
-      if (modeCheck?.response_mode === "ai" && modeCheck?.status !== "inchis") {
+      if (!escalatedToHuman && modeCheck?.response_mode === "ai" && modeCheck?.status !== "inchis") {
         try {
           const answer = await generateGeminiReply(conversation.id);
           if (answer) {
