@@ -7,6 +7,7 @@ const wa='https://wa.me/37378026212?text='+encodeURIComponent('Bună ziua! Dores
 const viber='viber://chat?number=%2B37378026212';
 const style=document.createElement('style');
 style.textContent=`
+html.vm-chat-open #valmex-contact-widget{display:none!important;pointer-events:none!important}
 #valmex-contact-widget{position:fixed;right:12px;bottom:16px;width:58px;height:58px;z-index:2147483005;font-family:inherit;pointer-events:auto;isolation:isolate}
 #valmex-contact-widget *{box-sizing:border-box}
 #valmex-contact-widget .vm-panel{position:absolute;right:0;bottom:72px;z-index:2;pointer-events:auto;width:250px;padding:14px;border:1px solid rgba(255,255,255,.62);border-radius:20px;background:rgba(255,255,255,.90);backdrop-filter:blur(22px) saturate(155%);-webkit-backdrop-filter:blur(22px) saturate(155%);box-shadow:0 18px 46px rgba(20,25,35,.16),inset 0 1px rgba(255,255,255,.9);opacity:0;visibility:hidden;transform:translateY(16px) scale(.95);transform-origin:bottom right;transition:opacity .22s ease,transform .34s cubic-bezier(.18,.78,.22,1),visibility .22s}
