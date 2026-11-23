@@ -749,20 +749,38 @@ ${transcriptText}
         return reply(400, { error: "Mod de răspuns invalid." });
       }
       const { data: old, error: readError } = await admin.from("chat_conversations")
-        .select("id,response_mode").eq("id", id).maybeSingle();
+        .select("id,response_mode,assigned_to,status").eq("id", id).maybeSingle();
       if (readError || !old) return reply(404, { error: "Conversația nu a fost găsită." });
       const now = new Date().toISOString();
       const patch = next === "human"
-        ? { response_mode: "human", taken_over_by: staff.id, taken_over_at: now }
+        ? { response_mode: "human", taken_over_by: staff.id, taken_over_at: now, assigned_to: staff.id, status: "in_lucru" }
         : { response_mode: "ai", taken_over_by: null, taken_over_at: null };
       const { error: updateError } = await admin.from("chat_conversations").update(patch).eq("id", id);
       if (updateError) throw updateError;
+      if (next === "human" && old.assigned_to !== staff.id) {
+        const { error: assignmentError } = await admin.from("chat_assignment_history").insert({
+          conversation_id: id, assigned_from: old.assigned_to || null,
+          assigned_to: staff.id, changed_by: staff.id, note: "Alocare automată la preluarea conversației."
+        });
+        if (assignmentError) throw assignmentError;
+      }
+      const systemText = next === "human"
+        ? "Un consultant VALMEX a preluat conversația. Puteți continua aici."
+        : "Asistentul VALMEX a fost reactivat. Consultantul poate interveni în continuare.";
+      const { data: notice, error: noticeError } = await admin.from("chat_messages").insert({
+        conversation_id: id, sender_type: "system", visibility: "public", message_type: "system", body: systemText
+      }).select("created_at").single();
+      if (noticeError) throw noticeError;
+      await admin.from("chat_conversations").update({
+        last_message_at: notice.created_at, last_message_preview: systemText,
+        visitor_unread_count: 1
+      }).eq("id", id);
       const { error: eventError } = await admin.from("chat_control_events").insert({
         conversation_id: id, old_mode: old.response_mode || "ai", new_mode: next,
-        changed_by: staff.id, note: next === "human" ? "Operatorul a preluat conversația." : "AI reactivat de operator."
+        changed_by: staff.id, note: next === "human" ? "Preluare confirmată de " + (staff.full_name || staff.id) + "." : "AI reactivat de operator."
       });
       if (eventError) throw eventError;
-      return reply(200, { success: true, response_mode: next, changed_by: staff.id, changed_at: now });
+      return reply(200, { success: true, response_mode: next, changed_by: staff.id, changed_by_name: staff.full_name, changed_at: now });
     }
 
     if (action === "set_status") {
