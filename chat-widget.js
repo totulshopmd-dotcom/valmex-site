@@ -11,7 +11,8 @@ const css=`
 #vm-chat-launch:hover{background:#c90010;box-shadow:0 7px 20px rgba(20,24,32,.22)}
 #vm-chat-launch svg{width:27px;height:27px;display:block}
 #vm-chat-panel{display:none;position:fixed;right:20px;bottom:94px;width:min(400px,calc(100vw - 32px));height:min(640px,calc(100dvh - 120px));max-height:calc(100dvh - 120px);background:#fff;border:1px solid #e8e9ec;border-radius:18px;box-shadow:0 16px 48px rgba(15,20,30,.22);overflow:hidden;flex-direction:column;z-index:100002}
-#vm-chat-panel.vm-open{display:flex}#vm-chat-head{flex:0 0 auto;min-width:0;box-sizing:border-box;width:100%;background:#20252d;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#vm-chat-panel.vm-open{display:flex}
+#valmex-chat-root #vm-chat-panel.vm-open{display:flex!important;visibility:visible;opacity:1;pointer-events:auto}#vm-chat-head{flex:0 0 auto;min-width:0;box-sizing:border-box;width:100%;background:#20252d;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
 #vm-chat-head strong{font-size:16px}#vm-chat-head small{display:block;color:#c0c5cc;margin-top:4px;font-size:11px}
 #vm-chat-close{border:0;background:transparent;color:#fff;font-size:24px;cursor:pointer}
 #vm-chat-content{box-sizing:border-box;width:100%;min-width:0;padding:16px;overflow:auto;overscroll-behavior:contain;flex:1 1 auto;min-height:0;background:#f7f8fa}
