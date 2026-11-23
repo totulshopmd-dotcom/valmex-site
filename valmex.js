@@ -383,4 +383,13 @@
     });
   }
 
+  /* Load the global VALMEX contact widget on pages using valmex.js. */
+  if (!document.getElementById('valmex-contact-widget-loader')) {
+    const contactWidgetScript = document.createElement('script');
+    contactWidgetScript.id = 'valmex-contact-widget-loader';
+    contactWidgetScript.src = '/valmex-contact-widget.js?v=20261123-1';
+    contactWidgetScript.defer = true;
+    document.head.appendChild(contactWidgetScript);
+  }
+
 })();
