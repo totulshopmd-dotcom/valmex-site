@@ -7,9 +7,9 @@ const wa='https://wa.me/37378026212?text='+encodeURIComponent('Bună ziua! Dores
 const viber='viber://chat?number=%2B37378026212';
 const style=document.createElement('style');
 style.textContent=`
-#valmex-contact-widget{position:fixed;right:12px;bottom:16px;z-index:99999;font-family:inherit;pointer-events:none}
+#valmex-contact-widget{position:fixed;right:12px;bottom:16px;width:58px;height:58px;z-index:2147483005;font-family:inherit;pointer-events:auto;isolation:isolate}
 #valmex-contact-widget *{box-sizing:border-box}
-#valmex-contact-widget .vm-panel{position:absolute;right:0;bottom:72px;pointer-events:auto;width:250px;padding:14px;border:1px solid rgba(255,255,255,.62);border-radius:20px;background:rgba(255,255,255,.90);backdrop-filter:blur(22px) saturate(155%);-webkit-backdrop-filter:blur(22px) saturate(155%);box-shadow:0 18px 46px rgba(20,25,35,.16),inset 0 1px rgba(255,255,255,.9);opacity:0;visibility:hidden;transform:translateY(16px) scale(.95);transform-origin:bottom right;transition:opacity .22s ease,transform .34s cubic-bezier(.18,.78,.22,1),visibility .22s}
+#valmex-contact-widget .vm-panel{position:absolute;right:0;bottom:72px;z-index:2;pointer-events:auto;width:250px;padding:14px;border:1px solid rgba(255,255,255,.62);border-radius:20px;background:rgba(255,255,255,.90);backdrop-filter:blur(22px) saturate(155%);-webkit-backdrop-filter:blur(22px) saturate(155%);box-shadow:0 18px 46px rgba(20,25,35,.16),inset 0 1px rgba(255,255,255,.9);opacity:0;visibility:hidden;transform:translateY(16px) scale(.95);transform-origin:bottom right;transition:opacity .22s ease,transform .34s cubic-bezier(.18,.78,.22,1),visibility .22s}
 #valmex-contact-widget.is-open .vm-panel{opacity:1;visibility:visible;transform:none}
 #valmex-contact-widget .vm-heading{margin:1px 3px 9px;color:#20242b;font-size:13px;font-weight:750}
 #valmex-contact-widget .vm-links{display:grid;gap:5px}
@@ -36,6 +36,7 @@ style.textContent=`
 document.head.appendChild(style);
 const root=document.createElement('div');root.id='valmex-contact-widget';
 root.innerHTML=`
+<button type="button" class="vm-main" id="vm-contact-main" aria-label="Deschide opțiunile de contact" aria-expanded="false"><span class="vm-pulse"></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.9 7.3L3 20l1.2-4.2A8.5 8.5 0 1 1 20.5 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
 <div class="vm-panel" id="vmContactPanel" aria-hidden="true">
 <div class="vm-heading">Alege cum dorești să discutăm</div><div class="vm-links">
 <a class="vm-link" href="tel:+37378026212"><span class="vm-icon vm-call"><svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.11.37 2.31.56 3.58.56a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.27.19 2.47.56 3.58a1 1 0 01-.25 1.01l-2.19 2.2z"/></svg></span><span>Sună-ne<small>+373 780 26212</small></span></a>
@@ -45,20 +46,14 @@ root.innerHTML=`
 </div></div>
 `;
 document.body.appendChild(root);
-const trigger=document.getElementById('vm-chat-launch'),panel=root.querySelector('.vm-panel');
-if(!trigger){return;}
-const openChat=trigger.onclick;
+const trigger=root.querySelector('#vm-contact-main'),panel=root.querySelector('.vm-panel');
 function setOpen(open){root.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',String(open));trigger.setAttribute('aria-label',open?'Închide opțiunile de contact':'Deschide opțiunile de contact');panel.setAttribute('aria-hidden',String(!open));}
-trigger.onclick=(e)=>{e.preventDefault();e.stopPropagation();setOpen(!root.classList.contains('is-open'));};
-document.addEventListener('click',e=>{if(!root.contains(e.target)&&e.target!==trigger&&!trigger.contains(e.target))setOpen(false);});
+trigger.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setOpen(!root.classList.contains('is-open'));});
+document.addEventListener('click',e=>{if(!root.contains(e.target))setOpen(false);});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false);});
 root.querySelector('[data-vm-chat]').addEventListener('click',e=>{
 e.preventDefault();setOpen(false);
-const siteChat=document.getElementById('vm-chat-launch');
 if(window.VALMEX_CHAT&&typeof window.VALMEX_CHAT.open==='function'){window.VALMEX_CHAT.open();return;}
-if(siteChat){if(typeof openChat==='function')openChat.call(siteChat,e);else siteChat.click();return;}
-if(window.jivo_api&&typeof window.jivo_api.open==='function'){window.jivo_api.open();return;}
-if(window.JivoSite&&typeof window.JivoSite.open==='function'){window.JivoSite.open();return;}
 alert('Chatul online nu este disponibil momentan. Ne poți contacta prin telefon, WhatsApp sau Viber.');
 });
 })();
