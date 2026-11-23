@@ -14,6 +14,12 @@ const css=`
 #vm-chat-panel.vm-open{display:flex}
 #valmex-chat-root #vm-chat-panel.vm-open{display:flex!important;visibility:visible;opacity:1;pointer-events:auto}#vm-chat-head{flex:0 0 auto;min-width:0;box-sizing:border-box;width:100%;background:#20252d;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
 
+/* Tablet layout correction: prevent global site flex/header rules from centering or shrinking chat children */
+#valmex-chat-root #vm-chat-panel{display:none;align-items:stretch!important;justify-content:flex-start!important;padding:0!important;gap:0!important;box-sizing:border-box!important}
+#valmex-chat-root #vm-chat-panel.vm-open{display:flex!important}
+#valmex-chat-root #vm-chat-panel #vm-chat-head{align-self:stretch!important;position:relative!important;display:flex!important;flex:0 0 auto!important;width:100%!important;min-width:100%!important;max-width:none!important;min-height:60px!important;height:auto!important;margin:0!important;padding:14px 16px!important;box-sizing:border-box!important;transform:none!important;float:none!important;inset:auto!important}
+#valmex-chat-root #vm-chat-panel #vm-chat-content{align-self:stretch!important;display:block!important;flex:1 1 auto!important;width:100%!important;min-width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;margin:0!important;box-sizing:border-box!important}
+#valmex-chat-root #vm-chat-panel #vm-chat-log{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
 /* Keep the dark chat header inside its own panel, overriding global site header rules */
 #valmex-chat-root #vm-chat-panel #vm-chat-head{position:relative!important;inset:auto!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;transform:none!important;float:none!important;display:flex!important;width:100%!important;max-width:100%!important;min-height:60px;flex:0 0 auto;box-sizing:border-box;z-index:1}
 /* Tablet: panel and its header stay as one compact floating window */
