@@ -458,48 +458,47 @@ Deno.serve(async (req) => {
         }).eq("id", conversation.id);
         escalatedToHuman = true;
       }
-      try {
-        await notifyVisitorChatMessage(conversation.assigned_to || null,
-          explicitHumanRequest ? "Clientul solicită preluarea de către un consultant." : text, conversation.id);
-      } catch (pushError) {
-        console.error("VALMEX visitor chat push failed:", pushError);
-      }
+      const background = (globalThis as any).EdgeRuntime;
+      const pushTask = notifyVisitorChatMessage(conversation.assigned_to || null,
+        explicitHumanRequest ? "Clientul solicită preluarea de către un consultant." : text, conversation.id)
+        .catch((pushError) => console.error("VALMEX visitor chat push failed:", pushError));
+      if (background?.waitUntil) background.waitUntil(pushTask);
+      else await pushTask;
 
-      let aiMessage = null;
-      let aiError = null;
-      const { data: modeCheck } = await admin.from("chat_conversations")
-        .select("response_mode,status").eq("id", conversation.id).maybeSingle();
-      if (!escalatedToHuman && modeCheck?.response_mode === "ai" && modeCheck?.status !== "inchis") {
-        try {
-          const answer = await generateGeminiReply(conversation.id);
-          if (answer) {
+      if (!escalatedToHuman) {
+        const aiTask = (async () => {
+          try {
+            const { data: modeCheck } = await admin.from("chat_conversations")
+              .select("response_mode,status").eq("id", conversation.id).maybeSingle();
+            if (modeCheck?.response_mode !== "ai" || modeCheck?.status === "inchis") return;
+            const answer = await generateGeminiReply(conversation.id);
+            if (!answer) return;
             const { data: finalCheck } = await admin.from("chat_conversations")
               .select("response_mode,status").eq("id", conversation.id).maybeSingle();
-            if (finalCheck?.response_mode === "ai" && finalCheck?.status !== "inchis") {
-              const { data: savedRows, error: saveError } = await admin.rpc("valmex_insert_ai_reply", {
-                p_conversation_id: conversation.id, p_body: answer.text
-              });
-              if (saveError) throw saveError;
-              aiMessage = Array.isArray(savedRows) ? (savedRows[0] || null) : savedRows;
-              if (answer.attachmentPath) {
-                const { data: fileMessage, error: fileError } = await admin.from("chat_messages").insert({
-                  conversation_id: conversation.id, sender_type: "ai", visibility: "public",
-                  message_type: "attachment", body: answer.attachmentPath
-                }).select("id,body,created_at,message_type").single();
-                if (fileError) throw fileError;
-                await admin.from("chat_conversations").update({
-                  last_message_at: fileMessage.created_at, last_message_preview: "Ofertă PDF VALMEX", staff_unread_count: 1
-                }).eq("id", conversation.id);
-              }
+            if (finalCheck?.response_mode !== "ai" || finalCheck?.status === "inchis") return;
+            const { error: saveError } = await admin.rpc("valmex_insert_ai_reply", {
+              p_conversation_id: conversation.id, p_body: answer.text
+            });
+            if (saveError) throw saveError;
+            if (answer.attachmentPath) {
+              const { data: fileMessage, error: fileError } = await admin.from("chat_messages").insert({
+                conversation_id: conversation.id, sender_type: "ai", visibility: "public",
+                message_type: "attachment", body: answer.attachmentPath
+              }).select("id,body,created_at,message_type").single();
+              if (fileError) throw fileError;
+              await admin.from("chat_conversations").update({
+                last_message_at: fileMessage.created_at, last_message_preview: "Ofertă PDF VALMEX", staff_unread_count: 1
+              }).eq("id", conversation.id);
             }
+          } catch (e) {
+            console.error("VALMEX Gemini background reply failed", e instanceof Error ? e.message : "Eroare Gemini.");
           }
-        } catch (e) {
-          aiError = e instanceof Error ? e.message : "Eroare Gemini.";
-          console.error("VALMEX Gemini reply failed", aiError);
-        }
+        })();
+        if (background?.waitUntil) background.waitUntil(aiTask);
+        else await aiTask;
       }
       const { data: finalConversation } = await admin.from("chat_conversations").select("response_mode,status").eq("id", conversation.id).maybeSingle();
-      return reply(200, { success: true, message: data, ai_message: aiMessage, ai_error: aiError, response_mode: finalConversation?.response_mode || "ai" });
+      return reply(200, { success: true, message: data, ai_pending: !escalatedToHuman && finalConversation?.response_mode === "ai", response_mode: finalConversation?.response_mode || "ai" });
     }
 
     if (action === "visitor_history") {
