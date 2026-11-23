@@ -605,6 +605,27 @@ ${transcriptText}
         report_status: "draft"
       }).select("*").single();
       if (saveError) throw saveError;
+      // Keep the structured AI summary in the central lead tracker as well as the chat report.
+      const { data: leadRow, error: leadReadError } = await admin.from("lead_events")
+        .select("details").eq("conversation_id", id).maybeSingle();
+      if (leadReadError) console.error("VALMEX lead tracker read failed:", leadReadError);
+      if (leadRow) {
+        const leadDetails = {
+          ...(leadRow.details && typeof leadRow.details === "object" ? leadRow.details : {}),
+          ai_report_id: saved.id,
+          ...clean
+        };
+        const { error: leadUpdateError } = await admin.from("lead_events").update({
+          visitor_name: clean.client_name || conversation.visitor_name,
+          phone: clean.phone || conversation.visitor_phone,
+          locality: clean.locality || null,
+          service: clean.service || "Chat website",
+          details: leadDetails,
+          updated_at: new Date().toISOString(),
+          last_activity_at: new Date().toISOString()
+        }).eq("conversation_id", id);
+        if (leadUpdateError) console.error("VALMEX lead tracker update failed:", leadUpdateError);
+      }
       return reply(200, { success: true, report: saved });
     }
 
