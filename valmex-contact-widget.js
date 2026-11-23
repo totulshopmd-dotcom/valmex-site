@@ -22,8 +22,8 @@ style.textContent=`
 #valmex-contact-widget .vm-viber{background:#7360c8}
 #valmex-contact-widget .vm-chat{background:#27364a}
 #valmex-contact-widget .vm-link small{display:block;margin-top:2px;color:#737b86;font-size:11px;font-weight:500}
-#valmex-contact-widget .vm-main{position:relative;width:58px;height:58px;border:0;border-radius:19px;display:grid;place-items:center;background:linear-gradient(145deg,#f12635,#c90013);color:#fff;box-shadow:0 9px 25px rgba(198,0,18,.3),inset 0 1px rgba(255,255,255,.35);cursor:pointer;transition:transform .22s,box-shadow .22s}
-#valmex-contact-widget .vm-main:hover{transform:translateY(-3px);box-shadow:0 13px 30px rgba(198,0,18,.36)}
+#valmex-contact-widget .vm-main{position:relative;width:58px;height:58px;border:0;border-radius:50%;display:grid;place-items:center;background:#e30613;color:#fff;box-shadow:0 5px 16px rgba(20,24,32,.18);cursor:pointer;transition:background .2s,box-shadow .2s}
+#valmex-contact-widget .vm-main:hover{background:#c90010;box-shadow:0 7px 20px rgba(20,24,32,.22)}
 #valmex-contact-widget .vm-main svg{width:25px;height:25px;transition:transform .25s}
 #valmex-contact-widget.is-open .vm-main svg{transform:rotate(45deg)}
 #valmex-contact-widget .vm-main:focus-visible,#valmex-contact-widget a:focus-visible{outline:3px solid rgba(227,6,19,.35);outline-offset:3px}
@@ -48,10 +48,6 @@ document.body.appendChild(root);
 const trigger=document.getElementById('vm-chat-launch'),panel=root.querySelector('.vm-panel');
 if(!trigger){return;}
 const openChat=trigger.onclick;
-trigger.style.boxShadow='0 9px 25px rgba(198,0,18,.30),inset 0 1px rgba(255,255,255,.35)';
-trigger.style.transition='transform .22s,box-shadow .22s';
-trigger.style.position='relative';
-trigger.insertAdjacentHTML('beforeend','<span class="vm-pulse" aria-hidden="true"></span>');
 function setOpen(open){root.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',String(open));trigger.setAttribute('aria-label',open?'Închide opțiunile de contact':'Deschide opțiunile de contact');panel.setAttribute('aria-hidden',String(!open));}
 trigger.onclick=(e)=>{e.preventDefault();e.stopPropagation();setOpen(!root.classList.contains('is-open'));};
 document.addEventListener('click',e=>{if(!root.contains(e.target)&&e.target!==trigger&&!trigger.contains(e.target))setOpen(false);});
@@ -59,6 +55,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false);});
 root.querySelector('[data-vm-chat]').addEventListener('click',e=>{
 e.preventDefault();setOpen(false);
 const siteChat=document.getElementById('vm-chat-launch');
+if(window.VALMEX_CHAT&&typeof window.VALMEX_CHAT.open==='function'){window.VALMEX_CHAT.open();return;}
 if(siteChat){if(typeof openChat==='function')openChat.call(siteChat,e);else siteChat.click();return;}
 if(window.jivo_api&&typeof window.jivo_api.open==='function'){window.jivo_api.open();return;}
 if(window.JivoSite&&typeof window.JivoSite.open==='function'){window.JivoSite.open();return;}
