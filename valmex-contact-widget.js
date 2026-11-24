@@ -23,6 +23,7 @@ html.vm-chat-open #valmex-contact-widget{display:none!important;pointer-events:n
 #valmex-contact-widget .vm-viber{background:#7360c8}
 #valmex-contact-widget .vm-chat{background:#27364a}
 #valmex-contact-widget .vm-link small{display:block;margin-top:2px;color:#737b86;font-size:11px;font-weight:500}
+#valmex-contact-widget .vm-unread-badge{display:none;position:absolute;top:-5px;right:-5px;z-index:3;min-width:22px;height:22px;padding:0 5px;border:2px solid #fff;border-radius:20px;background:#20252d;color:#fff;font:700 11px/18px Arial,sans-serif;text-align:center;box-shadow:0 2px 7px rgba(0,0,0,.24);box-sizing:border-box}#valmex-contact-widget .vm-unread-badge.is-visible{display:block;animation:vmUnreadPop .25s ease-out}@keyframes vmUnreadPop{0%{transform:scale(.65)}75%{transform:scale(1.12)}100%{transform:scale(1)}}
 #valmex-contact-widget .vm-main{position:relative;width:58px;height:58px;border:0;border-radius:50%;display:grid;place-items:center;background:#e30613;color:#fff;box-shadow:0 5px 16px rgba(20,24,32,.18);cursor:pointer;transition:background .2s,box-shadow .2s}
 #valmex-contact-widget .vm-main:hover{background:#c90010;box-shadow:0 7px 20px rgba(20,24,32,.22)}
 #valmex-contact-widget .vm-main svg{width:25px;height:25px;transition:transform .25s}
@@ -37,7 +38,7 @@ html.vm-chat-open #valmex-contact-widget{display:none!important;pointer-events:n
 document.head.appendChild(style);
 const root=document.createElement('div');root.id='valmex-contact-widget';
 root.innerHTML=`
-<button type="button" class="vm-main" id="vm-contact-main" aria-label="Deschide opțiunile de contact" aria-expanded="false"><span class="vm-pulse"></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.9 7.3L3 20l1.2-4.2A8.5 8.5 0 1 1 20.5 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+<button type="button" class="vm-main" id="vm-contact-main" aria-label="Deschide opțiunile de contact" aria-expanded="false"><span class="vm-pulse"></span><span class="vm-unread-badge" id="vm-contact-unread" aria-label="Mesaje noi" aria-live="polite"></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.9 7.3L3 20l1.2-4.2A8.5 8.5 0 1 1 20.5 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
 <div class="vm-panel" id="vmContactPanel" aria-hidden="true">
 <div class="vm-heading">Alege cum dorești să discutăm</div><div class="vm-links">
 <a class="vm-link" href="tel:+37378026212"><span class="vm-icon vm-call"><svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.11.37 2.31.56 3.58.56a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.27.19 2.47.56 3.58a1 1 0 01-.25 1.01l-2.19 2.2z"/></svg></span><span>Sună-ne<small>+373 780 26212</small></span></a>
@@ -47,7 +48,13 @@ root.innerHTML=`
 </div></div>
 `;
 document.body.appendChild(root);
-const trigger=root.querySelector('#vm-contact-main'),panel=root.querySelector('.vm-panel');
+const trigger=root.querySelector('#vm-contact-main'),panel=root.querySelector('.vm-panel'),unread=root.querySelector('#vm-contact-unread');
+window.addEventListener('valmex:chat-unread',event=>{
+ const count=Math.max(0,Number(event.detail?.count)||0);
+ unread.textContent=count>99?'99+':String(count);
+ unread.classList.toggle('is-visible',count>0);
+ trigger.setAttribute('aria-label',count>0?'Deschide opțiunile de contact. Mesaje noi: '+count:'Deschide opțiunile de contact');
+});
 function setOpen(open){root.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',String(open));trigger.setAttribute('aria-label',open?'Închide opțiunile de contact':'Deschide opțiunile de contact');panel.setAttribute('aria-hidden',String(!open));}
 trigger.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setOpen(!root.classList.contains('is-open'));});
 document.addEventListener('click',e=>{if(!root.contains(e.target))setOpen(false);});
