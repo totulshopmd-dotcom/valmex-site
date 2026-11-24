@@ -1,0 +1,161 @@
+(()=>{'use strict';
+let pendingContext=null;
+document.addEventListener('valmex:chat-context',e=>{pendingContext=e.detail||null;const intro=document.querySelector('#vm-chat-start p');if(intro&&pendingContext)intro.textContent='Discutăm despre: '+(pendingContext.message||'serviciul selectat')+' Poți începe fără date de contact.';});
+const API='https://qejnbbzhpvfjeqzwotwt.supabase.co/functions/v1/valmex-chat-api';
+const KEY='sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov';
+const STORE='valmex_public_chat_session_v1';
+if(document.getElementById('valmex-chat-root'))return;
+const css=`
+#valmex-chat-root{position:fixed;right:20px;bottom:22px;width:58px;height:58px;z-index:2147483000;font-family:Arial,system-ui,sans-serif;color:#20242b;pointer-events:auto;isolation:isolate}#valmex-chat-root #vm-chat-panel{pointer-events:auto;display:none;position:fixed;right:16px;bottom:92px;left:auto;width:min(430px,calc(100vw - 32px));max-width:calc(100vw - 32px);height:min(650px,calc(100dvh - 112px));max-height:calc(100dvh - 112px);min-height:320px;box-sizing:border-box;background:#fff;border:1px solid #e7e9ed;border-radius:18px;box-shadow:0 18px 52px rgba(18,24,34,.20);overflow:hidden;flex-direction:column;z-index:100002}
+#vm-chat-launch{display:none!important;pointer-events:none!important;position:absolute;inset:0;z-index:2147483001;width:58px;height:58px;border:0;border-radius:50%;background:#e30613;color:#fff;box-shadow:0 5px 16px rgba(20,24,32,.18);cursor:pointer;display:grid;place-items:center;transition:background .2s,box-shadow .2s}
+#vm-chat-launch:hover{background:#c90010;box-shadow:0 7px 20px rgba(20,24,32,.22)}
+#vm-chat-launch svg{width:27px;height:27px;display:block}
+#vm-chat-unread-badge{display:none;position:absolute;top:-5px;right:-5px;min-width:21px;height:21px;padding:0 5px;border:2px solid #fff;border-radius:20px;background:#20252d;color:#fff;font:700 11px/17px Arial,sans-serif;text-align:center;box-sizing:border-box;box-shadow:0 2px 7px rgba(0,0,0,.22)}
+#vm-chat-unread-badge.vm-visible{display:block;animation:vmUnreadPop .25s ease-out}
+#vm-chat-new-preview{position:absolute;right:68px;bottom:7px;max-width:min(250px,calc(100vw - 100px));padding:10px 13px;border:1px solid #eceef1;border-radius:13px;background:#fff;color:#20242b;font:12px/1.35 Arial,sans-serif;box-shadow:0 8px 25px rgba(20,25,35,.16);opacity:0;visibility:hidden;transform:translateY(5px);transition:opacity .2s,transform .2s,visibility .2s;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#vm-chat-new-preview.vm-visible{opacity:1;visibility:visible;transform:translateY(0)}
+@keyframes vmUnreadPop{0%{transform:scale(.65)}75%{transform:scale(1.12)}100%{transform:scale(1)}}
+#vm-chat-panel{display:none;position:fixed;right:20px;bottom:94px;width:min(400px,calc(100vw - 32px));height:min(640px,calc(100dvh - 120px));max-height:calc(100dvh - 120px);background:#fff;border:1px solid #e8e9ec;border-radius:18px;box-shadow:0 16px 48px rgba(15,20,30,.22);overflow:hidden;flex-direction:column;z-index:100002}
+#vm-chat-panel.vm-open{display:flex}
+#valmex-chat-root #vm-chat-panel.vm-open{display:flex!important;visibility:visible;opacity:1;pointer-events:auto}#vm-chat-head{flex:0 0 auto;min-width:0;box-sizing:border-box;width:100%;background:#20252d;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+
+/* Tablet layout correction: prevent global site flex/header rules from centering or shrinking chat children */
+#valmex-chat-root #vm-chat-panel{display:none;align-items:stretch!important;justify-content:flex-start!important;padding:0!important;gap:0!important;box-sizing:border-box!important}
+#valmex-chat-root #vm-chat-panel.vm-open{display:flex!important}
+#valmex-chat-root #vm-chat-panel #vm-chat-head{align-self:stretch!important;position:relative!important;display:flex!important;flex:0 0 auto!important;width:100%!important;min-width:100%!important;max-width:none!important;min-height:60px!important;height:auto!important;margin:0!important;padding:14px 16px!important;box-sizing:border-box!important;transform:none!important;float:none!important;inset:auto!important}
+#valmex-chat-root #vm-chat-panel #vm-chat-content{align-self:stretch!important;display:block!important;flex:1 1 auto!important;width:100%!important;min-width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;margin:0!important;box-sizing:border-box!important}
+#valmex-chat-root #vm-chat-panel #vm-chat-log{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+/* Keep the dark chat header inside its own panel, overriding global site header rules */
+#valmex-chat-root #vm-chat-panel #vm-chat-head{position:relative!important;inset:auto!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;transform:none!important;float:none!important;display:flex!important;width:100%!important;max-width:100%!important;min-height:60px;flex:0 0 auto;box-sizing:border-box;z-index:1}
+/* Tablet: panel and its header stay as one compact floating window */
+@media(min-width:521px){#valmex-chat-root #vm-chat-panel{left:auto!important;right:16px!important;width:min(430px,calc(100vw - 32px))!important;border-radius:18px!important}#valmex-chat-root #vm-chat-panel #vm-chat-head{border-radius:17px 17px 0 0}}
+/* Phone: chat intentionally expands to the full screen */
+@media(max-width:520px){#valmex-chat-root #vm-chat-panel{left:0!important;right:0!important;top:0!important;bottom:0!important;width:100vw!important;max-width:100vw!important;height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;border-radius:0!important;border:0!important}#valmex-chat-root #vm-chat-panel #vm-chat-head{border-radius:0!important;padding-top:max(14px,env(safe-area-inset-top))}}
+#vm-chat-head strong{font-size:16px}#vm-chat-head small{display:block;color:#c0c5cc;margin-top:4px;font-size:11px}
+#vm-chat-close{border:0;background:transparent;color:#fff;font-size:24px;cursor:pointer}
+#vm-chat-content{box-sizing:border-box;width:100%;min-width:0;padding:16px;overflow:auto;overscroll-behavior:contain;flex:1 1 auto;min-height:0;background:#f7f8fa}
+#vm-chat-start p{font-size:13px;color:#59616d;line-height:1.5;margin:0 0 13px}
+#vm-chat-options{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 0 14px}
+#vm-chat-options button{display:flex;align-items:center;gap:9px;min-width:0;min-height:66px;padding:10px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;color:#242a33;text-align:left;font-size:12px;font-weight:700;line-height:1.25;box-shadow:0 2px 7px rgba(18,24,34,.035);transition:border-color .2s,background .2s,transform .2s,box-shadow .2s}
+#vm-chat-options button:hover{border-color:#e30613;background:#fffafa;transform:translateY(-1px);box-shadow:0 5px 14px rgba(18,24,34,.08)}
+#vm-chat-first-message{width:100%;min-height:66px;resize:vertical;border:1px solid #d8dce2;border-radius:8px;padding:10px;font:13px Arial;box-sizing:border-box;margin:0 0 9px}
+#vm-chat-start button#vm-chat-begin{width:100%}
+
+#vm-chat-start input:not([type=checkbox]){width:100%;padding:11px;border:1px solid #d8dce2;border-radius:8px;margin:0 0 9px;font-size:14px;box-sizing:border-box}
+#vm-chat-consent{font-size:11px;color:#68717d;display:flex;gap:7px;align-items:flex-start;margin:4px 0 13px;line-height:1.4}
+#vm-chat-consent input{margin:2px 0 0}
+#vm-chat-start button,#vm-chat-send{border:0;background:#d83232;color:#fff;font-weight:700;border-radius:8px;padding:12px 14px;cursor:pointer}
+#vm-chat-start button{width:100%}#vm-chat-start button:disabled,#vm-chat-send:disabled{opacity:.55;cursor:wait}
+#vm-chat-log{display:flex;flex-direction:column;gap:9px}#vm-chat-log[hidden],#vm-chat-compose[hidden]{display:none}
+.vm-chat-msg{max-width:88%;padding:9px 11px;border-radius:12px;background:#e6e9ee;color:#222;font-size:13px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;align-self:flex-start}
+.vm-chat-msg.vm-me{align-self:flex-end;background:#d83232;color:#fff}
+.vm-chat-msg.vm-ai{border-left:3px solid #d83232;background:#fff}
+.vm-chat-msg small{display:block;font-size:9px;opacity:.72;margin-top:4px}
+#vm-chat-compose{display:flex;gap:7px;padding:11px;border-top:1px solid #e5e7eb;background:#fff}
+@media(max-width:520px){#valmex-chat-root #vm-chat-compose{position:relative;z-index:10;flex:0 0 auto;padding-bottom:calc(11px + env(safe-area-inset-bottom))}#valmex-chat-root #vm-chat-send{position:relative;z-index:11;flex:0 0 48px;min-width:48px;min-height:44px;touch-action:manipulation}}
+#vm-chat-text{flex:1;min-width:0;resize:none;height:42px;max-height:90px;border:1px solid #d8dce2;border-radius:8px;padding:10px;font:13px Arial;box-sizing:border-box}
+#vm-chat-send{padding:0 13px}#vm-chat-error{font-size:11px;color:#b42318;padding:0 12px 8px;display:none}
+.vm-chat-file{display:inline-flex;align-items:center;gap:8px;margin-top:5px;padding:10px 12px;border-radius:9px;background:#fff;border:1px solid #d83232;color:#bd2029;text-decoration:none;font-weight:700;font-size:12px}
+.vm-chat-file:hover{background:#fff5f5}.vm-chat-file-error{margin-top:5px;padding:9px 11px;border-radius:8px;background:#fff7ed;color:#9a3412;font-size:11px}
+.vm-chat-file:before{content:"↓";font-size:17px;line-height:1}
+
+#vm-chat-status{font-size:11px;color:#667085;padding:0 12px 7px;min-height:20px;display:flex;align-items:center;gap:7px}#vm-chat-status.vm-processing{color:#b4232c;font-weight:600}#vm-chat-status.vm-processing:before{content:"";width:7px;height:7px;border-radius:50%;background:#d83232;animation:vmStatusPulse 1s ease-in-out infinite}@keyframes vmStatusPulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}@media(prefers-reduced-motion:reduce){#vm-chat-status.vm-processing:before{animation:none}}
+#vm-chat-data-consent{display:flex;align-items:flex-start;gap:7px;padding:7px 12px;color:#667085;font-size:10px;line-height:1.35;background:#fff}
+#vm-chat-data-consent[hidden]{display:none}
+#vm-chat-data-consent input{margin:1px 0 0;flex:none}
+
+@media(max-width:900px){#valmex-chat-root{right:16px;bottom:16px}#vm-chat-panel{right:12px;bottom:88px;width:min(420px,calc(100vw - 24px));height:min(680px,calc(100dvh - 104px));max-height:calc(100dvh - 104px)}}@media(max-width:520px){#valmex-chat-root{right:12px;bottom:14px}#vm-chat-panel{right:8px;bottom:82px;width:calc(100vw - 16px);height:calc(100dvh - 98px);max-height:calc(100dvh - 98px);border-radius:16px}}
+#vm-chat-options .vm-service-mark{width:32px;height:32px;flex:0 0 32px;display:grid;place-items:center;border-radius:9px;background:#fff0f1;color:#c90013;font-size:10px;font-weight:800;letter-spacing:-.3px}#vm-chat-options .vm-service-copy{display:block;min-width:0}#vm-chat-options .vm-service-copy strong{display:block;font-size:11px;line-height:1.25}#vm-chat-options .vm-service-copy small{display:block;margin-top:4px;color:#78818d;font-size:9px;font-weight:500;line-height:1.2}#vm-chat-options .vm-service-arrow{margin-left:auto;align-self:flex-start;color:#9aa1ab;font-size:14px;font-weight:400}#vm-chat-start p{font-size:12px;color:#68717d;line-height:1.5;margin:0 0 12px}#vm-chat-first-message{width:100%;box-sizing:border-box;min-height:58px;border-radius:10px;border:1px solid #dfe2e7;background:#fff;padding:11px;font:13px Arial,system-ui,sans-serif}#vm-chat-begin{margin-top:2px;border-radius:10px!important;background:#e30613!important}#vm-chat-compose{box-sizing:border-box;width:100%;flex:0 0 auto}#vm-chat-status{flex:0 0 auto;box-sizing:border-box;width:100%;padding:7px 12px;min-height:27px;background:#fff;border-top:1px solid #eef0f2}#vm-chat-data-consent{box-sizing:border-box;width:100%;flex:0 0 auto}#vm-chat-error{box-sizing:border-box;width:100%;flex:0 0 auto}#vm-chat-close{flex:0 0 32px;width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.10);font-size:22px;line-height:1}#vm-chat-log{width:100%;min-width:0;box-sizing:border-box}
+`;
+const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
+const root=document.createElement('div');root.id='valmex-chat-root';
+root.innerHTML=`
+<section id="vm-chat-panel" aria-label="Chat VALMEX">
+<header id="vm-chat-head"><div><strong>Discută cu VALMEX</strong><small>Asistent VALMEX · Consultantul poate prelua discuția</small></div><button id="vm-chat-close" aria-label="Închide">×</button></header>
+<div id="vm-chat-content"><div id="vm-chat-start"><p>Alegeți subiectul sau scrieți întrebarea. Asistentul VALMEX începe discuția, iar un consultant poate prelua conversația în orice moment.</p>
+<div id="vm-chat-options">
+<button type="button" data-vm-service="Acoperiș la cheie"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.2 12 4l9 7.2M5.5 10v9h13v-9M9.5 19v-5h5v5" /></svg></span><span class="vm-service-copy"><strong>Acoperiș la cheie</strong><small>Proiectare și montaj</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Țiglă metalică și materiale"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18M4 8l2 11h12l2-11M7 8V5h10v3M8 12h8M9 15h6" /></svg></span><span class="vm-service-copy"><strong>Țiglă și materiale</strong><small>Materiale pentru acoperiș</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Fațade decorative"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V5l8-2 8 2v15M4 9h16M8 9v4m8-4v4M8 20v-4h8v4" /></svg></span><span class="vm-service-copy"><strong>Fațade decorative</strong><small>Tencuieli și finisaje</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Fațade AMK"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 9h16M9 4v16m6-16v16" /></svg></span><span class="vm-service-copy"><strong>Fațade AMK</strong><small>Panouri și montaj</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Renovări exterioare"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6 4 4M4 20l4.5-1 10-10a2.8 2.8 0 0 0-4-4l-10 10L4 20ZM4 4h5M4 4v5" /></svg></span><span class="vm-service-copy"><strong>Renovări exterioare</strong><small>Lucrări pentru locuință</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Rate 0%"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 8h.01M16 16h.01M20 12a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" /></svg></span><span class="vm-service-copy"><strong>Plată în rate 0%</strong><small>Condiții de finanțare</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Calcul estimativ acoperiș"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2m4 0h2m-8 4h2m4 0h2m-8 3h2m4 0h2" /></svg></span><span class="vm-service-copy"><strong>Calcul acoperiș</strong><small>Estimare orientativă</small></span><span class="vm-service-arrow">›</span></button>
+</div>
+<textarea id="vm-chat-first-message" maxlength="4000" placeholder="Sau scrieți întrebarea aici…"></textarea>
+<button id="vm-chat-begin">Începe conversația</button></div><div id="vm-chat-log" hidden></div></div>
+<div id="vm-chat-error" role="status" aria-live="polite"></div><div id="vm-chat-status" role="status" aria-live="polite">VALMEX · Republica Moldova</div>
+<label id="vm-chat-data-consent" hidden><input id="vm-chat-consent" type="checkbox"><span>Sunt de acord să transmit numărul de telefon pentru gestionarea solicitării mele.</span></label>
+<div id="vm-chat-compose" hidden><textarea id="vm-chat-text" maxlength="4000" placeholder="Scrie mesajul…"></textarea><button id="vm-chat-send" aria-label="Trimite mesaj">➤</button></div>
+</section><button id="vm-chat-launch" aria-label="Deschide chatul VALMEX"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.9 7.3L3 20l1.2-4.2A8.5 8.5 0 1 1 20.5 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span id="vm-chat-unread-badge" aria-label="Mesaje noi"></span><span id="vm-chat-new-preview" role="status" aria-live="polite"></span></button>`;
+document.body.appendChild(root);
+const $=id=>document.getElementById(id);let token='',poll=null,lastCount=-1,busy=false,pollBusy=false;let unreadCount=0,unreadBaselineInitialized=false;const seenMessageIds=new Set();
+let notificationAudio=null,notificationAudioUnlocked=false;
+function unlockNotificationAudio(){notificationAudioUnlocked=true}
+document.addEventListener('pointerdown',unlockNotificationAudio,{once:true,capture:true});
+document.addEventListener('keydown',unlockNotificationAudio,{once:true,capture:true});
+function playNotificationSound(){
+ if(!notificationAudioUnlocked)return;
+ try{
+  if(!notificationAudio)notificationAudio=new Audio('/assets/sounds/mixkit-long-pop-2358.wav');
+  notificationAudio.currentTime=0;
+  const playback=notificationAudio.play();
+  if(playback&&typeof playback.catch==='function')playback.catch(()=>{});
+ }catch(e){/* Sunetul nu trebuie să afecteze funcționarea chatului. */}
+}
+function showError(s){$('vm-chat-error').textContent=s;$('vm-chat-error').style.display='block'}function clearError(){$('vm-chat-error').style.display='none'}
+async function api(action,data={}){const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':KEY},body:JSON.stringify({action,...data})});let result={};try{result=await response.json()}catch{}if(!response.ok||result.error)throw Error(result.error||'Chatul nu este disponibil momentan.');return result}
+function restore(){try{const saved=JSON.parse(localStorage.getItem(STORE)||'null');if(saved?.token){token=saved.token;return true}}catch{}return false}
+function save(){try{localStorage.setItem(STORE,JSON.stringify({token}))}catch{}}
+function showChat(){$('vm-chat-start').hidden=true;$('vm-chat-log').hidden=false;$('vm-chat-compose').hidden=false}
+function escapeHTML(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function senderLabel(t){return t==='visitor'?'Tu':t==='ai'?'Asistent VALMEX':t==='operator'?'Consultant VALMEX':'VALMEX'}
+async function history(){if(!token)return null;const result=await api('visitor_history',{session_token:token});const messages=result.messages||[];if(messages.length){showChat()}else{$('vm-chat-start').hidden=false;$('vm-chat-log').hidden=true;$('vm-chat-compose').hidden=true}updateModeStatus(result.conversation);if(messages.length===lastCount)return result;lastCount=messages.length;$('vm-chat-log').innerHTML=messages.map(m=>m.message_type==='attachment'?(`<div class="vm-chat-msg vm-ai">${m.attachment_url?`<a class="vm-chat-file" href="${escapeHTML(m.attachment_url)}" download target="_blank" rel="noopener">Descarcă oferta PDF</a>`:'<div class="vm-chat-file-error">PDF-ul este momentan indisponibil pentru descărcare.</div>'}<small>${senderLabel(m.sender_type)} · ${new Date(m.created_at).toLocaleTimeString('ro-MD',{hour:'2-digit',minute:'2-digit'})}</small></div>`):(`<div class="vm-chat-msg ${m.sender_type==='visitor'?'vm-me':m.sender_type==='ai'?'vm-ai':''}">${escapeHTML(m.body)}<small>${senderLabel(m.sender_type)} · ${new Date(m.created_at).toLocaleTimeString('ro-MD',{hour:'2-digit',minute:'2-digit'})}</small></div>`)).join('');$('vm-chat-content').scrollTop=$('vm-chat-content').scrollHeight;const latest=messages[messages.length-1];if(latest?.sender_type==='ai')setChatStatus('Asistentul VALMEX a răspuns.');else if(latest?.sender_type==='system'&&result.conversation?.response_mode==='human')setChatStatus('Solicitarea a fost transmisă către un consultant VALMEX.');return result}
+function chisinauDay(value){return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Chisinau',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value))}async function startFreshConversation(){const result=await api('start');token=result.session_token;save();lastCount=-1;return history()}async function begin(initialMessage=''){if(busy)return;const first=String(initialMessage||$('vm-chat-first-message').value||'').trim();if(/(?:\+?373[\s().-]*\d{2}[\s().-]*\d{3}[\s().-]*\d{3}|0\d{2}[\s().-]*\d{3}[\s().-]*\d{3}|\b\d{8}\b)/.test(first)){showError('Începeți conversația fără numărul de telefon. Îl veți putea transmite în chat după confirmarea acordului.');return}busy=true;$('vm-chat-begin').disabled=true;clearError();try{const result=await api('start');token=result.session_token;save();if(pendingContext&&pendingContext.message){const contextMessage=pendingContext.message;pendingContext=null;await api('visitor_send',{session_token:token,message:contextMessage});}if(first)await api('visitor_send',{session_token:token,message:first});await history();startPolling();$('vm-chat-text').focus()}catch(e){showError(e.message)}finally{busy=false;$('vm-chat-begin').disabled=false}}
+function phoneInMessage(value){return /(?:\+?373[\s().-]*\d{2}[\s().-]*\d{3}[\s().-]*\d{3}|0\d{2}[\s().-]*\d{3}[\s().-]*\d{3}|\b\d{8}\b)/.test(String(value||''))}function updateConsentVisibility(){const show=phoneInMessage($('vm-chat-text').value);$('vm-chat-data-consent').hidden=!show;if(!show)$('vm-chat-consent').checked=false}function setChatStatus(message,processing=false){const status=$('vm-chat-status');status.textContent=message;status.classList.toggle('vm-processing',processing)}
+function updateModeStatus(conversation){if(conversation?.response_mode==='human')setChatStatus('Solicitarea este transmisă către VALMEX. Asistentul automat este oprit.');else setChatStatus('Asistentul VALMEX este activ. Consultantul poate prelua discuția.')}async function send(){const input=$('vm-chat-text'),message=input.value.trim();if(!message||busy||!token)return;const hasPhone=phoneInMessage(message);if(hasPhone&&!$('vm-chat-consent').checked){$('vm-chat-data-consent').hidden=false;showError('Bifați acordul pentru a transmite numărul de telefon.');return}busy=true;$('vm-chat-send').disabled=true;setChatStatus('Mesajul a fost preluat. VALMEX AI pregătește răspunsul…',true);clearError();try{const result=await api('visitor_send',{session_token:token,message,consent:hasPhone});input.value='';$('vm-chat-consent').checked=false;$('vm-chat-data-consent').hidden=true;lastCount=-1;await history();if(result.response_mode==='human')setChatStatus('Mesajul a fost transmis. Consultantul VALMEX gestionează conversația.',false);else setChatStatus(result.ai_pending?'Mesajul a fost trimis. Asistentul VALMEX pregătește răspunsul…':'Mesajul a fost primit. Revenim în chat în scurt timp.',false)}catch(e){if(/conversația este închisă|sesiunea de chat a expirat/i.test(e.message)){try{await startFreshConversation();const retry=await api('visitor_send',{session_token:token,message,consent:hasPhone});input.value='';$('vm-chat-consent').checked=false;$('vm-chat-data-consent').hidden=true;lastCount=-1;await history();setChatStatus('Discuția precedentă s-a încheiat. Mesajul a fost trimis într-un chat nou.',false);return}catch(retryError){showError(retryError.message)}}else{showError(e.message)}setChatStatus('Nu am putut confirma trimiterea. Verificați conexiunea și încercați din nou.',false)}finally{busy=false;$('vm-chat-send').disabled=false;input.focus()}}
+function messageKey(m){return String(m.id||m.message_id||[m.created_at,m.sender_type,m.body].join('|'))}
+function updateUnreadUI(latestText=''){window.VALMEX_CHAT_UNREAD_COUNT=unreadCount;window.dispatchEvent(new CustomEvent('valmex:chat-unread',{detail:{count:unreadCount,preview:latestText||''}}));const badge=$('vm-chat-unread-badge'),preview=$('vm-chat-new-preview');if(!badge||!preview)return;if(unreadCount>0){badge.textContent=unreadCount>99?'99+':String(unreadCount);badge.classList.add('vm-visible');preview.textContent=latestText||'Aveți un mesaj nou';preview.classList.add('vm-visible')}else{badge.textContent='';badge.classList.remove('vm-visible');preview.classList.remove('vm-visible')}}
+function markMessagesSeen(messages,notify){let latestIncoming='';(messages||[]).forEach(m=>{const key=messageKey(m);if(seenMessageIds.has(key))return;seenMessageIds.add(key);if(notify&&!$('vm-chat-panel').classList.contains('vm-open')&&(m.sender_type==='ai'||m.sender_type==='operator')){playNotificationSound();unreadCount++;latestIncoming=String(m.body||'Ați primit un mesaj nou.').slice(0,110)}});while(seenMessageIds.size>250)seenMessageIds.delete(seenMessageIds.values().next().value);if(latestIncoming)updateUnreadUI(latestIncoming)}
+function clearUnread(messages=[]){unreadCount=0;(messages||[]).forEach(m=>seenMessageIds.add(messageKey(m)));updateUnreadUI()}
+async function refreshUnread(){if(!token||pollBusy)return;pollBusy=true;try{const result=await api('visitor_history',{session_token:token});const messages=result.messages||[];if(!unreadBaselineInitialized){markMessagesSeen(messages,false);unreadBaselineInitialized=true}else markMessagesSeen(messages,true);if($('vm-chat-panel').classList.contains('vm-open')){clearUnread(messages);const current=await history();if(current?.conversation?.created_at&&chisinauDay(current.conversation.created_at)!==chisinauDay(Date.now())){await startFreshConversation();setChatStatus('A început o zi nouă. Discuția continuă într-un chat nou.',false)}}}catch(e){/* Reîncercare automată la următorul ciclu. */}finally{pollBusy=false}}
+function startPolling(){stopPolling();refreshUnread();poll=setInterval(refreshUnread,3500)}
+function stopPolling(){if(poll){clearInterval(poll);poll=null}}
+async function openValmexChat(){document.documentElement.classList.add('vm-chat-open');$('vm-chat-panel').classList.add('vm-open');$('vm-chat-launch').style.display='none';clearUnread();clearError();if(restore()){try{const previous=await history();clearUnread(previous?.messages||[]);const meta=previous?.conversation;const isNewDay=meta?.created_at&&chisinauDay(meta.created_at)!==chisinauDay(Date.now());if(meta?.status==='inchis'||isNewDay){await startFreshConversation();setChatStatus(meta?.status==='inchis'?'Conversația precedentă a fost încheiată. A început o discuție nouă.':'A început o zi nouă. Discuția continuă într-un chat nou.',false)}startPolling()}catch{localStorage.removeItem(STORE);token='';$('vm-chat-start').hidden=false;$('vm-chat-log').hidden=true;$('vm-chat-compose').hidden=true;showError('Sesiunea anterioară a expirat. Începe o conversație nouă.')}}};
+window.VALMEX_CHAT={open:openValmexChat,close:()=>{document.documentElement.classList.remove('vm-chat-open');$('vm-chat-panel').classList.remove('vm-open');$('vm-chat-launch').style.display='grid';stopPolling()}};
+$('vm-chat-launch').addEventListener('click',function(event){event.preventDefault();event.stopPropagation();openValmexChat()},{capture:true});
+$('vm-chat-launch').onclick=openValmexChat;
+$('vm-chat-close').onclick=()=>{window.VALMEX_CHAT.close()};
+$('vm-chat-begin').onclick=()=>begin();document.querySelectorAll('[data-vm-service]').forEach(button=>button.onclick=()=>begin(button.getAttribute('data-vm-service')));$('vm-chat-first-message').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();begin()}};$('vm-chat-send').onclick=send;$('vm-chat-text').oninput=updateConsentVisibility;$('vm-chat-text').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}};if(restore()){api('visitor_history',{session_token:token}).then(result=>{markMessagesSeen(result.messages||[],false);unreadBaselineInitialized=true;startPolling()}).catch(()=>{});}
+
+/* VALMEX service selector – refined visual system */
+const iconStyle=document.createElement('style');
+iconStyle.textContent=`
+#valmex-chat-root #vm-chat-content{padding:20px 18px 22px!important;background:#f5f6f8!important}
+#valmex-chat-root #vm-chat-start p{font-size:14px!important;line-height:1.55!important;color:#667085!important;margin:2px 0 18px!important}
+#valmex-chat-root #vm-chat-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;margin:0 0 17px!important}
+#valmex-chat-root #vm-chat-options button{position:relative!important;display:flex!important;align-items:center!important;gap:11px!important;min-width:0!important;min-height:84px!important;padding:13px 11px!important;border:1px solid #e4e7ec!important;border-radius:15px!important;background:#fff!important;color:#20242b!important;text-align:left!important;font-family:inherit!important;font-size:13px!important;font-weight:600!important;line-height:1.3!important;box-shadow:0 3px 12px rgba(16,24,40,.045)!important;transition:border-color .2s,box-shadow .2s,transform .2s!important}
+#valmex-chat-root #vm-chat-options button:hover,#valmex-chat-root #vm-chat-options button:focus-visible{border-color:#e30613!important;background:#fff!important;box-shadow:0 7px 18px rgba(16,24,40,.09)!important;transform:translateY(-2px)!important;outline:none!important}
+#valmex-chat-root .vm-service-icon{width:43px!important;height:43px!important;flex:0 0 43px!important;display:grid!important;place-items:center!important;border-radius:13px!important;background:#fff0f1!important;color:#d20a19!important}
+#valmex-chat-root .vm-service-icon svg{width:25px!important;height:25px!important;display:block!important;fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+#valmex-chat-root .vm-service-copy{display:block!important;min-width:0!important;flex:1 1 auto!important}
+#valmex-chat-root .vm-service-copy strong{display:block!important;font-size:12px!important;line-height:1.3!important;font-weight:750!important;color:#20242b!important}
+#valmex-chat-root .vm-service-copy small{display:block!important;margin-top:5px!important;color:#858b96!important;font-size:10px!important;font-weight:500!important;line-height:1.25!important}
+#valmex-chat-root .vm-service-arrow{margin-left:auto!important;align-self:center!important;color:#c0c4cc!important;font-size:21px!important;font-weight:400!important;line-height:1!important}
+#valmex-chat-root #vm-chat-first-message{min-height:76px!important;margin:0 0 10px!important;padding:14px 15px!important;border:1px solid #dfe3e8!important;border-radius:13px!important;background:#fff!important;color:#252a33!important;font:14px/1.45 Arial,system-ui,sans-serif!important;box-shadow:inset 0 1px 2px rgba(16,24,40,.025)!important}
+#valmex-chat-root #vm-chat-first-message:focus{outline:none!important;border-color:#e30613!important;box-shadow:0 0 0 3px rgba(227,6,19,.10)!important}
+#valmex-chat-root #vm-chat-begin{min-height:54px!important;margin:0!important;border:0!important;border-radius:13px!important;background:#e30613!important;color:#fff!important;font-size:15px!important;font-weight:750!important;letter-spacing:.1px!important;box-shadow:0 7px 18px rgba(227,6,19,.18)!important}
+#valmex-chat-root #vm-chat-begin:hover{background:#c90010!important}
+@media(max-width:520px){
+ #valmex-chat-root #vm-chat-content{padding:18px 16px 24px!important}
+ #valmex-chat-root #vm-chat-options{gap:9px!important}
+ #valmex-chat-root #vm-chat-options button{min-height:78px!important;padding:10px 9px!important;gap:8px!important;border-radius:13px!important}
+ #valmex-chat-root .vm-service-icon{width:38px!important;height:38px!important;flex-basis:38px!important;border-radius:11px!important}
+ #valmex-chat-root .vm-service-icon svg{width:22px!important;height:22px!important}
+ #valmex-chat-root .vm-service-copy strong{font-size:11px!important}
+ #valmex-chat-root .vm-service-copy small{font-size:9px!important}
+}
+@media(max-width:360px){#valmex-chat-root #vm-chat-options{grid-template-columns:1fr!important}#valmex-chat-root #vm-chat-options button{min-height:68px!important}}
+`;
+document.head.appendChild(iconStyle);
+})();
