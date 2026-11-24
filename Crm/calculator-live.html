@@ -26,6 +26,7 @@ h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 24px;letter-spacin
 .bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);border-top:1px solid var(--line);padding:12px 18px calc(12px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:10px;z-index:5}
 .bottom button{width:min(210px,42vw);border-radius:10px;padding:14px 12px;font-weight:700;border:1px solid var(--line);background:#fff}
 .bottom .cancel{color:#777}.bottom .next{background:var(--red);color:#fff;border-color:var(--red)}
+.bottom .skip{background:#fff;color:#555;border:1px dashed #aaa}
 .bottom button:disabled{opacity:.35;cursor:not-allowed}
 .summary{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:10px 0 18px}
 .sumrow{display:flex;justify-content:space-between;gap:15px;padding:10px 0;border-bottom:1px solid #eee;font-size:14px}.sumrow:last-child{border:0}.sumrow strong{text-align:right}
@@ -68,6 +69,7 @@ h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 24px;letter-spacin
 <footer class="bottom" id="nav">
   <button class="cancel" id="back">← Înapoi</button>
   <button class="cancel" id="quit">Renunță</button>
+  <button class="skip hidden" id="skipStep" type="button">Treci peste etapă</button>
   <button class="next hidden" id="continue">Continuă →</button>
 </footer>
 </div>
@@ -191,6 +193,8 @@ ${state.payment==='installments'&&state.payer==='client'?row('Total achitat de c
  }
  if(stepOptions) document.querySelectorAll('.option').forEach(b=>b.onclick=()=>choose(b.dataset.value));
  $('back').disabled=index===0;$('continue').classList.toggle('hidden',!s.fields&&!s.input&&s.key!=='extras');
+ $('skipStep').classList.toggle('hidden',s.key==='confirm');
+ $('skipStep').onclick=()=>{if(!confirm('Treci peste această etapă fără să salvezi valorile introduse aici?'))return;advance()};
  $('continue').disabled=false;
  // Reatașează handlerul standard la fiecare pas. Pasul „custom” îl suprascrie
  // temporar; fără resetare, handlerul vechi rămânea activ și bloca pașii următori.
