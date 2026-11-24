@@ -677,7 +677,19 @@ function makePdf(kind,shouldPrint=true){
   if(kind==='client'&&state.slab==='yes')body+='<p>Volumul betonului este geometric; grinzile, golurile, pierderile și elementele structurale se stabilesc separat conform proiectului tehnic.</p>';
   body+='<p style="margin-top:40px"><strong><span style="color:#171717">VAL</span><span style="color:#e30613">MEX</span></strong> · Valmex.md@gmail.com</p>';
  $('printdoc').innerHTML=body;
- if(shouldPrint){document.body.classList.add('printing');window.print();document.body.classList.remove('printing');}
+ if(shouldPrint){
+  const previousTitle=document.title;
+  const safePart=value=>String(value||'').normalize('NFC').replace(/[\\/:*?"<>|]/g,' ').replace(/\\s+/g,' ').trim();
+  const client=safePart(state.clientName)||'Client fara nume';
+  const phone=safePart(state.clientPhone).replace(/[^0-9+]/g,'')||'fara telefon';
+  const pdfTitle='Valmex - '+(kind==='internal'?'Calcul intern - ':'Client - ')+client+' - '+phone;
+  const restoreTitle=()=>{document.title=previousTitle;window.removeEventListener('afterprint',restoreTitle)};
+  document.title=pdfTitle;
+  window.addEventListener('afterprint',restoreTitle);
+  document.body.classList.add('printing');
+  window.print();
+  document.body.classList.remove('printing');
+ }
 }
 window.makePdf=makePdf;window.loadArchived=loadArchived;window.deleteArchived=deleteArchived;window.exportArchived=exportArchived;
 $('continue').classList.add('hidden');
