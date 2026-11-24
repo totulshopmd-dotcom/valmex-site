@@ -69,14 +69,14 @@ root.innerHTML=`
 <header id="vm-chat-head"><div><strong>Discută cu VALMEX</strong><small>Asistent VALMEX · Consultantul poate prelua discuția</small></div><button id="vm-chat-close" aria-label="Închide">×</button></header>
 <div id="vm-chat-content"><div id="vm-chat-start"><p>Alegeți subiectul sau scrieți întrebarea. Asistentul VALMEX începe discuția, iar un consultant poate prelua conversația în orice moment.</p>
 <div id="vm-chat-options">
-<button type="button" data-vm-service="Acoperiș la cheie"><span class="vm-service-mark">AC</span><span class="vm-service-copy"><strong>Acoperiș la cheie</strong><small>Proiect și montaj</small></span><span class="vm-service-arrow">›</span></button>
-<button type="button" data-vm-service="Țiglă metalică și materiale"><span class="vm-service-mark">TM</span><span class="vm-service-copy"><strong>Țiglă și materiale</strong><small>Materiale pentru acoperiș</small></span><span class="vm-service-arrow">›</span></button>
-<button type="button" data-vm-service="Fațade decorative"><span class="vm-service-mark">FD</span><span class="vm-service-copy"><strong>Fațade decorative</strong><small>Finisaje exterioare</small></span><span class="vm-service-arrow">›</span></button>
-<button type="button" data-vm-service="Fațade AMK"><span class="vm-service-mark">AMK</span><span class="vm-service-copy"><strong>Fațade AMK</strong><small>Panouri și montaj</small></span><span class="vm-service-arrow">›</span></button>
-<button type="button" data-vm-service="Garduri și porți"><span class="vm-service-mark">GP</span><span class="vm-service-copy"><strong>Garduri și porți</strong><small>Configurați proiectul</small></span><span class="vm-service-arrow">›</span></button>
-<button type="button" data-vm-service="Rate 0%"><span class="vm-service-mark">0%</span><span class="vm-service-copy"><strong>Plată în rate</strong><small>Condiții de finanțare</small></span><span class="vm-service-arrow">›</span></button>
-<button type="button" data-vm-service="Calcul estimativ acoperiș"><span class="vm-service-mark">CALC</span><span class="vm-service-copy"><strong>Calcul acoperiș</strong><small>Estimare orientativă</small></span><span class="vm-service-arrow">›</span></button>
-<button type="button" data-vm-service="Consultație cu un consultant"><span class="vm-service-mark">CONS</span><span class="vm-service-copy"><strong>Consultant VALMEX</strong><small>Discuție directă</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Acoperiș la cheie"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.2 12 4l9 7.2M5.5 10v9h13v-9M9.5 19v-5h5v5" /></svg></span><span class="vm-service-copy"><strong>Acoperiș la cheie</strong><small>Proiectare și montaj</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Țiglă metalică și materiale"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18M4 8l2 11h12l2-11M7 8V5h10v3M8 12h8M9 15h6" /></svg></span><span class="vm-service-copy"><strong>Țiglă și materiale</strong><small>Materiale pentru acoperiș</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Fațade decorative"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V5l8-2 8 2v15M4 9h16M8 9v4m8-4v4M8 20v-4h8v4" /></svg></span><span class="vm-service-copy"><strong>Fațade decorative</strong><small>Tencuieli și finisaje</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Fațade AMK"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 9h16M9 4v16m6-16v16" /></svg></span><span class="vm-service-copy"><strong>Fațade AMK</strong><small>Panouri și montaj</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Renovări exterioare"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6 4 4M4 20l4.5-1 10-10a2.8 2.8 0 0 0-4-4l-10 10L4 20ZM4 4h5M4 4v5" /></svg></span><span class="vm-service-copy"><strong>Renovări exterioare</strong><small>Lucrări pentru locuință</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Rate 0%"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 8h.01M16 16h.01M20 12a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" /></svg></span><span class="vm-service-copy"><strong>Plată în rate 0%</strong><small>Condiții de finanțare</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Calcul estimativ acoperiș"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2m4 0h2m-8 4h2m4 0h2m-8 3h2m4 0h2" /></svg></span><span class="vm-service-copy"><strong>Calcul acoperiș</strong><small>Estimare orientativă</small></span><span class="vm-service-arrow">›</span></button>
+<button type="button" data-vm-service="Consultație cu un consultant"><span class="vm-service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM16 11h5m-2.5-2.5v5" /></svg></span><span class="vm-service-copy"><strong>Consultant VALMEX</strong><small>Discuție directă</small></span><span class="vm-service-arrow">›</span></button>
 </div>
 <textarea id="vm-chat-first-message" maxlength="4000" placeholder="Sau scrieți întrebarea aici…"></textarea>
 <button id="vm-chat-begin">Începe conversația</button></div><div id="vm-chat-log" hidden></div></div>
@@ -105,4 +105,35 @@ $('vm-chat-launch').addEventListener('click',function(event){event.preventDefaul
 $('vm-chat-launch').onclick=openValmexChat;
 $('vm-chat-close').onclick=()=>{window.VALMEX_CHAT.close()};
 $('vm-chat-begin').onclick=()=>begin();document.querySelectorAll('[data-vm-service]').forEach(button=>button.onclick=()=>begin(button.getAttribute('data-vm-service')));$('vm-chat-first-message').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();begin()}};$('vm-chat-send').onclick=send;$('vm-chat-text').oninput=updateConsentVisibility;$('vm-chat-text').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}};
+
+/* VALMEX service selector – refined visual system */
+const iconStyle=document.createElement('style');
+iconStyle.textContent=`
+#valmex-chat-root #vm-chat-content{padding:20px 18px 22px!important;background:#f5f6f8!important}
+#valmex-chat-root #vm-chat-start p{font-size:14px!important;line-height:1.55!important;color:#667085!important;margin:2px 0 18px!important}
+#valmex-chat-root #vm-chat-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;margin:0 0 17px!important}
+#valmex-chat-root #vm-chat-options button{position:relative!important;display:flex!important;align-items:center!important;gap:11px!important;min-width:0!important;min-height:84px!important;padding:13px 11px!important;border:1px solid #e4e7ec!important;border-radius:15px!important;background:#fff!important;color:#20242b!important;text-align:left!important;font-family:inherit!important;font-size:13px!important;font-weight:600!important;line-height:1.3!important;box-shadow:0 3px 12px rgba(16,24,40,.045)!important;transition:border-color .2s,box-shadow .2s,transform .2s!important}
+#valmex-chat-root #vm-chat-options button:hover,#valmex-chat-root #vm-chat-options button:focus-visible{border-color:#e30613!important;background:#fff!important;box-shadow:0 7px 18px rgba(16,24,40,.09)!important;transform:translateY(-2px)!important;outline:none!important}
+#valmex-chat-root .vm-service-icon{width:43px!important;height:43px!important;flex:0 0 43px!important;display:grid!important;place-items:center!important;border-radius:13px!important;background:#fff0f1!important;color:#d20a19!important}
+#valmex-chat-root .vm-service-icon svg{width:25px!important;height:25px!important;display:block!important;fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+#valmex-chat-root .vm-service-copy{display:block!important;min-width:0!important;flex:1 1 auto!important}
+#valmex-chat-root .vm-service-copy strong{display:block!important;font-size:12px!important;line-height:1.3!important;font-weight:750!important;color:#20242b!important}
+#valmex-chat-root .vm-service-copy small{display:block!important;margin-top:5px!important;color:#858b96!important;font-size:10px!important;font-weight:500!important;line-height:1.25!important}
+#valmex-chat-root .vm-service-arrow{margin-left:auto!important;align-self:center!important;color:#c0c4cc!important;font-size:21px!important;font-weight:400!important;line-height:1!important}
+#valmex-chat-root #vm-chat-first-message{min-height:76px!important;margin:0 0 10px!important;padding:14px 15px!important;border:1px solid #dfe3e8!important;border-radius:13px!important;background:#fff!important;color:#252a33!important;font:14px/1.45 Arial,system-ui,sans-serif!important;box-shadow:inset 0 1px 2px rgba(16,24,40,.025)!important}
+#valmex-chat-root #vm-chat-first-message:focus{outline:none!important;border-color:#e30613!important;box-shadow:0 0 0 3px rgba(227,6,19,.10)!important}
+#valmex-chat-root #vm-chat-begin{min-height:54px!important;margin:0!important;border:0!important;border-radius:13px!important;background:#e30613!important;color:#fff!important;font-size:15px!important;font-weight:750!important;letter-spacing:.1px!important;box-shadow:0 7px 18px rgba(227,6,19,.18)!important}
+#valmex-chat-root #vm-chat-begin:hover{background:#c90010!important}
+@media(max-width:520px){
+ #valmex-chat-root #vm-chat-content{padding:18px 16px 24px!important}
+ #valmex-chat-root #vm-chat-options{gap:9px!important}
+ #valmex-chat-root #vm-chat-options button{min-height:78px!important;padding:10px 9px!important;gap:8px!important;border-radius:13px!important}
+ #valmex-chat-root .vm-service-icon{width:38px!important;height:38px!important;flex-basis:38px!important;border-radius:11px!important}
+ #valmex-chat-root .vm-service-icon svg{width:22px!important;height:22px!important}
+ #valmex-chat-root .vm-service-copy strong{font-size:11px!important}
+ #valmex-chat-root .vm-service-copy small{font-size:9px!important}
+}
+@media(max-width:360px){#valmex-chat-root #vm-chat-options{grid-template-columns:1fr!important}#valmex-chat-root #vm-chat-options button{min-height:68px!important}}
+`;
+document.head.appendChild(iconStyle);
 })();
