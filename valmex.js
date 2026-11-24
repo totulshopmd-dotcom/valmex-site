@@ -387,7 +387,7 @@
   if (!document.getElementById('valmex-contact-widget-loader')) {
     const contactWidgetScript = document.createElement('script');
     contactWidgetScript.id = 'valmex-contact-widget-loader';
-    contactWidgetScript.src = '/valmex-contact-widget.js?v=20261123-single-launcher2';
+    contactWidgetScript.src = '/valmex-contact-widget.js?v=20261124-unread-badge1';
     contactWidgetScript.defer = true;
     document.head.appendChild(contactWidgetScript);
   }
