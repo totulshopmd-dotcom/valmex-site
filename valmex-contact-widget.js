@@ -55,6 +55,8 @@ window.addEventListener('valmex:chat-unread',event=>{
  unread.classList.toggle('is-visible',count>0);
  trigger.setAttribute('aria-label',count>0?'Deschide opțiunile de contact. Mesaje noi: '+count:'Deschide opțiunile de contact');
 });
+const existingUnread=Math.max(0,Number(window.VALMEX_CHAT_UNREAD_COUNT)||0);
+if(existingUnread){unread.textContent=existingUnread>99?'99+':String(existingUnread);unread.classList.add('is-visible');trigger.setAttribute('aria-label','Deschide opțiunile de contact. Mesaje noi: '+existingUnread);}
 function setOpen(open){root.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',String(open));trigger.setAttribute('aria-label',open?'Închide opțiunile de contact':'Deschide opțiunile de contact');panel.setAttribute('aria-hidden',String(!open));}
 trigger.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setOpen(!root.classList.contains('is-open'));});
 document.addEventListener('click',e=>{if(!root.contains(e.target))setOpen(false);});
