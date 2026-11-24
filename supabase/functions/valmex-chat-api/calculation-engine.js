@@ -69,8 +69,16 @@
     const beamPerimeter = 2 * (Number(state.length) + Number(state.width));
     const beamVol = state.beam === "yes" ? beamPerimeter * state.beamWidth * state.beamHeight : 0;
     const beamCost = beamVol * settings.beamCostPerM3, roofSale = A * Number(state.price);
+    // Tipul zidăriei: pereți (implicit pentru ofertele vechi), fronton sau dimensiuni personalizate.
+    const masonryType = state.masonryType || "walls";
     const masonryPerimeter = 2 * (Number(state.length) + Number(state.width));
-    const masonryGrossArea = state.masonry === "yes" ? masonryPerimeter * (Number(state.masonryHeightCm) / 100) : 0;
+    const masonryHeightM = Math.max(0, Number(state.masonryHeightCm) || 0) / 100;
+    const masonrySegments = Array.isArray(state.masonrySegments) ? state.masonrySegments : [];
+    const masonryGrossArea = state.masonry !== "yes" ? 0 :
+      masonryType === "fronton" ? Math.max(0, Number(state.width) || 0) * masonryHeightM :
+      masonryType === "custom" ? masonrySegments.reduce((sum, segment) =>
+        sum + Math.max(0, Number(segment.length) || 0) * Math.max(0, Number(segment.heightCm) || 0) / 100, 0) :
+      masonryPerimeter * masonryHeightM;
     const masonryArea = Math.max(0, masonryGrossArea - Math.max(0, Number(state.openingsArea) || 0));
     const blockFaceArea = (Number(settings.blockLengthCm) / 100) * (Number(settings.blockHeightCm) / 100);
     const blockThickness = Number(settings.blockThicknessCm) / 100;
