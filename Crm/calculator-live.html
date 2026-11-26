@@ -469,17 +469,31 @@ function getArchive(){
  try{const raw=localStorage.getItem(ARCHIVE_KEY);const parsed=raw?JSON.parse(raw):[];return Array.isArray(parsed)?parsed.filter(x=>x&&typeof x==='object'&&x.id!==undefined):[];}
  catch(e){console.warn('VALMEX: arhiva nu poate fi citită.',e);return []}
 }
-function saveCurrentOffer(){
+async function archiveCloudUser(){if(!crmDb)crmDb=crmClient();if(!crmDb)return null;const {data:{session},error}=await crmDb.auth.getSession();if(error)throw error;return session?.user?.id||null;}
+async function syncArchiveCloud(){
+ const uid=await archiveCloudUser();if(!uid)return;
+ const {data,error}=await crmDb.from('valmex_live_archives').select('id,record').eq('user_id',uid).order('id',{ascending:false});if(error)throw error;
+ const cloud=(data||[]).map(x=>x.record).filter(x=>x&&typeof x==='object'),local=getArchive(),merged=new Map();
+ cloud.forEach(x=>merged.set(String(x.id),x));local.forEach(x=>{if(!merged.has(String(x.id)))merged.set(String(x.id),x);});
+ const combined=[...merged.values()].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));localStorage.setItem(ARCHIVE_KEY,JSON.stringify(combined));
+ for(const x of local)if(!cloud.some(y=>String(y.id)===String(x.id)))await saveArchiveCloudRecord(x,uid);
+}
+async function saveArchiveCloudRecord(record,uid=null){const owner=uid||await archiveCloudUser();if(!owner)return;const {error}=await crmDb.from('valmex_live_archives').upsert({id:Number(record.id),user_id:owner,record,updated_at:new Date().toISOString()},{onConflict:'id'});if(error)throw error;}
+async function deleteArchiveCloudRecord(id){const uid=await archiveCloudUser();if(!uid)return;const {error}=await crmDb.from('valmex_live_archives').delete().eq('id',Number(id)).eq('user_id',uid);if(error)throw error;}
+
+async function saveCurrentOffer(){
  const c=costs();
  const record={id:Date.now(),date:new Date().toISOString(),state:{...state},calc:{...c}};
  const list=getArchive();list.unshift(record);localStorage.setItem(ARCHIVE_KEY,JSON.stringify(list));
+ try{await saveArchiveCloudRecord(record);}catch(e){console.warn('Arhiva cloud: oferta este păstrată local, sincronizarea a eșuat.',e);}
  $('saveArchive').textContent='Salvată în arhivă';$('saveArchive').disabled=true;
  showArchive();
  const slot=$('archive').querySelector('[data-reminder-slot="'+record.id+'"]');
  if(slot)slot.innerHTML=reminderEditor(record.id);
 }
-function showArchive(){
+async function showArchive(){
  $('screen').classList.add('hidden');$('result').classList.add('hidden');$('archive').classList.remove('hidden');$('nav').classList.add('hidden');
+ try{await syncArchiveCloud();}catch(e){console.warn('Nu s-a putut sincroniza arhiva cloud:',e);}
  const list=getArchive();
  let html='<div class="stepcount">VALMEX · ISTORIC OFERTE</div><h1>Arhivă</h1>';
  if(!list.length)html+='<p class="hint">Nu există oferte salvate pe acest dispozitiv.</p>';
@@ -500,9 +514,11 @@ function loadArchived(id){
  if(r.state&&r.state.masonryLaborRate!==undefined&&r.state.masonryHeightCm===undefined)alert('Ofertă veche: verifică tariful de manoperă la zidărie. Versiunea veche folosea lei/m².');
  finalView();
 }
-function deleteArchived(id){
+async function deleteArchived(id){
  if(!confirm('Ștergi această ofertă din arhivă?'))return;
- localStorage.setItem(ARCHIVE_KEY,JSON.stringify(getArchive().filter(x=>x.id!==id)));saveReminders(getReminders().filter(x=>String(x.recordId)!==String(id)));showArchive();
+ localStorage.setItem(ARCHIVE_KEY,JSON.stringify(getArchive().filter(x=>x.id!==id)));
+ try{await deleteArchiveCloudRecord(id);}catch(e){alert('Oferta a fost eliminată local, dar ștergerea cloud a eșuat.');console.error(e);}
+ saveReminders(getReminders().filter(x=>String(x.recordId)!==String(id)));showArchive();
 }
 function exportArchived(id,kind){
  const r=getArchive().find(x=>x.id===id);if(!r)return;
