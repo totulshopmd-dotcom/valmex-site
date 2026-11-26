@@ -1,7 +1,7 @@
 /* VALMEX unified consent: essential site storage + optional analytics + push opt-in. */
 (function(){
  'use strict';
- var KEY='valmexCookieConsent', PUSH='valmexPushConsentV2';
+ var KEY='valmexCookieConsentV2', PUSH='valmexPushConsentV2';
  function choice(){try{return localStorage.getItem(KEY)}catch(e){return null}}
  function save(v){try{localStorage.setItem(KEY,v);localStorage.setItem(PUSH,v==='accepted'?'accepted':'rejected')}catch(e){}}
  function render(){
