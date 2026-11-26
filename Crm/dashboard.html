@@ -135,7 +135,7 @@ $("removeAvatar").addEventListener("click",async()=>{
  }catch(e){msg.textContent="Nu s-a putut elimina fotografia: "+(e.message||e)}
  finally{btn.disabled=false}
 });
-async function countRows(table,id){let query=db.from(table).select("*",{count:"exact",head:true});if(table==="clients"||table==="projects")query=query.is("deleted_at",null);const {count,error}=await query;$(id).textContent=error?"—":String(count??0);return !error}
+async function countRows(table,id){let query=db.from(table).select("*",{count:"exact",head:true});if(table==="clients"||table==="projects")query=query.is("deleted_at",null);const {count,error}=await query;const el=$(id);if(el)el.textContent=error?"—":String(count??0);return !error}
 
 async function loadTrash(){
  const section=$("trashSection"),host=$("trashContent");
@@ -164,8 +164,7 @@ async function init(){
  if(error||!session){location.replace("index.html");return}
  const {data:p,error:pe}=await db.from("profiles").select("id,full_name,role,active,avatar_path").eq("id",session.user.id).maybeSingle();
  if(pe||!p||p.active!==true||!p.role){await db.auth.signOut();location.replace("index.html");return}
- $("userName").textContent=p.full_name||session.user.email||"Utilizator";
- $("userRole").textContent=p.role;
+const userNameEl=$("userName"),userRoleEl=$("userRole");\n if(userNameEl)userNameEl.textContent=p.full_name||session.user.email||"Utilizator";\n if(userRoleEl)userRoleEl.textContent=p.role;
  await loadMyAvatar(p,session.user.id);
  const role=String(p.role).toLowerCase();
  const isAdmin=["administrator","admin"].includes(role);
@@ -183,6 +182,6 @@ async function init(){
 }
 $("logout").addEventListener("click",async()=>{await db.auth.signOut();location.replace("index.html")});
 db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)location.replace("index.html")});
-init().catch(e=>{$("notice").textContent="Eroare la încărcarea Dashboard-ului: "+e.message});
+init().catch(e=>{const notice=$("notice");if(notice)notice.textContent="Eroare la încărcarea Dashboard-ului: "+e.message;console.error("Dashboard initialization failed:",e);});
 </script><script src="onesignal-auth.js?v=1" defer></script>
 </body></html>
