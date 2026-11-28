@@ -9,7 +9,7 @@
     calculator:'calculator.access',
     quotations:'quotes.create',
     chat:'chat.access',
-    tasks:'tasks.manage',
+    tasks:['tasks.manage','tasks.view_all'],
     timesheet:'projects.view',
     documents:'documents.view',
     contracts:'documents.manage',
