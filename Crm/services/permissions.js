@@ -14,7 +14,8 @@
     documents:'documents.view',
     contracts:'documents.manage',
     materials:'materials.manage',
-    warranties:'warranty.view',\n    interventions:'interventions.manage',
+    warranties:'warranty.view',
+    interventions:'interventions.manage',
     notifications:'notifications.manage'
   });
   function isAdmin(profile) { return ADMIN_ROLES.includes(String(profile?.role || '').toLowerCase()); }
