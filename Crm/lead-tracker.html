@@ -21,12 +21,13 @@ button{cursor:pointer;font-weight:700}button.primary{background:var(--red);color
 <header><div class="brand">VAL<span>MEX</span> · AUTO LEAD TRACKER</div><a href="dashboard.html">← Dashboard</a></header>
 <main><h1>Solicitări primite</h1><div class="sub">Formulare website, calculatoare și conversații chat într-un singur registru.</div>
 <div class="toolbar"><select id="source"><option value="">Toate sursele</option><option value="website_form">Formular website</option><option value="roof_calculator">Calculator acoperiș</option><option value="facade_calculator">Calculator fațadă</option><option value="amk_calculator">Calculator AMK</option><option value="contact_form">Contact</option><option value="chat">Chat</option></select><select id="status"><option value="">Toate statusurile</option><option value="nou">Nou</option><option value="in_lucru">În lucru</option><option value="convertit">Convertit</option><option value="inchis">Închis</option></select><button class="primary" id="refresh">Reîncarcă</button></div>
-<div id="message" role="status">Se verifică accesul...</div><section id="list"></section></main>
+<div id="message" role="status">Se verifică accesul...</div><section id="list"></section><div class="toolbar" style="justify-content:center"><button id="prevPage">← Anterior</button><span id="pageInfo" style="padding:10px;color:var(--muted)">Pagina 1</span><button id="nextPage">Următorul →</button></div></main>
 <script>
 const URL='https://qejnbbzhpvfjeqzwotwt.supabase.co',KEY='sb_publishable_xbF3ggFeZ475werOTmFWvA_Ho_cxYov',SK='sb-qejnbbzhpvfjeqzwotwt-auth-token';
 const storage=localStorage.getItem(SK)?localStorage:(sessionStorage.getItem(SK)?sessionStorage:localStorage);
 const db=window.supabase.createClient(URL,KEY,{auth:{storage,storageKey:SK,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $=id=>document.getElementById(id);
+let page=0;const PAGE_SIZE=50;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sourceLabel={website_form:'Formular website',roof_calculator:'Calculator acoperiș',facade_calculator:'Calculator fațadă',amk_calculator:'Calculator AMK',contact_form:'Contact',chat:'Chat',other:'Altă sursă'};
 async function load(){
@@ -36,15 +37,16 @@ async function load(){
  const {data:profile,error:profileError}=await db.from('profiles').select('id,role,active').eq('id',session.user.id).maybeSingle();
  if(profileError||!profile||!profile.active){$('message').textContent='Contul CRM nu este activ.';return}
  if(!['administrator','vanzari'].includes(profile.role)){$('message').textContent='Accesul la Auto Lead Tracker este disponibil administratorului și rolului Vânzări.';return}
- let q=db.from('lead_events').select('id,source,visitor_name,phone,locality,service,page_url,details,status,created_at,last_activity_at').order('last_activity_at',{ascending:false}).limit(250);
+ let q=db.from('lead_events').select('id,source,visitor_name,phone,locality,service,page_url,details,status,created_at,last_activity_at',{count:'exact'}).order('last_activity_at',{ascending:false});
  if($('source').value)q=q.eq('source',$('source').value);if($('status').value)q=q.eq('status',$('status').value);
- const {data,error}=await q;if(error)throw error;
- if(!data?.length){$('list').innerHTML='<div class="empty">Nu există solicitări pentru filtrul selectat.</div>';$('message').textContent='0 solicitări';return}
+ q=q.range(page*PAGE_SIZE,page*PAGE_SIZE+PAGE_SIZE-1);const {data,error,count}=await q;if(error)throw error;
+ if(!data?.length){$('list').innerHTML='<div class="empty">Nu există solicitări pentru filtrul selectat.</div>';$('message').textContent='0 solicitări';$('pageInfo').textContent='Pagina 1';$('prevPage').disabled=true;$('nextPage').disabled=true;return}
  $('list').innerHTML=data.map(x=>'<article class="lead"><div><h3>'+esc(x.visitor_name||'Vizitator fără nume')+'</h3><div class="meta"><a class="phone" href="tel:'+esc(x.phone||'')+'">'+esc(x.phone||'Telefon necompletat')+'</a><br>'+esc(x.service||'Solicitare VALMEX')+' · '+esc(sourceLabel[x.source]||x.source)+'<br>'+esc(x.locality||'Localitate necompletată')+' · '+esc(new Date(x.created_at).toLocaleString('ro-MD'))+(x.page_url?'<br><a href="'+esc(x.page_url)+'" target="_blank" rel="noopener">Pagina sursă</a>':'')+(x.details?'<br><details><summary>Detalii solicitare</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0;font:12px Arial">'+esc(JSON.stringify(x.details,null,2))+'</pre></details>':'')+'</div></div><select class="status" data-id="'+esc(x.id)+'"><option value="nou" '+(x.status==='nou'?'selected':'')+'>Nou</option><option value="in_lucru" '+(x.status==='in_lucru'?'selected':'')+'>În lucru</option><option value="convertit" '+(x.status==='convertit'?'selected':'')+'>Convertit</option><option value="inchis" '+(x.status==='inchis'?'selected':'')+'>Închis</option></select></article>').join('');
- $('message').textContent=data.length+' solicitări afișate';
+ $('message').textContent=(count??data.length)+' solicitări în total · '+data.length+' pe pagina curentă';$('pageInfo').textContent='Pagina '+(page+1)+' / '+Math.max(1,Math.ceil((count||0)/PAGE_SIZE));$('prevPage').disabled=page===0;$('nextPage').disabled=page+1>=Math.ceil((count||0)/PAGE_SIZE);
  document.querySelectorAll('[data-id]').forEach(el=>el.addEventListener('change',async()=>{el.disabled=true;const {error}=await db.from('lead_events').update({status:el.value,updated_at:new Date().toISOString()}).eq('id',el.dataset.id);el.disabled=false;if(error){$('message').textContent='Statusul nu a putut fi actualizat: '+error.message;return}$('message').textContent='Status actualizat.'}));
 }
-$('refresh').onclick=()=>load().catch(e=>$('message').textContent=e.message);$('source').onchange=()=>load().catch(e=>$('message').textContent=e.message);$('status').onchange=()=>load().catch(e=>$('message').textContent=e.message);
+$('prevPage').onclick=()=>{if(page>0){page--;load().catch(e=>$('message').textContent=e.message)}};$('nextPage').onclick=()=>{page++;load().catch(e=>$('message').textContent=e.message)};
+$('refresh').onclick=()=>{page=0;load().catch(e=>$('message').textContent=e.message)};$('source').onchange=()=>{page=0;load().catch(e=>$('message').textContent=e.message)};$('status').onchange=()=>{page=0;load().catch(e=>$('message').textContent=e.message)};
 load().catch(e=>$('message').textContent='Eroare: '+e.message);
 </script><script src="onesignal-auth.js?v=1" defer></script>
 </body></html>
