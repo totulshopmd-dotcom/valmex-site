@@ -9,12 +9,12 @@
     calculator:'calculator.access',
     quotations:'quotes.create',
     chat:'chat.access',
-    tasks:'projects.view',
+    tasks:'tasks.manage',
     timesheet:'projects.view',
     documents:'documents.view',
-    contracts:'documents.view',
-    materials:'materials.view',
-    warranties:'warranty.view',
+    contracts:'documents.manage',
+    materials:'materials.manage',
+    warranties:'warranty.view',\n    interventions:'interventions.manage',
     notifications:'notifications.manage'
   });
   function isAdmin(profile) { return ADMIN_ROLES.includes(String(profile?.role || '').toLowerCase()); }
