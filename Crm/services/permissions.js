@@ -1,11 +1,28 @@
-/* UI navigation hints only. Database RLS/RPC authorization is mandatory. */
+/* UI access checks based on the permission rows loaded by VALMEX_AUTH. Supabase RLS/RPC remains authoritative. */
 (function (w) {
   'use strict';
   const ADMIN_ROLES = ['admin', 'administrator'];
+  const MODULE_PERMISSION = Object.freeze({
+    clients:'clients.view',
+    projects:'projects.view',
+    'project-file':'projects.view',
+    calculator:'calculator.access',
+    quotations:'quotes.create',
+    chat:'chat.access',
+    tasks:'projects.view',
+    timesheet:'projects.view',
+    documents:'documents.view',
+    contracts:'documents.view',
+    materials:'materials.view',
+    warranties:'warranty.view',
+    notifications:'notifications.manage'
+  });
   function isAdmin(profile) { return ADMIN_ROLES.includes(String(profile?.role || '').toLowerCase()); }
   function canSeeModule(moduleId, profile) {
-    if (['cms', 'employees-admin', 'settings', 'audit', 'finance'].includes(moduleId)) return isAdmin(profile);
-    return Boolean(profile && profile.active === true);
+    if (!profile || profile.active !== true) return false;
+    if (isAdmin(profile)) return true;
+    const required = MODULE_PERMISSION[moduleId];
+    return Boolean(required && profile.permissions instanceof Set && profile.permissions.has(required));
   }
-  w.VALMEX_PERMISSIONS = Object.freeze({ isAdmin, canSeeModule });
+  w.VALMEX_PERMISSIONS = Object.freeze({ isAdmin, canSeeModule, modulePermission:MODULE_PERMISSION });
 })(window);
