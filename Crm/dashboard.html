@@ -175,7 +175,7 @@ const userNameEl=$("userName"),userRoleEl=$("userRole");\n if(userNameEl)userNam
   if(permissionError){$("notice").textContent="Permisiunile nu au putut fi verificate. Accesul la module a fost restricționat.";document.querySelectorAll("[data-permission]").forEach(el=>el.hidden=true);return;}
   granted=new Set((permissionRows||[]).map(x=>x.permission_key));
  }
- document.querySelectorAll("[data-permission]").forEach(el=>{el.hidden=!(isAdmin||granted.has(el.dataset.permission));});
+ document.querySelectorAll("[data-permission]").forEach(el=>{const key=el.dataset.permission;const aliases=key==="tasks.manage"?["tasks.manage","tasks.view_all"]:key==="materials.view"?["materials.view","materials.manage"]:key==="warranty.view"?["warranty.view"]: [key];el.hidden=!(isAdmin||aliases.some(permission=>granted.has(permission)));});
  const results=await Promise.all([countRows("clients","clientsCount"),countRows("projects","projectsCount"),countRows("tasks","tasksCount"),countRows("contracts","contractsCount")]);
  if(isAdmin) await loadTrash();
  if(results.some(x=>!x))$("notice").textContent="Unele statistici nu sunt disponibile pentru rolul curent. Permisiunile bazei de date rămân decisive.";
