@@ -13,7 +13,7 @@
     timesheet:'projects.view',
     documents:'documents.view',
     contracts:'documents.manage',
-    materials:'materials.manage',
+    materials:['materials.view','materials.manage'],
     warranties:'warranty.view',
     interventions:'interventions.manage',
     notifications:'notifications.manage'
@@ -23,7 +23,7 @@
     if (!profile || profile.active !== true) return false;
     if (isAdmin(profile)) return true;
     const required = MODULE_PERMISSION[moduleId];
-    return Boolean(required && profile.permissions instanceof Set && profile.permissions.has(required));
+    return Boolean(required && profile.permissions instanceof Set && (Array.isArray(required) ? required.some(key => profile.permissions.has(key)) : profile.permissions.has(required)));
   }
   w.VALMEX_PERMISSIONS = Object.freeze({ isAdmin, canSeeModule, modulePermission:MODULE_PERMISSION });
 })(window);
