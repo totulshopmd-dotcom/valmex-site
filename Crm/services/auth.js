@@ -11,6 +11,16 @@
     if (profileError || !profile || profile.active !== true || !profile.role) {
       await db.auth.signOut(); w.location.replace('index.html'); return null;
     }
+    const admin = ['admin','administrator'].includes(String(profile.role).toLowerCase());
+    let permissions = new Set();
+    if (!admin) {
+      const { data: rows, error: permissionError } = await db.from('employee_permissions')
+        .select('permission_key').eq('employee_id', session.user.id).eq('granted', true);
+      if (permissionError) throw new Error('Permisiunile nu au putut fi verificate. Accesul a fost restricționat.');
+      permissions = new Set((rows || []).map(row => row.permission_key));
+    }
+    profile.permissions = permissions;
+    profile.permissionCheckFailed = false;
     return { session, profile };
   }
   async function signOut() {
